@@ -25,7 +25,7 @@ Keyboard:
 
 Xbox controller:
 - R2 for throttle and L2 for braking
-- left analog stick for steering
+- Left analog stick for steering
 - A button for upshifting and X button for downshifting
 - B button for handbrake
 
