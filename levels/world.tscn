@@ -1,0 +1,47 @@
+[gd_scene load_steps=6 format=2]
+
+[ext_resource path="res://scenes/SportCar.tscn" type="PackedScene" id=1]
+[ext_resource path="res://scenes/Track.tscn" type="PackedScene" id=2]
+
+[sub_resource type="CubeMesh" id=2]
+
+[sub_resource type="SpatialMaterial" id=3]
+albedo_color = Color( 0.243137, 0.545098, 0.0313726, 1 )
+
+[sub_resource type="ConcavePolygonShape" id=4]
+data = PoolVector3Array( -1, 1, 1, 1, 1, 1, -1, -1, 1, 1, 1, 1, 1, -1, 1, -1, -1, 1, 1, 1, -1, -1, 1, -1, 1, -1, -1, -1, 1, -1, -1, -1, -1, 1, -1, -1, 1, 1, 1, 1, 1, -1, 1, -1, 1, 1, 1, -1, 1, -1, -1, 1, -1, 1, -1, 1, -1, -1, 1, 1, -1, -1, -1, -1, 1, 1, -1, -1, 1, -1, -1, -1, 1, 1, 1, -1, 1, 1, 1, 1, -1, -1, 1, 1, -1, 1, -1, 1, 1, -1, -1, -1, 1, 1, -1, 1, -1, -1, -1, 1, -1, 1, 1, -1, -1, -1, -1, -1 )
+
+[node name="world" type="Spatial"]
+
+[node name="Ground" type="MeshInstance" parent="."]
+transform = Transform( 326.618, 0, 0, 0, 0.1, 0, 0, 0, 326.618, 0, 0, 0 )
+mesh = SubResource( 2 )
+skeleton = NodePath("")
+material/0 = SubResource( 3 )
+
+[node name="StaticBody" type="StaticBody" parent="Ground" groups=["Grass"]]
+
+[node name="CollisionShape" type="CollisionShape" parent="Ground/StaticBody"]
+shape = SubResource( 4 )
+
+[node name="DirectionalLight" type="DirectionalLight" parent="."]
+transform = Transform( 1, 0, 0, 0, -0.812898, 0.582407, 0, -0.582407, -0.812898, 0, 4.7, 0 )
+shadow_enabled = true
+
+[node name="Track" parent="." instance=ExtResource( 2 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, 0 )
+
+[node name="Path" parent="Track" index="0"]
+track_width = 14.131
+lower_ground_width = 16.931
+
+[node name="Road" parent="Track/Path" index="0"]
+polygon = PoolVector2Array( -7.0655, 0, -7.0655, -0.1, 7.0655, -0.1, 7.0655, 0 )
+
+[node name="Ground" parent="Track/Path" index="1"]
+polygon = PoolVector2Array( -9.0655, -0.1, 9.0655, -0.1, 16.931, -4.01, 17.031, -4.1, -17.031, -4.1, -16.931, -4 )
+
+[node name="Sportcar" parent="." instance=ExtResource( 1 )]
+transform = Transform( 0.866025, 0, 0.5, 0, 1, 0, -0.5, 0, 0.866025, 60.5971, 3.4, 109.218 )
+
+[editable path="Track"]

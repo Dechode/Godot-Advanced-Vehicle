@@ -1,0 +1,177 @@
+[gd_scene load_steps=12 format=2]
+
+[ext_resource path="res://scripts/RigidBodyCar.gd" type="Script" id=1]
+[ext_resource path="res://scripts/WheelSuspension.gd" type="Script" id=2]
+[ext_resource path="res://sounds/tres/EngineSample.tres" type="AudioStream" id=3]
+[ext_resource path="res://scripts/Gui.gd" type="Script" id=4]
+[ext_resource path="res://materials/tire.tres" type="Material" id=5]
+[ext_resource path="res://scripts/Camera.gd" type="Script" id=6]
+
+[sub_resource type="Curve" id=8]
+_data = [ Vector2( 0, 0.563636 ), 0.0, 0.0, 0, 0, Vector2( 0.575472, 1 ), 0.0, 0.0, 0, 0, Vector2( 0.962264, 0.809091 ), -0.335178, -0.335178, 0, 0, Vector2( 1, 0.109091 ), -6.85253, 0.0, 0, 0 ]
+
+[sub_resource type="Curve" id=3]
+_data = [ Vector2( 0, 0 ), 0.0, 0.0, 0, 0, Vector2( 0.133803, 1 ), 0.0697793, 0.0697793, 0, 0, Vector2( 1, 0.881818 ), 0.0, 0.0, 0, 0 ]
+
+[sub_resource type="Curve" id=4]
+_data = [ Vector2( 0, 0 ), 0.0, 0.0, 0, 0, Vector2( 0.0633803, 1 ), -0.422619, -1.12955, 0, 0, Vector2( 0.246479, 0.909091 ), -2.87972, -0.721391, 0, 0, Vector2( 1, 0.709091 ), 0.0, 0.0, 0, 0 ]
+
+[sub_resource type="CylinderShape" id=9]
+radius = 0.35
+height = 0.4
+
+[sub_resource type="CylinderMesh" id=10]
+material = ExtResource( 5 )
+top_radius = 0.3
+bottom_radius = 0.3
+height = 0.2
+radial_segments = 16
+
+[node name="RigidBodyCar" type="RigidBody"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0 )
+collision_layer = 2
+mass = 700.0
+script = ExtResource( 1 )
+rpm_clutch_out = 2000.0
+torque_curve = SubResource( 8 )
+engine_moment = 0.2
+engine_sound = ExtResource( 3 )
+gear_ratios = [ 3.5, 3.0, 2.5, 1.72, 1.2, 1.0 ]
+gear_inertia = 0.09
+
+[node name="Camera" type="ClippedCamera" parent="."]
+transform = Transform( 1, 0, 0, 0, 0.965926, 0.258819, 0, -0.258819, 0.965926, 0, 1.6, 4.4 )
+script = ExtResource( 6 )
+target_path = NodePath("..")
+offset = Vector3( 0, 2, 5 )
+
+[node name="Wheel_br" type="RayCast" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.8, 0, 1.5 )
+enabled = true
+script = ExtResource( 2 )
+springstiffness = 40000.0
+bump = 7000.0
+rebound = 5000.0
+lateral_force = SubResource( 3 )
+longitudinal_force = SubResource( 4 )
+
+[node name="WheelBody" type="KinematicBody" parent="Wheel_br"]
+collision_layer = 2
+
+[node name="CollisionShape" type="CollisionShape" parent="Wheel_br/WheelBody"]
+transform = Transform( -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 0, 0, 0 )
+shape = SubResource( 9 )
+
+[node name="MeshInstance" type="MeshInstance" parent="Wheel_br/WheelBody"]
+transform = Transform( -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 0, 0, 0 )
+mesh = SubResource( 10 )
+material/0 = null
+
+[node name="Wheel_bl" type="RayCast" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.8, 0, 1.5 )
+enabled = true
+script = ExtResource( 2 )
+springstiffness = 40000.0
+bump = 7000.0
+rebound = 5000.0
+lateral_force = SubResource( 3 )
+longitudinal_force = SubResource( 4 )
+
+[node name="WheelBody" type="KinematicBody" parent="Wheel_bl"]
+collision_layer = 2
+
+[node name="CollisionShape" type="CollisionShape" parent="Wheel_bl/WheelBody"]
+transform = Transform( -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 0, 0, 0 )
+shape = SubResource( 9 )
+
+[node name="MeshInstance" type="MeshInstance" parent="Wheel_bl/WheelBody"]
+transform = Transform( -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 0, 0, 0 )
+mesh = SubResource( 10 )
+material/0 = null
+
+[node name="Wheel_fr" type="RayCast" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.8, 0, -1.4 )
+enabled = true
+script = ExtResource( 2 )
+springstiffness = 40000.0
+bump = 7000.0
+rebound = 5000.0
+lateral_force = SubResource( 3 )
+longitudinal_force = SubResource( 4 )
+
+[node name="WheelBody" type="KinematicBody" parent="Wheel_fr"]
+collision_layer = 2
+
+[node name="CollisionShape" type="CollisionShape" parent="Wheel_fr/WheelBody"]
+transform = Transform( -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 0, 0, 0 )
+shape = SubResource( 9 )
+
+[node name="MeshInstance" type="MeshInstance" parent="Wheel_fr/WheelBody"]
+transform = Transform( -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 0, 0, 0 )
+mesh = SubResource( 10 )
+material/0 = null
+
+[node name="Wheel_fl" type="RayCast" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.8, 0, -1.4 )
+enabled = true
+script = ExtResource( 2 )
+springstiffness = 40000.0
+bump = 7000.0
+rebound = 5000.0
+lateral_force = SubResource( 3 )
+longitudinal_force = SubResource( 4 )
+
+[node name="WheelBody" type="KinematicBody" parent="Wheel_fl"]
+collision_layer = 2
+
+[node name="CollisionShape" type="CollisionShape" parent="Wheel_fl/WheelBody"]
+transform = Transform( -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 0, 0, 0 )
+shape = SubResource( 9 )
+
+[node name="MeshInstance" type="MeshInstance" parent="Wheel_fl/WheelBody"]
+transform = Transform( -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 0, 0, 0 )
+mesh = SubResource( 10 )
+material/0 = null
+
+[node name="EngineSound" type="AudioStreamPlayer" parent="."]
+
+[node name="Gui" type="PanelContainer" parent="."]
+anchor_top = 1.0
+anchor_bottom = 1.0
+margin_top = -147.0
+margin_right = 221.0
+script = ExtResource( 4 )
+
+[node name="Panel" type="Panel" parent="Gui"]
+margin_left = 7.0
+margin_top = 7.0
+margin_right = 214.0
+margin_bottom = 140.0
+rect_min_size = Vector2( 200, 100 )
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Gui/Panel"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="GearLabel" type="Label" parent="Gui/Panel/VBoxContainer"]
+margin_right = 207.0
+margin_bottom = 14.0
+text = "Gear"
+
+[node name="Speedlabel" type="Label" parent="Gui/Panel/VBoxContainer"]
+margin_top = 18.0
+margin_right = 207.0
+margin_bottom = 32.0
+text = "Speed"
+
+[node name="RpmLabel" type="Label" parent="Gui/Panel/VBoxContainer"]
+margin_top = 36.0
+margin_right = 207.0
+margin_bottom = 50.0
+text = "Rpm"
+
+[node name="FuelLabel" type="Label" parent="Gui/Panel/VBoxContainer"]
+margin_top = 54.0
+margin_right = 207.0
+margin_bottom = 68.0
+text = "Fuel"
