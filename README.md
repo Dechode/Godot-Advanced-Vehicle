@@ -12,6 +12,7 @@ Features:
 - Simple engine sound
 - Choose between open diff, 1-way or 2-way simple Limited Slip Diff
 - Manual gearbox
+- Different surfaces have different friction
 
 This project would not have been possible without Wolfes written tutorial of his own car simulator physics. Also huge thank you to Bastiaan Olij for his vehicle demo. See the links in the Acknowledments section for more info.
 
