@@ -41,4 +41,4 @@ This project is licensed under the MIT License - see the LICENSE.md file for det
 
 * [Kenney car kit](https://www.kenney.nl/assets/car-kit)
 * [Bastiaan Olij - Vehicle demo](https://github.com/BastiaanOlij/vehicle-demo/)
-* [Wolfe, Written tutorial of his GDSim vehicle physics](https://www.gtplanet.net/forum/threads/gdsim-v0-4a-autocross-and-custom-setups.396400/)
+* [Wolfe, written tutorial of his GDSim vehicle physics](https://www.gtplanet.net/forum/threads/gdsim-v0-4a-autocross-and-custom-setups.396400/)
