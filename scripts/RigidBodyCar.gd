@@ -141,8 +141,8 @@ func _physics_process(delta):
 		torque_out = 0.0
 		rpm = 0.0
 		stopEngineSound()
-	
-	handBrake(delta)
+	if handbrake_input != 0:
+		handBrake(delta)
 	engineSound()
 	burnFuel(delta)
 	
@@ -193,10 +193,9 @@ func gearRatio():
 	
 func rwd(drive, delta):
 	var drivetrain_inertia
-#	drivetrain_inertia = engine_moment + pow(abs(gearRatio()), 2) * gear_inertia # This should (?) be physically the most correct way, but i find it has way too much moment of inertia 
-#	drivetrain_inertia = engine_moment * abs(gearRatio()) # This is how Wolfe does hes inertia calculation, but again i find it has too much moment of inertia
-#	drivetrain_inertia = gear_inertia * abs(gearRatio()) # This one ignores engines moment of inertia alltogether
-	drivetrain_inertia = gear_inertia * abs(gearRatio()) + engine_moment # Works best imo
+	drivetrain_inertia = engine_moment + pow(abs(gearRatio()), 2) * gear_inertia # Works now! 
+#	drivetrain_inertia = engine_moment * abs(gearRatio()) # This is how Wolfe does hes inertia calculation
+#	drivetrain_inertia = gear_inertia * abs(gearRatio()) + engine_moment # Dont use this anymore!
 
 #	print(drivetrain_inertia)
 	
