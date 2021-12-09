@@ -192,7 +192,7 @@ func brush_formula(slip, yforce):
 	var contact_patch = 0.2
 	###########################
 	
-	var stiffness = 500000 * tire_stiffness * contact_patch
+	var stiffness = 500000 * tire_stiffness * pow(contact_patch, 2)
 	var friction = mu * yforce
 	var deflect = sqrt(pow(stiffness * slip.y, 2) + pow(stiffness * tan(slip.x), 2))
 
