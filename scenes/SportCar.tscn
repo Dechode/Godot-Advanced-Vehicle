@@ -146,27 +146,29 @@ points = PoolVector3Array( 0.667935, 0.203826, 1.20892, 0.647425, 0.000644192, 1
 
 [node name="RigidBodyCar" parent="." instance=ExtResource( 1 )]
 mass = 800.0
+max_steer = 0.45
 max_brake_force = 2700.0
 fuel_tank_size = 50.0
 max_engine_rpm = 7500.0
 rpm_clutch_out = 2500.0
 engine_moment = 0.12
 gear_ratios = [ 3.5, 2.3, 1.7, 1.25, 1.0 ]
-rear_diff = 1
 gear_inertia = 0.02
+clutch_friction = 300.0
 
 [node name="Camera" parent="RigidBodyCar" index="0"]
 transform = Transform( 1, 2.75852e-15, -1.02949e-14, 0, 0.965926, 0.258819, 1.06581e-14, -0.258819, 0.965926, -0.0299997, 2.32483, 7.20093 )
 
 [node name="Wheel_br" parent="RigidBodyCar" index="1"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.75, -0.3, 1.03 )
-tire_formula_to_use = 1
+tire_formula_to_use = 0
+spring_length = 0.15
 bump = 11000.0
 rebound = 10000.0
-anti_roll = 10000.0
-wheel_mass = 20.0
+anti_roll = 1000.0
+wheel_mass = 25.0
 tire_radius = 0.32
-tire_mu = 1.0
+tire_mu = 1.2
 
 [node name="MeshInstance" parent="RigidBodyCar/Wheel_br/WheelBody" index="1"]
 transform = Transform( 1.2, 0, 0, 0, 1.2, 0, 0, 0, 1.2, -0.2, 0, 0 )
@@ -175,13 +177,14 @@ material/1 = null
 
 [node name="Wheel_bl" parent="RigidBodyCar" index="2"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.8, -0.3, 1.03 )
-tire_formula_to_use = 1
+tire_formula_to_use = 0
+spring_length = 0.15
 bump = 11000.0
 rebound = 10000.0
-anti_roll = 10000.0
-wheel_mass = 20.0
+anti_roll = 1000.0
+wheel_mass = 25.0
 tire_radius = 0.32
-tire_mu = 1.0
+tire_mu = 1.2
 
 [node name="MeshInstance" parent="RigidBodyCar/Wheel_bl/WheelBody" index="1"]
 transform = Transform( -1.2, 0, -1.81195e-07, 0, 1.2, 0, 1.81195e-07, 0, -1.2, 0.2, 0, 0 )
@@ -190,13 +193,14 @@ material/1 = null
 
 [node name="Wheel_fr" parent="RigidBodyCar" index="3"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.75, -0.3, -0.96 )
-tire_formula_to_use = 1
+tire_formula_to_use = 0
+spring_length = 0.15
 bump = 11000.0
 rebound = 10000.0
-anti_roll = 10000.0
-wheel_mass = 20.0
+anti_roll = 1000.0
+wheel_mass = 25.0
 tire_radius = 0.32
-tire_mu = 1.0
+tire_mu = 1.2
 
 [node name="MeshInstance" parent="RigidBodyCar/Wheel_fr/WheelBody" index="1"]
 transform = Transform( 1.2, 0, 0, 0, 1.2, 0, 0, 0, 1.2, -0.2, 0, 0 )
@@ -205,13 +209,14 @@ material/1 = null
 
 [node name="Wheel_fl" parent="RigidBodyCar" index="4"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.8, -0.3, -0.96 )
-tire_formula_to_use = 1
+tire_formula_to_use = 0
+spring_length = 0.15
 bump = 11000.0
 rebound = 10000.0
-anti_roll = 10000.0
-wheel_mass = 20.0
+anti_roll = 1000.0
+wheel_mass = 25.0
 tire_radius = 0.32
-tire_mu = 1.0
+tire_mu = 1.2
 
 [node name="MeshInstance" parent="RigidBodyCar/Wheel_fl/WheelBody" index="1"]
 transform = Transform( -1.2, 0, -1.81195e-07, 0, 1.2, 0, 1.81195e-07, 0, -1.2, 0.2, 0, 0 )
