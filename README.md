@@ -10,7 +10,8 @@ Features:
 - Fuel consumption using BSFC
 - Torque curve for the engine
 - Simple engine sound
-- Choose between open diff, 1-way or 2-way simple Limited Slip Diff
+- Choose between preloaded limited slip diff, open diff and locked diff/solid axle
+- Manual clutch
 - Manual gearbox
 - Different surfaces have different friction
 
@@ -22,6 +23,7 @@ Keyboard:
 - Arrow keys for throttle, brake and steering
 - Space for handbrake
 - A for upshifting and Z for downshifting
+- c for clutch
 
 Xbox controller:
 - R2 for throttle and L2 for braking
