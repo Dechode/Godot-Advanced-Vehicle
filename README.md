@@ -51,3 +51,4 @@ Engine sound sample found in /sounds folder is made with enginesound, available 
 * [Kenney car kit](https://www.kenney.nl/assets/car-kit)
 * [Bastiaan Olij - Vehicle demo](https://github.com/BastiaanOlij/vehicle-demo/)
 * [Wolfe, written tutorial of his GDSim vehicle physics](https://www.gtplanet.net/forum/threads/gdsim-v0-4a-autocross-and-custom-setups.396400/)
+* [Racer.nl, Alot of great documentation about physisc of racing sims](http://www.racer.nl/)
