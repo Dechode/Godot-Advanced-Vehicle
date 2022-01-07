@@ -9,6 +9,7 @@ As of January 6th 2022 all 3 tire models now use combined slip!
 
 
 Features:
+- RWD, FWD and AWD drivetypes available
 - 3 different tire models to choose from: simple pacejka model, brush tire model and one using godot curves. 
 - Fuel consumption using BSFC
 - Torque curve for the engine
