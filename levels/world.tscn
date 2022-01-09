@@ -42,6 +42,6 @@ polygon = PoolVector2Array( -7.0655, 0, -7.0655, -0.1, 7.0655, -0.1, 7.0655, 0 )
 polygon = PoolVector2Array( -9.0655, -0.1, 9.0655, -0.1, 16.931, -4.01, 17.031, -4.1, -17.031, -4.1, -16.931, -4 )
 
 [node name="Sportcar" parent="." instance=ExtResource( 1 )]
-transform = Transform( 0.866025, 0, 0.5, 0, 1, 0, -0.5, 0, 0.866025, 60.5971, 3.4, 109.218 )
+transform = Transform( 0.833779, 0, 0.552097, 0, 1, 0, -0.552097, 0, 0.833779, 39.2642, 4.40273, 76.6809 )
 
 [editable path="Track"]

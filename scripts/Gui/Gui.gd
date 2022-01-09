@@ -3,10 +3,10 @@ extends Control
 
 
 onready var car = get_parent()
-onready var speedlabel = $Panel/VBoxContainer/Speedlabel
-onready var gearlabel = $Panel/VBoxContainer/GearLabel
-onready var rpmlabel = $Panel/VBoxContainer/RpmLabel
-onready var fuellabel = $Panel/VBoxContainer/FuelLabel
+onready var speedlabel = $Essentials/VBoxContainer/Speedlabel
+onready var gearlabel = $Essentials/VBoxContainer/GearLabel
+onready var rpmlabel = $Essentials/VBoxContainer/RpmLabel
+onready var fuellabel = $Essentials/VBoxContainer/FuelLabel
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
