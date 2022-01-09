@@ -23,6 +23,7 @@ export (float) var tire_radius = 0.3
 export (float) var tire_width = 0.2
 export (float) var ackermann = 0.15
 export (float) var tire_mu = 0.9
+export (Curve) var tire_wear_mu_curve = null
 
 ############# For curve tire formula #############
 export (Curve) var lateral_force = null
@@ -142,6 +143,7 @@ func _physics_process(delta: float) -> void:
 func tireWear(delta, yload):
 	var larger_slip = max(abs(slip_vec.x), abs(slip_vec.y))
 	tire_wear += larger_slip * mu * delta * 0.01 * yload * 0.0001 / tire_stiffness
+	tire_wear = clamp(tire_wear, 0 ,1)
 
 
 func apply_forces(opposite_comp, delta):
@@ -229,20 +231,22 @@ func apply_forces(opposite_comp, delta):
 		var contact = get_collision_point() - car.global_transform.origin
 		var normal = get_collision_normal()
 		var surface
-
+		
+		var wear_mu = tire_wear_mu_curve.interpolate_baked(tire_wear)
+		
 		if get_collider().get_groups().size() > 0:
 			surface = get_collider().get_groups()[0]
 		if surface:
 			if surface == "Tarmac":
-				mu = 0.8 * tire_mu
+				mu = 0.8 * tire_mu * wear_mu
 			elif surface == "Grass":
-				mu = 0.55 * tire_mu
+				mu = 0.55 * tire_mu * wear_mu
 			elif surface == "Gravel":
-				mu = 0.6 * tire_mu
+				mu = 0.6 * tire_mu * wear_mu
 			elif surface == "Snow":
-				mu = 0.4 * tire_mu
+				mu = 0.4 * tire_mu * wear_mu
 		else:
-			mu = 1
+			mu = 1 * tire_mu * wear_mu
 #		print(mu)
 		car.add_force(normal * y_force, contact)
 		car.add_force(global_transform.basis.x * force_vec.x, contact)
