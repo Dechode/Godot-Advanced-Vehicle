@@ -10,12 +10,13 @@ As of January 6th 2022 all 3 tire models now use combined slip!
 
 Features:
 - RWD, FWD and AWD drivetypes available
-- 3 different tire models to choose from: simple pacejka model, brush tire model and one using godot curves. 
+- 3 different tire models to choose from: simple pacejka model, brush tire model and one using godot curves.
+- Tire wear
 - Fuel consumption using BSFC
 - Torque curve for the engine
 - Simple engine sound
 - Choose between preloaded limited slip diff, open diff and locked diff/solid axle
-- Manual clutch
+- Manual clutch with adjustable clutch friction force
 - Manual gearbox
 - Different surfaces have different friction
 
