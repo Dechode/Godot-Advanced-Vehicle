@@ -50,7 +50,7 @@ export var rear_diff_power_ratio: float = 3.5
 export var front_diff_power_ratio: float = 3.5
 export var rear_diff_coast_ratio: float = 1
 export var front_diff_coast_ratio: float = 1
-export (float, 0, 1) var center_split = 0.4
+export (float, 0, 1) var center_split_f_r = 0.4 # AWD torque split front / rear
 export (float) var clutch_friction = 500
 
 ######## CONSTANTS ########
@@ -78,8 +78,8 @@ var drive_reaction_torque = 0.0
 var rpm: float = 0.0
 var engine_angular_vel: float = 0.0
 
-var rear_brake_torque: float = 0.0
-var front_brake_torque: float = 0.0
+var rear_brake_force: float = 0.0
+var front_brake_force: float = 0.0
 var selected_gear: int = 0
 
 var drive_inertia: float = 0.0 #includes every inertia after engine and before wheels (wheels include brakes inertia)
@@ -125,8 +125,10 @@ func _process(delta: float) -> void:
 	
 	drive_inertia = engine_moment + pow(abs(gearRatio()), 2) * gear_inertia
 	
-	front_brake_torque = max_brake_force * brake_input * front_brake_bias * 0.5 # Per wheel
-	rear_brake_torque = max_brake_force * brake_input * (1 - front_brake_bias) * 0.5 # Per wheel
+	front_brake_force = max_brake_force * brake_input * front_brake_bias * 0.5 # Per wheel
+	
+	var rear_brake_input = max(brake_input, handbrake_input)
+	rear_brake_force = max_brake_force * rear_brake_input * (1 - front_brake_bias) * 0.5 # Per wheel
 
 
 func _physics_process(delta):
@@ -179,9 +181,6 @@ func _physics_process(delta):
 		torque_out = 0.0
 		rpm = 0.0
 		stopEngineSound()
-		
-	if handbrake_input != 0:
-		handBrake(delta)
 	
 	engineSound()
 	burnFuel(delta)
@@ -196,10 +195,10 @@ func engineTorque(r_p_m) -> float:
 func freewheel(delta):
 	clutch_reaction_torque = 0.0
 	avg_front_spin = 0.0
-	wheel_bl.apply_torque(0.0, 0.0, rear_brake_torque, delta)
-	wheel_br.apply_torque(0.0, 0.0, rear_brake_torque, delta)
-	wheel_fl.apply_torque(0.0, 0.0, front_brake_torque, delta)
-	wheel_fr.apply_torque(0.0, 0.0, front_brake_torque, delta)
+	wheel_bl.apply_torque(0.0, 0.0, rear_brake_force, delta)
+	wheel_br.apply_torque(0.0, 0.0, rear_brake_force, delta)
+	wheel_fl.apply_torque(0.0, 0.0, front_brake_force, delta)
+	wheel_fr.apply_torque(0.0, 0.0, front_brake_force, delta)
 	avg_front_spin += (wheel_fl.spin + wheel_fr.spin) * 0.5
 	speedo = avg_front_spin * wheel_radius * 3.6
 	
@@ -239,8 +238,8 @@ func engage(delta):
 #			net_drive += drag_torque * gearRatio()
 		
 		rwd(net_drive, delta)
-		wheel_fl.apply_torque(0.0, 0.0, front_brake_torque, delta)
-		wheel_fr.apply_torque(0.0, 0.0, front_brake_torque, delta)
+		wheel_fl.apply_torque(0.0, 0.0, front_brake_force, delta)
+		wheel_fr.apply_torque(0.0, 0.0, front_brake_force, delta)
 		
 	elif drivetype == DRIVE_TYPE.AWD:
 		awd(net_drive, delta)
@@ -251,8 +250,8 @@ func engage(delta):
 #			net_drive += drag_torque * gearRatio()
 		
 		fwd(net_drive, delta)
-		wheel_bl.apply_torque(0.0, 0.0, rear_brake_torque, delta)
-		wheel_br.apply_torque(0.0, 0.0, rear_brake_torque, delta)
+		wheel_bl.apply_torque(0.0, 0.0, rear_brake_force, delta)
+		wheel_br.apply_torque(0.0, 0.0, rear_brake_force, delta)
 		
 	speedo = avg_front_spin * wheel_radius * 3.6
 
@@ -286,8 +285,8 @@ func rwd(drive, delta):
 #		print("Unlocked")
 		var diff_sum: float = 0.0
 		
-		diff_sum -= wheel_br.apply_torque(drive * (1 - r_split), drive_inertia, rear_brake_torque, delta)
-		diff_sum += wheel_bl.apply_torque(drive * r_split, drive_inertia, rear_brake_torque, delta)
+		diff_sum -= wheel_br.apply_torque(drive * (1 - r_split), drive_inertia, rear_brake_force, delta)
+		diff_sum += wheel_bl.apply_torque(drive * r_split, drive_inertia, rear_brake_force, delta)
 		
 		r_split = 0.5 * (clamp(diff_sum, -1, 1) + 1)
 		
@@ -299,15 +298,15 @@ func rwd(drive, delta):
 		net_torque += drive
 		var axle_spin = 0.0
 		# Stop wheel if brakes overwhelm other forces
-		if avg_rear_spin < 5 and rear_brake_torque > abs(net_torque):
+		if avg_rear_spin < 5 and rear_brake_force > abs(net_torque):
 			axle_spin = 0.0
 		else:
 			var f_rr = 0.0#(wheel_bl.rollingResistance(wheel_bl.y_force) + wheel_br.rollingResistance(wheel_br.y_force))
-			net_torque -= (2 * rear_brake_torque + f_rr)  * sign(avg_rear_spin)
+			net_torque -= (2 * rear_brake_force + f_rr)  * sign(avg_rear_spin)
 			axle_spin = avg_rear_spin + (delta * net_torque / (wheel_bl.wheel_moment + drive_inertia + wheel_br.wheel_moment ))
 				
-		wheel_br.applySolidAxleSpin(axle_spin, rear_brake_torque)
-		wheel_bl.applySolidAxleSpin(axle_spin, rear_brake_torque)
+		wheel_br.applySolidAxleSpin(axle_spin, rear_brake_force)
+		wheel_bl.applySolidAxleSpin(axle_spin, rear_brake_force)
 
 
 
@@ -331,8 +330,8 @@ func fwd(drive, delta):
 #		print("Unlocked")
 		var diff_sum: float = 0.0
 		
-		diff_sum -= wheel_fr.apply_torque(drive * (1 - r_split), drive_inertia, rear_brake_torque, delta)
-		diff_sum += wheel_fl.apply_torque(drive * r_split, drive_inertia, rear_brake_torque, delta)
+		diff_sum -= wheel_fr.apply_torque(drive * (1 - f_split), drive_inertia, front_brake_force, delta)
+		diff_sum += wheel_fl.apply_torque(drive * f_split, drive_inertia, front_brake_force, delta)
 		
 		f_split = 0.5 * (clamp(diff_sum, -1, 1) + 1)
 		
@@ -344,21 +343,21 @@ func fwd(drive, delta):
 		net_torque += drive
 		var axle_spin = 0.0
 		# Stop wheel if brakes overwhelm other forces
-		if avg_front_spin < 5 and front_brake_torque > abs(net_torque):
+		if avg_front_spin < 5 and front_brake_force > abs(net_torque):
 			axle_spin = 0.0
 		else:
 			var f_rr = 0.0#(wheel_fl.rollingResistance(wheel_fl.y_force) + wheel_fr.rollingResistance(wheel_fr.y_force))
-			net_torque -= (2 * front_brake_torque + f_rr)  * sign(avg_front_spin)
+			net_torque -= (2 * front_brake_force + f_rr)  * sign(avg_front_spin)
 			axle_spin = avg_front_spin + (delta * net_torque / (wheel_fl.wheel_moment + drive_inertia + wheel_fr.wheel_moment ))
 			
-		wheel_fr.applySolidAxleSpin(axle_spin, front_brake_torque)
-		wheel_fl.applySolidAxleSpin(axle_spin, front_brake_torque)
+		wheel_fr.applySolidAxleSpin(axle_spin, front_brake_force)
+		wheel_fl.applySolidAxleSpin(axle_spin, front_brake_force)
 
 
 func awd(drive, delta):
 	
-	var rear_drive = drive * (1 - center_split)
-	var front_drive = drive * center_split
+	var rear_drive = drive * (1 - center_split_f_r)
+	var front_drive = drive * center_split_f_r
 	
 	var front_diff_locked = true
 	var rear_diff_locked = true
@@ -391,63 +390,60 @@ func awd(drive, delta):
 	if !rear_diff_locked:
 		var rear_diff_sum: float = 0.0
 		
-		rear_diff_sum -= wheel_br.apply_torque(rear_drive * (1 - r_split), drive_inertia, rear_brake_torque, delta)
-		rear_diff_sum += wheel_bl.apply_torque(rear_drive * r_split, drive_inertia, rear_brake_torque, delta)
+		rear_diff_sum -= wheel_br.apply_torque(rear_drive * (1 - r_split), drive_inertia, rear_brake_force, delta)
+		rear_diff_sum += wheel_bl.apply_torque(rear_drive * r_split, drive_inertia, rear_brake_force, delta)
 		
 		r_split = 0.5 * (clamp(rear_diff_sum, -1, 1) + 1)
+		
 	else:
 		r_split = 0.5
-		f_split = 0.5
+		
 		# Initialize net_torque with previous frame's friction
 		var net_torque = (wheel_bl.force_vec.y * wheel_bl.tire_radius + wheel_br.force_vec.y * wheel_br.tire_radius)# * 0.5
 		net_torque += rear_drive
 		var axle_spin = 0.0
 		# Stop wheel if brakes overwhelm other forces
-		if avg_rear_spin < 5 and rear_brake_torque > abs(net_torque):
+		if avg_rear_spin < 5 and rear_brake_force > abs(net_torque):
 			axle_spin = 0.0
 		else:
 			var f_rr = 0.0#(wheel_bl.rollingResistance(wheel_bl.y_force) + wheel_br.rollingResistance(wheel_br.y_force))
-			net_torque -= (2 * rear_brake_torque + f_rr) * sign(avg_rear_spin)
+			net_torque -= (2 * rear_brake_force + f_rr) * sign(avg_rear_spin)
 			axle_spin = avg_rear_spin + (delta * net_torque / (wheel_bl.wheel_moment + drive_inertia + wheel_br.wheel_moment ))
 		
-		wheel_br.applySolidAxleSpin(axle_spin, rear_brake_torque)
-		wheel_bl.applySolidAxleSpin(axle_spin, rear_brake_torque)
+		wheel_br.applySolidAxleSpin(axle_spin, rear_brake_force)
+		wheel_bl.applySolidAxleSpin(axle_spin, rear_brake_force)
 	
 	if !front_diff_locked:
 		
 		var front_diff_sum: float = 0.0
 		
-		front_diff_sum -= wheel_fr.apply_torque(front_drive * (1 - f_split), drive_inertia, front_brake_torque, delta)
-		front_diff_sum += wheel_fl.apply_torque(front_drive * f_split, drive_inertia, front_brake_torque, delta)
+		front_diff_sum -= wheel_fr.apply_torque(front_drive * (1 - f_split), drive_inertia, front_brake_force, delta)
+		front_diff_sum += wheel_fl.apply_torque(front_drive * f_split, drive_inertia, front_brake_force, delta)
 		
 		f_split = 0.5 * (clamp(front_diff_sum, -1, 1) + 1)
 	else:
+		f_split = 0.5
+		
 		# Initialize net_torque with previous frame's friction
 		var net_torque = (wheel_fl.force_vec.y * wheel_fl.tire_radius + wheel_fr.force_vec.y * wheel_fr.tire_radius)# * 0.5
 		net_torque += front_drive
 		var axle_spin = 0.0
 		# Stop wheel if brakes overwhelm other forces
-		if avg_front_spin < 5 and front_brake_torque > abs(net_torque):
+		if avg_front_spin < 5 and front_brake_force > abs(net_torque):
 			axle_spin = 0.0
 		else:
 			var f_rr = 0.0#(wheel_fl.rollingResistance(wheel_fl.y_force) + wheel_fr.rollingResistance(wheel_fr.y_force))
-			net_torque -= (2 * front_brake_torque + f_rr) * sign(avg_front_spin)
+			net_torque -= (2 * front_brake_force + f_rr) * sign(avg_front_spin)
 			axle_spin = avg_front_spin + (delta * net_torque / (wheel_fl.wheel_moment + drive_inertia + wheel_fr.wheel_moment ))
 			
-		wheel_fr.applySolidAxleSpin(axle_spin, front_brake_torque)
-		wheel_fl.applySolidAxleSpin(axle_spin, front_brake_torque)
+		wheel_fr.applySolidAxleSpin(axle_spin, front_brake_force)
+		wheel_fl.applySolidAxleSpin(axle_spin, front_brake_force)
 
 
 func burnFuel(delta):
 	var fuel_burned = engine_bsfc * torque_out * rpm * delta / (3600 * PETROL_KG_L * NM_2_KW)
 	fuel -= fuel_burned
 	self.mass -= fuel_burned * PETROL_KG_L
-
-
-func handBrake(delta):
-	var handbrake_torque = handbrake_input * max_brake_force
-	wheel_bl.apply_torque(net_drive, drive_inertia, handbrake_torque, delta)
-	wheel_br.apply_torque(net_drive, drive_inertia, handbrake_torque, delta)
 
 
 func shiftUp():

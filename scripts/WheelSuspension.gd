@@ -12,7 +12,7 @@ export (TIRE_FORMULAS) var tire_formula_to_use = TIRE_FORMULAS.CURVE_BASED_FORMU
 ############# Suspension stuff #############
 export (float) var spring_length = 0.2
 export (float) var springstiffness = 20000
-export (float) var bump = 1500
+export (float) var bump = 5000
 export (float) var rebound = 3000
 export (float) var anti_roll = 0.0
 
@@ -22,14 +22,26 @@ export (float) var wheel_mass = 15
 export (float) var tire_radius = 0.3
 export (float) var tire_width = 0.2
 export (float) var ackermann = 0.15
-export (float) var tire_stiffness = 10
+export (float) var tire_mu = 0.9
 
+############# For curve tire formula #############
 export (Curve) var lateral_force = null
 export (Curve) var longitudinal_force = null
-export (float) var tire_mu = 0.9
+
+############# For brush tire_formula #############
+export (float) var brush_contact_patch = 0.2
+export (float) var tire_stiffness = 10 # Also used in tire wear
+
+############# For Pacejka tire formula #############
+export (float) var pacejka_C_long = 1.65
+export (float) var pacejka_C_lat = 1.35
+export (float) var pacejka_E = 0.0
+
 
 var peak_sr: float = 0.10
 var peak_sa: float = 0.10
+
+var tire_wear: float
 
 var mu = 1.0
 var y_force: float = 0.0
@@ -77,7 +89,7 @@ func get_peak_pacejka_x(yload):
 	var sorted_points: Array = []
 
 	for i in range(100):
-		unsorted_points.append(pacejka(i * 0.01, tire_stiffness , 1.35, mu, 0 ,yload ))
+		unsorted_points.append(pacejka(i * 0.01, tire_stiffness , pacejka_C_lat, mu, pacejka_E ,yload ))
 		sorted_points.append(unsorted_points[i])
 		if i == 99:
 			done = true
@@ -100,7 +112,7 @@ func get_peak_pacejka_z(yload):
 	var sorted_points: Array = []
 
 	for i in range(100):
-		unsorted_points.append(pacejka(i * 0.01, tire_stiffness, 1.65, mu, 0 ,yload ))
+		unsorted_points.append(pacejka(i * 0.01, tire_stiffness, pacejka_C_long, mu, pacejka_E ,yload ))
 		sorted_points.append(unsorted_points[i])
 		if i == 99:
 			done = true
@@ -118,10 +130,18 @@ func get_peak_pacejka_z(yload):
 	
 func _process(delta: float) -> void:
 	wheelmesh.rotate_x(wrapf(-spin * delta,0, TAU))
+	if z_vel > 2.0:
+		tireWear(delta, y_force)
 
 
 func _physics_process(delta: float) -> void:
 	wheelbody.transform.origin = Vector3.DOWN * spring_curr_length
+
+
+# Tire wear calculations are totally made up
+func tireWear(delta, yload):
+	var larger_slip = max(abs(slip_vec.x), abs(slip_vec.y))
+	tire_wear += larger_slip * mu * delta * 0.01 * yload * 0.0001 / tire_stiffness
 
 
 func apply_forces(opposite_comp, delta):
@@ -183,14 +203,12 @@ func apply_forces(opposite_comp, delta):
 	var z_force: float = 0.0
 	
 	if tire_formula_to_use == TIRE_FORMULAS.CURVE_BASED_FORMULA:
-#		force_vec = tireForce(slip_vec, y_force)
 		x_force = TireForceVol2(abs(sa_modified), y_force, lateral_force) * sign(slip_vec.x)
 		z_force = TireForceVol2(abs(sr_modified), y_force, longitudinal_force) * sign(slip_vec.y)
-#		force_vec = combinedSlipCurve(slip_vec, y_force)
 		
 	elif tire_formula_to_use == TIRE_FORMULAS.SIMPLE_PACEJKA:
-		x_force = pacejka(abs(sa_modified), tire_stiffness, 1.35, mu, 0 ,y_force) * sign(slip_vec.x)
-		z_force = pacejka(abs(sr_modified), tire_stiffness, 1.65, mu, 0 ,y_force) * sign(slip_vec.y)
+		x_force = pacejka(abs(sa_modified), tire_stiffness, pacejka_C_lat, mu, pacejka_E ,y_force) * sign(slip_vec.x)
+		z_force = pacejka(abs(sr_modified), tire_stiffness, pacejka_C_long, mu, pacejka_E ,y_force) * sign(slip_vec.y)
 		
 	if resultant_slip != 0:
 		force_vec.x = x_force * abs(normalised_sa / resultant_slip)
@@ -202,6 +220,7 @@ func apply_forces(opposite_comp, delta):
 		force_vec.x = x_force
 		force_vec.y = z_force
 	
+	# We dont use the modified slip here because the brush tire formula handles slip combination
 	if tire_formula_to_use == TIRE_FORMULAS.BRUSH_TIRE_FORMULA:
 		force_vec = brush_formula(slip_vec, y_force)
 	
@@ -262,44 +281,9 @@ func applySolidAxleSpin(axlespin, brake_torque):
 	spin = axlespin
 
 
-func tireForce(slip, normal_load):
-	var friction = normal_load * mu
-	var vec = Vector2.ZERO
-	var slip_ratio = slip.y
-	var slip_angle = slip.x
-	vec.x = lateral_force.interpolate_baked(abs(slip_angle)) * friction * sign(slip_angle)
-	vec.y = longitudinal_force.interpolate_baked(abs(slip_ratio)) * friction * sign(slip_ratio)
-	return vec
-
-
 func TireForceVol2(slip: float, normal_load: float, tire_curve: Curve) -> float:
 	var friction = normal_load * mu
 	return tire_curve.interpolate_baked(abs(slip)) * friction * sign(slip)
-
-
-func combinedSlipCurve(slip, yforce):
-	var friction = yforce * mu
-	var vec = Vector2.ZERO
-	
-	var slip_ratio = slip.y
-	var slip_angle = slip.x
-	
-	var normalised_sr = slip_ratio / peak_sr
-	var normalised_sa = slip_angle / peak_sa
-	var resultant_slip = sqrt(pow(normalised_sr, 2) + pow(normalised_sa, 2))
-	
-	var sr_modified = resultant_slip * peak_sr
-	var sa_modified = resultant_slip * peak_sa
-	
-	var Fx: float = lateral_force.interpolate_baked(abs(sa_modified)) * friction * sign(slip.x)
-	var Fz: float = longitudinal_force.interpolate_baked(abs(sr_modified)) * friction * sign(slip.y)
-	
-	if resultant_slip != 0:
-		vec.x = Fx * abs(normalised_sa / resultant_slip)
-		vec.y = Fz * abs(normalised_sr / resultant_slip)
-	else:
-		vec = Vector2.ZERO
-	return vec
 
 
 func pacejka(slip, B, C, D, E, yforce):
@@ -307,10 +291,7 @@ func pacejka(slip, B, C, D, E, yforce):
 	
 
 func brush_formula(slip, yforce):
-	var contact_patch = 0.2
-	###########################
-	
-	var stiffness = 500000 * tire_stiffness * pow(contact_patch, 2)
+	var stiffness = 500000 * tire_stiffness * pow(brush_contact_patch, 2)
 	var friction = mu * yforce
 	var deflect = sqrt(pow(stiffness * slip.y, 2) + pow(stiffness * tan(slip.x), 2))
 

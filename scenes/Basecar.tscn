@@ -1,11 +1,13 @@
-[gd_scene load_steps=12 format=2]
+[gd_scene load_steps=14 format=2]
 
 [ext_resource path="res://scripts/RigidBodyCar.gd" type="Script" id=1]
 [ext_resource path="res://scripts/WheelSuspension.gd" type="Script" id=2]
 [ext_resource path="res://sounds/tres/EngineSample.tres" type="AudioStream" id=3]
-[ext_resource path="res://scripts/Gui.gd" type="Script" id=4]
+[ext_resource path="res://scripts/Gui/Gui.gd" type="Script" id=4]
 [ext_resource path="res://materials/tire.tres" type="Material" id=5]
 [ext_resource path="res://scripts/Camera.gd" type="Script" id=6]
+[ext_resource path="res://scenes/GuiApps/TireInfoApp.tscn" type="PackedScene" id=7]
+[ext_resource path="res://scenes/GuiApps/InputApp.tscn" type="PackedScene" id=8]
 
 [sub_resource type="Curve" id=8]
 _data = [ Vector2( 0, 0.563636 ), 0.0, 0.0, 0, 0, Vector2( 0.575472, 1 ), 0.0, 0.0, 0, 0, Vector2( 0.962264, 0.809091 ), -0.335178, -0.335178, 0, 0, Vector2( 1, 0.109091 ), -6.85253, 0.0, 0, 0 ]
@@ -42,8 +44,7 @@ gear_inertia = 0.09
 [node name="Camera" type="ClippedCamera" parent="."]
 transform = Transform( 1, 0, 0, 0, 0.965926, 0.258819, 0, -0.258819, 0.965926, 0, 1.6, 4.4 )
 script = ExtResource( 6 )
-target_path = NodePath("..")
-offset = Vector3( 0, 2, 5 )
+follow_this_path = NodePath("../CamTarget")
 
 [node name="Wheel_br" type="RayCast" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.8, 0, 1.5 )
@@ -135,43 +136,61 @@ material/0 = null
 
 [node name="EngineSound" type="AudioStreamPlayer" parent="."]
 
-[node name="Gui" type="PanelContainer" parent="."]
-anchor_top = 1.0
+[node name="Gui" type="Control" parent="."]
+anchor_right = 1.0
 anchor_bottom = 1.0
-margin_top = -147.0
-margin_right = 221.0
 script = ExtResource( 4 )
 
-[node name="Panel" type="Panel" parent="Gui"]
-margin_left = 7.0
-margin_top = 7.0
-margin_right = 214.0
-margin_bottom = 140.0
+[node name="Essentials" type="Panel" parent="Gui"]
+self_modulate = Color( 1, 1, 1, 0.556863 )
+anchor_top = 1.0
+anchor_bottom = 1.0
+margin_top = -100.0
+margin_right = 200.0
 rect_min_size = Vector2( 200, 100 )
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Gui/Panel"]
+[node name="VBoxContainer" type="VBoxContainer" parent="Gui/Essentials"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 
-[node name="GearLabel" type="Label" parent="Gui/Panel/VBoxContainer"]
-margin_right = 207.0
+[node name="GearLabel" type="Label" parent="Gui/Essentials/VBoxContainer"]
+margin_right = 200.0
 margin_bottom = 14.0
 text = "Gear"
 
-[node name="Speedlabel" type="Label" parent="Gui/Panel/VBoxContainer"]
+[node name="Speedlabel" type="Label" parent="Gui/Essentials/VBoxContainer"]
 margin_top = 18.0
-margin_right = 207.0
+margin_right = 200.0
 margin_bottom = 32.0
 text = "Speed"
 
-[node name="RpmLabel" type="Label" parent="Gui/Panel/VBoxContainer"]
+[node name="RpmLabel" type="Label" parent="Gui/Essentials/VBoxContainer"]
 margin_top = 36.0
-margin_right = 207.0
+margin_right = 200.0
 margin_bottom = 50.0
 text = "Rpm"
 
-[node name="FuelLabel" type="Label" parent="Gui/Panel/VBoxContainer"]
+[node name="FuelLabel" type="Label" parent="Gui/Essentials/VBoxContainer"]
 margin_top = 54.0
-margin_right = 207.0
+margin_right = 200.0
 margin_bottom = 68.0
 text = "Fuel"
+
+[node name="TireInfoApp" parent="Gui" instance=ExtResource( 7 )]
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 0.0
+anchor_bottom = 0.0
+margin_left = 0.0
+margin_top = 0.0
+margin_right = 150.0
+margin_bottom = 200.0
+wheel_fl_path = NodePath("../../Wheel_fl")
+wheel_fr_path = NodePath("../../Wheel_fr")
+wheel_bl_path = NodePath("../../Wheel_bl")
+wheel_br_path = NodePath("../../Wheel_br")
+
+[node name="InputApp" parent="Gui" instance=ExtResource( 8 )]
+
+[node name="CamTarget" type="Position3D" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.17515, 0 )

@@ -112,6 +112,9 @@ surfaces/5 = {
 "vertex_count": 1184
 }
 
+[sub_resource type="BoxShape" id=5]
+extents = Vector3( 1, 0.557182, 2.25548 )
+
 [sub_resource type="ArrayMesh" id=2]
 resource_name = "sedanSports_Mesh spoiler"
 surfaces/0 = {
@@ -139,9 +142,6 @@ surfaces/1 = {
 "vertex_count": 78
 }
 
-[sub_resource type="ConvexPolygonShape" id=4]
-points = PoolVector3Array( 0.667935, 0.203826, 1.20892, 0.647425, 0.000644192, 1.17167, 0.667935, 0.203916, -1.20916, 0.454132, 0.887604, 0.555323, -0.644006, 5.55112e-17, 1.17336, -0.591254, 3.33067e-16, -1.22642, -0.453099, 0.890704, 0.559242, 0.453428, 0.886919, -0.167441, 0.647391, 0.000668209, -1.17185, -0.529141, 0.422406, 1.20519, -0.522065, 0.499435, -0.984275, -0.449204, 0.886919, -0.167441, -0.663587, 0.502632, 0.774281, 0.667935, 0.502632, -0.774528, -0.663587, 0.203916, -1.20916, 0.539081, 0.42222, -1.11297, 0.533488, 0.422406, 1.20519, 0.667935, 0.502632, 0.774281, -0.663587, 0.502632, -0.774528, -0.609236, 0.203826, 1.26359, -0.609236, 0.203916, -1.26359, 0.613584, 0.203916, -1.26359, 0.595602, 0, 1.22642, 0.531146, 0.551423, -0.89004, 0.613584, 0.203826, 1.26359, -0.644006, 6.10623e-16, -1.1736, -0.663587, 0.203826, 1.20892, -0.534733, 0.42222, -1.11297, 0.595602, -3.33067e-16, -1.22642, -0.591254, 0, 1.22642, -0.526798, 0.551423, -0.89004, 0.621716, 0.6, -0.417057, -0.617489, 0.6, -0.417057, 0.526413, 0.499435, -0.984275 )
-
 [node name="Sportcar" type="Spatial"]
 
 [node name="RigidBodyCar" parent="." instance=ExtResource( 1 )]
@@ -152,6 +152,7 @@ fuel_tank_size = 50.0
 max_engine_rpm = 7500.0
 rpm_clutch_out = 2500.0
 engine_moment = 0.12
+drivetype = 2
 gear_ratios = [ 3.5, 2.3, 1.7, 1.25, 1.0 ]
 gear_inertia = 0.02
 clutch_friction = 300.0
@@ -160,7 +161,7 @@ clutch_friction = 300.0
 transform = Transform( 1, 2.75852e-15, -1.02949e-14, 0, 0.965926, 0.258819, 1.06581e-14, -0.258819, 0.965926, -0.0299997, 2.32483, 7.20093 )
 
 [node name="Wheel_br" parent="RigidBodyCar" index="1"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.75, -0.3, 1.03 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.75, -0.3, 1.27031 )
 tire_formula_to_use = 0
 spring_length = 0.15
 bump = 11000.0
@@ -176,7 +177,7 @@ mesh = SubResource( 3 )
 material/1 = null
 
 [node name="Wheel_bl" parent="RigidBodyCar" index="2"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.8, -0.3, 1.03 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.8, -0.3, 1.27031 )
 tire_formula_to_use = 0
 spring_length = 0.15
 bump = 11000.0
@@ -192,7 +193,7 @@ mesh = SubResource( 3 )
 material/1 = null
 
 [node name="Wheel_fr" parent="RigidBodyCar" index="3"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.75, -0.3, -0.96 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.75, -0.3, -1.13272 )
 tire_formula_to_use = 0
 spring_length = 0.15
 bump = 11000.0
@@ -208,7 +209,7 @@ mesh = SubResource( 3 )
 material/1 = null
 
 [node name="Wheel_fl" parent="RigidBodyCar" index="4"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.8, -0.3, -0.96 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.8, -0.3, -1.13272 )
 tire_formula_to_use = 0
 spring_length = 0.15
 bump = 11000.0
@@ -224,7 +225,7 @@ mesh = SubResource( 3 )
 material/1 = null
 
 [node name="MeshInstance" type="MeshInstance" parent="RigidBodyCar"]
-transform = Transform( 1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, 0, -0.45, 0.05 )
+transform = Transform( 1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.8, 0, -0.45, 0.05 )
 mesh = SubResource( 1 )
 material/0 = null
 material/1 = null
@@ -233,14 +234,14 @@ material/3 = null
 material/4 = null
 material/5 = null
 
+[node name="CollisionShape" type="CollisionShape" parent="RigidBodyCar"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.218363, 0.05 )
+shape = SubResource( 5 )
+
 [node name="MeshInstance2" type="MeshInstance" parent="RigidBodyCar"]
 transform = Transform( 1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, 0, 0.15, 1.65 )
 mesh = SubResource( 2 )
 material/0 = null
 material/1 = null
-
-[node name="CollisionShape2" type="CollisionShape" parent="RigidBodyCar"]
-transform = Transform( 1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, 0, -0.45, 0.05 )
-shape = SubResource( 4 )
 
 [editable path="RigidBodyCar"]
