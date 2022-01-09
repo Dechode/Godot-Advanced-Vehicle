@@ -35,6 +35,7 @@ Xbox controller:
 - Left analog stick for steering
 - A button for upshifting and X button for downshifting
 - B button for handbrake
+- LB for clutch
 
 ## Help
 
