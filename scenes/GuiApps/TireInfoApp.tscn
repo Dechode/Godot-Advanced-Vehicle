@@ -33,7 +33,7 @@ text = "Wheel FL"
 margin_top = 20.0
 margin_right = 40.0
 margin_bottom = 34.0
-text = "Wear = "
+text = "Wear"
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -59,7 +59,7 @@ text = "Wheel FR"
 margin_top = 20.0
 margin_right = 40.0
 margin_bottom = 34.0
-text = "Wear = "
+text = "Wear"
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -84,7 +84,7 @@ text = "Wheel BL"
 margin_top = -20.0
 margin_right = 49.0
 margin_bottom = -6.0
-text = "Wear = "
+text = "Wear"
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -112,7 +112,7 @@ text = "Wheel BR"
 margin_top = -20.0
 margin_right = 49.0
 margin_bottom = -6.0
-text = "Wear = "
+text = "Wear"
 __meta__ = {
 "_edit_use_anchors_": false
 }

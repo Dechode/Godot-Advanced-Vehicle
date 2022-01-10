@@ -49,3 +49,5 @@ path_u_distance = 1.0
 path_joined = true
 smooth_faces = true
 material = ExtResource( 3 )
+
+[connection signal="curve_changed" from="Path" to="Path" method="_on_Path_curve_changed"]

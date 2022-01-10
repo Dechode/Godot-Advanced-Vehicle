@@ -53,6 +53,11 @@ export var front_diff_coast_ratio: float = 1
 export (float, 0, 1) var center_split_f_r = 0.4 # AWD torque split front / rear
 export (float) var clutch_friction = 500
 
+######### Aero #########
+export (float) var cd = 0.3
+export (float) var air_density = 1.225
+export (float) var frontal_area = 2.0
+
 ######## CONSTANTS ########
 const PETROL_KG_L: float = 0.7489
 const NM_2_KW: int = 9549
@@ -96,6 +101,11 @@ var susp_comp: Array = [0.5, 0.5, 0.5, 0.5]
 var avg_rear_spin = 0.0
 var avg_front_spin = 0.0
 
+var local_vel: Vector3 = Vector3.ZERO
+var prev_pos: Vector3 = Vector3.ZERO
+var z_vel: float = 0.0
+var x_vel: float = 0.0
+
 onready var wheel_fl = $Wheel_fl
 onready var wheel_fr = $Wheel_fr
 onready var wheel_bl = $Wheel_bl
@@ -117,6 +127,7 @@ func _unhandled_input(event: InputEvent) -> void:
 
 
 func _process(delta: float) -> void:
+	
 	brake_input = Input.get_action_strength("Brake")
 	steering_input = Input.get_action_strength("SteerLeft") - Input.get_action_strength("SteerRight")
 	throttle_input = Input.get_action_strength("Throttle")
@@ -129,10 +140,16 @@ func _process(delta: float) -> void:
 	
 	var rear_brake_input = max(brake_input, handbrake_input)
 	rear_brake_force = max_brake_force * rear_brake_input * (1 - front_brake_bias) * 0.5 # Per wheel
+	
 
 
 func _physics_process(delta):
-
+	local_vel = global_transform.basis.xform_inv((global_transform.origin - prev_pos) / delta)
+	prev_pos = global_transform.origin
+	z_vel = -local_vel.z
+	x_vel = local_vel.x
+#	prints("z velocity =", z_vel)
+	dragForce()
 	##### AntiRollBar #####
 	var prev_comp = susp_comp
 	susp_comp[2] = wheel_bl.apply_forces(prev_comp[3], delta)
@@ -167,7 +184,7 @@ func _physics_process(delta):
 		torque_out = 0
 		rpm -= 500 
 	
-	if rpm < (rpm_idle + 1):
+	if rpm <= (rpm_idle + 1) and z_vel <= 1:
 		clutch_input = 1.0
 	
 	if selected_gear == 0:
@@ -301,7 +318,7 @@ func rwd(drive, delta):
 		if avg_rear_spin < 5 and rear_brake_force > abs(net_torque):
 			axle_spin = 0.0
 		else:
-			var f_rr = 0.0#(wheel_bl.rollingResistance(wheel_bl.y_force) + wheel_br.rollingResistance(wheel_br.y_force))
+			var f_rr = (wheel_bl.rolling_resistance + wheel_br.rolling_resistance)
 			net_torque -= (2 * rear_brake_force + f_rr)  * sign(avg_rear_spin)
 			axle_spin = avg_rear_spin + (delta * net_torque / (wheel_bl.wheel_moment + drive_inertia + wheel_br.wheel_moment ))
 				
@@ -346,7 +363,7 @@ func fwd(drive, delta):
 		if avg_front_spin < 5 and front_brake_force > abs(net_torque):
 			axle_spin = 0.0
 		else:
-			var f_rr = 0.0#(wheel_fl.rollingResistance(wheel_fl.y_force) + wheel_fr.rollingResistance(wheel_fr.y_force))
+			var f_rr = (wheel_fl.rolling_resistance + wheel_fr.rolling_resistance)
 			net_torque -= (2 * front_brake_force + f_rr)  * sign(avg_front_spin)
 			axle_spin = avg_front_spin + (delta * net_torque / (wheel_fl.wheel_moment + drive_inertia + wheel_fr.wheel_moment ))
 			
@@ -406,7 +423,7 @@ func awd(drive, delta):
 		if avg_rear_spin < 5 and rear_brake_force > abs(net_torque):
 			axle_spin = 0.0
 		else:
-			var f_rr = 0.0#(wheel_bl.rollingResistance(wheel_bl.y_force) + wheel_br.rollingResistance(wheel_br.y_force))
+			var f_rr = (wheel_bl.rolling_resistance + wheel_br.rolling_resistance)
 			net_torque -= (2 * rear_brake_force + f_rr) * sign(avg_rear_spin)
 			axle_spin = avg_rear_spin + (delta * net_torque / (wheel_bl.wheel_moment + drive_inertia + wheel_br.wheel_moment ))
 		
@@ -432,12 +449,28 @@ func awd(drive, delta):
 		if avg_front_spin < 5 and front_brake_force > abs(net_torque):
 			axle_spin = 0.0
 		else:
-			var f_rr = 0.0#(wheel_fl.rollingResistance(wheel_fl.y_force) + wheel_fr.rollingResistance(wheel_fr.y_force))
+			var f_rr = (wheel_fl.rolling_resistance + wheel_fr.rolling_resistance)
 			net_torque -= (2 * front_brake_force + f_rr) * sign(avg_front_spin)
 			axle_spin = avg_front_spin + (delta * net_torque / (wheel_fl.wheel_moment + drive_inertia + wheel_fr.wheel_moment ))
 			
 		wheel_fr.applySolidAxleSpin(axle_spin, front_brake_force)
 		wheel_fl.applySolidAxleSpin(axle_spin, front_brake_force)
+
+
+func dragForce():
+	var spd = sqrt(x_vel * x_vel + z_vel * z_vel)
+	var cdrag = 0.5 * cd * frontal_area * air_density
+
+	
+	# fdrag.y is positive in this case because forward is -z in godot 
+	var fdrag: Vector2 = Vector2.ZERO
+	fdrag.y = cdrag * z_vel * spd
+	fdrag.x = -cdrag * x_vel * spd
+	
+#	prints("drag force vector =", fdrag)
+	
+	add_central_force(global_transform.basis.z * fdrag.y)
+	add_central_force(global_transform.basis.x * fdrag.x)
 
 
 func burnFuel(delta):

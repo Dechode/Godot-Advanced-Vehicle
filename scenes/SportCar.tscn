@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=2]
+[gd_scene load_steps=16 format=2]
 
 [ext_resource path="res://scenes/Basecar.tscn" type="PackedScene" id=1]
 [ext_resource path="res://models/KenneyCarKit1/_defaultMat.material" type="Material" id=2]
@@ -12,6 +12,9 @@
 
 [sub_resource type="Curve" id=6]
 _data = [ Vector2( 0, 1 ), 0.0, 0.0, 0, 0, Vector2( 0.235849, 1 ), 0.0, 0.0, 0, 0, Vector2( 1, 0.581818 ), 0.0, 0.0, 0, 0 ]
+
+[sub_resource type="Curve" id=7]
+_data = [ Vector2( 0, 0 ), 0.0, 2.65, 0, 0, Vector2( 0.292453, 0.690909 ), 1.14432, 1.14432, 0, 0, Vector2( 1, 1 ), 0.0, 0.0, 0, 0 ]
 
 [sub_resource type="ArrayMesh" id=3]
 resource_name = "sedanSports_Mesh wheel_frontLeft"
@@ -149,31 +152,30 @@ surfaces/1 = {
 
 [node name="RigidBodyCar" parent="." instance=ExtResource( 1 )]
 mass = 800.0
-max_steer = 0.45
+max_steer = 0.6
 max_brake_force = 2700.0
 fuel_tank_size = 50.0
 max_engine_rpm = 7500.0
 rpm_clutch_out = 2500.0
 engine_moment = 0.12
-drivetype = 2
 gear_ratios = [ 3.5, 2.3, 1.7, 1.25, 1.0 ]
 gear_inertia = 0.02
 clutch_friction = 300.0
 
 [node name="Camera" parent="RigidBodyCar" index="0"]
-transform = Transform( 1, 2.75852e-15, -1.02949e-14, 0, 0.965926, 0.258819, 1.06581e-14, -0.258819, 0.965926, -0.0299997, 2.32483, 7.20093 )
+transform = Transform( 1, 2.75852e-15, -1.02949e-14, 0, 0.965926, 0.258819, 1.06581e-14, -0.258819, 0.965926, -0.0299997, 2.42084, 7.20093 )
 
 [node name="Wheel_br" parent="RigidBodyCar" index="1"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.75, -0.3, 1.27031 )
-tire_formula_to_use = 0
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.75, -0.203989, 1.27031 )
 spring_length = 0.15
+springstiffness = 50000.0
 bump = 11000.0
-rebound = 10000.0
-anti_roll = 1000.0
+rebound = 8000.0
 wheel_mass = 25.0
 tire_radius = 0.32
 tire_mu = 1.2
 tire_wear_mu_curve = SubResource( 6 )
+tire_rr_vel_curve = SubResource( 7 )
 
 [node name="MeshInstance" parent="RigidBodyCar/Wheel_br/WheelBody" index="1"]
 transform = Transform( 1.2, 0, 0, 0, 1.2, 0, 0, 0, 1.2, -0.2, 0, 0 )
@@ -181,16 +183,16 @@ mesh = SubResource( 3 )
 material/1 = null
 
 [node name="Wheel_bl" parent="RigidBodyCar" index="2"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.8, -0.3, 1.27031 )
-tire_formula_to_use = 0
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.8, -0.203989, 1.27031 )
 spring_length = 0.15
+springstiffness = 50000.0
 bump = 11000.0
-rebound = 10000.0
-anti_roll = 1000.0
+rebound = 8000.0
 wheel_mass = 25.0
 tire_radius = 0.32
 tire_mu = 1.2
 tire_wear_mu_curve = SubResource( 6 )
+tire_rr_vel_curve = SubResource( 7 )
 
 [node name="MeshInstance" parent="RigidBodyCar/Wheel_bl/WheelBody" index="1"]
 transform = Transform( -1.2, 0, -1.81195e-07, 0, 1.2, 0, 1.81195e-07, 0, -1.2, 0.2, 0, 0 )
@@ -198,16 +200,16 @@ mesh = SubResource( 3 )
 material/1 = null
 
 [node name="Wheel_fr" parent="RigidBodyCar" index="3"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.75, -0.3, -1.13272 )
-tire_formula_to_use = 0
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.75, -0.203989, -1.13272 )
 spring_length = 0.15
+springstiffness = 50000.0
 bump = 11000.0
-rebound = 10000.0
-anti_roll = 1000.0
+rebound = 8000.0
 wheel_mass = 25.0
 tire_radius = 0.32
 tire_mu = 1.2
 tire_wear_mu_curve = SubResource( 6 )
+tire_rr_vel_curve = SubResource( 7 )
 
 [node name="MeshInstance" parent="RigidBodyCar/Wheel_fr/WheelBody" index="1"]
 transform = Transform( 1.2, 0, 0, 0, 1.2, 0, 0, 0, 1.2, -0.2, 0, 0 )
@@ -215,24 +217,28 @@ mesh = SubResource( 3 )
 material/1 = null
 
 [node name="Wheel_fl" parent="RigidBodyCar" index="4"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.8, -0.3, -1.13272 )
-tire_formula_to_use = 0
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.8, -0.203989, -1.13272 )
 spring_length = 0.15
+springstiffness = 50000.0
 bump = 11000.0
-rebound = 10000.0
-anti_roll = 1000.0
+rebound = 8000.0
 wheel_mass = 25.0
 tire_radius = 0.32
+ackermann = -0.15
 tire_mu = 1.2
 tire_wear_mu_curve = SubResource( 6 )
+tire_rr_vel_curve = SubResource( 7 )
 
 [node name="MeshInstance" parent="RigidBodyCar/Wheel_fl/WheelBody" index="1"]
 transform = Transform( -1.2, 0, -1.81195e-07, 0, 1.2, 0, 1.81195e-07, 0, -1.2, 0.2, 0, 0 )
 mesh = SubResource( 3 )
 material/1 = null
 
+[node name="CamTarget" parent="RigidBodyCar" index="7"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.27116, 0 )
+
 [node name="MeshInstance" type="MeshInstance" parent="RigidBodyCar"]
-transform = Transform( 1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.8, 0, -0.45, 0.05 )
+transform = Transform( 1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.8, 0, -0.353989, 0.05 )
 mesh = SubResource( 1 )
 material/0 = null
 material/1 = null
@@ -242,11 +248,11 @@ material/4 = null
 material/5 = null
 
 [node name="CollisionShape" type="CollisionShape" parent="RigidBodyCar"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.218363, 0.05 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.314374, 0.05 )
 shape = SubResource( 5 )
 
 [node name="MeshInstance2" type="MeshInstance" parent="RigidBodyCar"]
-transform = Transform( 1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, 0, 0.15, 1.65 )
+transform = Transform( 1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, 0, 0.246011, 1.65 )
 mesh = SubResource( 2 )
 material/0 = null
 material/1 = null

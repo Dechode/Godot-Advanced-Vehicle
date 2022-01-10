@@ -24,6 +24,7 @@ export (float) var tire_width = 0.2
 export (float) var ackermann = 0.15
 export (float) var tire_mu = 0.9
 export (Curve) var tire_wear_mu_curve = null
+export (Curve) var tire_rr_vel_curve = null
 
 ############# For curve tire formula #############
 export (Curve) var lateral_force = null
@@ -50,7 +51,11 @@ var braketorque: float = 0.0
 
 var wheel_moment: float = 0.0
 var spin: float = 0.0
-var z_vel = 0.0
+var z_vel: float = 0.0
+var local_vel
+
+var rolling_resistance: float = 0.0 #Vector2 = Vector2.ZERO
+var rol_res_surface_mul: float = 0.02
 
 var force_vec = Vector2.ZERO
 var slip_vec: Vector2 = Vector2.ZERO
@@ -146,10 +151,16 @@ func tireWear(delta, yload):
 	tire_wear = clamp(tire_wear, 0 ,1)
 
 
+func rollingResistance(yload, speed):
+	var spd_factor = clamp(abs(speed) / 44.0, 0.0, 1.0)
+	var crr = rol_res_surface_mul * tire_rr_vel_curve.interpolate_baked(spd_factor)# * sign(speed)
+	return crr * yload
+
+
 func apply_forces(opposite_comp, delta):
 	############# Local forward velocity #############
 	
-	var local_vel = global_transform.basis.xform_inv((global_transform.origin - prev_pos) / delta)
+	local_vel = global_transform.basis.xform_inv((global_transform.origin - prev_pos) / delta)
 	z_vel = -local_vel.z
 	var planar_vect = Vector2(local_vel.x, local_vel.z).normalized()
 	prev_pos = global_transform.origin
@@ -172,6 +183,8 @@ func apply_forces(opposite_comp, delta):
 	y_force = max(0, y_force)
 	prev_compress = compress
 	
+	rolling_resistance = rollingResistance(y_force, z_vel)
+	prints("Rolling resistance =", rolling_resistance)
 	############### Slip #######################
 	
 	slip_vec.x = asin(clamp(-planar_vect.x, -1, 1)) # X slip is lateral slip
@@ -186,7 +199,7 @@ func apply_forces(opposite_comp, delta):
 	if spin < 5 and braketorque > abs(net_torque):
 		spin = 0
 	else:
-		net_torque -= braketorque  * sign(spin)
+		net_torque -= (braketorque + rolling_resistance) * sign(spin)
 		spin += delta * net_torque / wheel_moment
 
 	############### Apply the forces #######################
@@ -226,7 +239,6 @@ func apply_forces(opposite_comp, delta):
 	if tire_formula_to_use == TIRE_FORMULAS.BRUSH_TIRE_FORMULA:
 		force_vec = brush_formula(slip_vec, y_force)
 	
-	
 	if is_colliding():
 		var contact = get_collision_point() - car.global_transform.origin
 		var normal = get_collision_normal()
@@ -238,16 +250,20 @@ func apply_forces(opposite_comp, delta):
 			surface = get_collider().get_groups()[0]
 		if surface:
 			if surface == "Tarmac":
-				mu = 0.8 * tire_mu * wear_mu
+				mu = 1.0 * tire_mu * wear_mu
+				rol_res_surface_mul = 0.01
 			elif surface == "Grass":
 				mu = 0.55 * tire_mu * wear_mu
+				rol_res_surface_mul = 0.025
 			elif surface == "Gravel":
 				mu = 0.6 * tire_mu * wear_mu
+				rol_res_surface_mul = 0.03
 			elif surface == "Snow":
 				mu = 0.4 * tire_mu * wear_mu
+				rol_res_surface_mul = 0.035
 		else:
 			mu = 1 * tire_mu * wear_mu
-#		print(mu)
+#		prints("Z force =", force_vec.y)
 		car.add_force(normal * y_force, contact)
 		car.add_force(global_transform.basis.x * force_vec.x, contact)
 		car.add_force(global_transform.basis.z * force_vec.y, contact)
@@ -271,7 +287,7 @@ func apply_torque(drive, drive_inertia, brake_torque, delta):
 	if spin < 5 and brake_torque > abs(net_torque):
 		spin = 0
 	else:
-		net_torque -= brake_torque * sign(spin)
+		net_torque -= (brake_torque + rolling_resistance) * sign(spin)
 		spin += delta * net_torque / (wheel_moment + drive_inertia)
 
 	if drive * delta == 0:
