@@ -47,7 +47,7 @@ var tire_wear: float
 
 var mu = 1.0
 var y_force: float = 0.0
-var braketorque: float = 0.0
+#var braketorque: float = 0.0
 
 var wheel_moment: float = 0.0
 var spin: float = 0.0
@@ -82,20 +82,20 @@ func _ready() -> void:
 	peak_sr = longitudinal_force.get_point_position(1).x
 
 	if tire_formula_to_use == TIRE_FORMULAS.SIMPLE_PACEJKA:
-		peak_sa = get_peak_pacejka_x(nominal_load)
-		peak_sr = get_peak_pacejka_z(nominal_load)
+		peak_sa = get_peak_pacejka(nominal_load, tire_stiffness, pacejka_C_lat, mu, pacejka_E)
+		peak_sr = get_peak_pacejka(nominal_load, tire_stiffness, pacejka_C_long, mu, pacejka_E)
 	print("Peak slip angle = " + str(peak_sa))
 	print("Peak slip ratio = " + str(peak_sr))
-	
 
-func get_peak_pacejka_x(yload):
+
+func get_peak_pacejka(yload, tire_stif, C, friction_coeff, E):
 	var done = false
 
 	var unsorted_points: Array = []
 	var sorted_points: Array = []
 
 	for i in range(100):
-		unsorted_points.append(pacejka(i * 0.01, tire_stiffness , pacejka_C_lat, mu, pacejka_E ,yload ))
+		unsorted_points.append(pacejka(i * 0.01, tire_stif, C, friction_coeff, E ,yload ))
 		sorted_points.append(unsorted_points[i])
 		if i == 99:
 			done = true
@@ -111,29 +111,7 @@ func get_peak_pacejka_x(yload):
 	return 0.0
 
 
-func get_peak_pacejka_z(yload):
-	var done = false
 
-	var unsorted_points: Array = []
-	var sorted_points: Array = []
-
-	for i in range(100):
-		unsorted_points.append(pacejka(i * 0.01, tire_stiffness, pacejka_C_long, mu, pacejka_E ,yload ))
-		sorted_points.append(unsorted_points[i])
-		if i == 99:
-			done = true
-#		continue
-	if done:
-		sorted_points.sort()
-#		print(sorted_points)
-
-		for slip in range(100):
-			if unsorted_points[slip] == sorted_points[99]:
-#				print(rad2deg(r * 0.01))
-				return slip * 0.01
-	return 0.0
-	
-	
 func _process(delta: float) -> void:
 	wheelmesh.rotate_x(wrapf(-spin * delta,0, TAU))
 	if z_vel > 2.0:
@@ -184,24 +162,32 @@ func apply_forces(opposite_comp, delta):
 	prev_compress = compress
 	
 	rolling_resistance = rollingResistance(y_force, z_vel)
-	prints("Rolling resistance =", rolling_resistance)
+#	prints("Rolling resistance =", rolling_resistance)
 	############### Slip #######################
 	
 	slip_vec.x = asin(clamp(-planar_vect.x, -1, 1)) # X slip is lateral slip
 	slip_vec.y = 0.0 # Y slip is the longitudinal Z slip
 	
-	if is_colliding() and z_vel != 0:
+#	if is_colliding() and z_vel != 0:
+	if z_vel != 0:
 		slip_vec.y = (z_vel - spin * tire_radius) / abs(z_vel)
-		
+	else:
+		if spin == 0:
+			slip_vec.y = 0.0
+#			print("Spin and z vel == 0")
+		else:
+#			print("Z vel == 0 but some spin")
+			slip_vec.y = 0.01 * spin # This is to avoid "getting stuck" if local z velocity is absolute 0
+	print("Spin = " , spin)
+	
 	############### Spin and net torque ###############
 	
-	var net_torque = force_vec.y * tire_radius
-	if spin < 5 and braketorque > abs(net_torque):
-		spin = 0
-	else:
-		net_torque -= (braketorque + rolling_resistance) * sign(spin)
-		spin += delta * net_torque / wheel_moment
-
+#	var net_torque = force_vec.y * tire_radius
+#	if spin < 5 and braketorque > abs(net_torque):
+#		spin = 0
+#	else:
+#		net_torque -= (braketorque + rolling_resistance) * sign(spin)
+#		spin += delta * net_torque / wheel_moment
 	############### Apply the forces #######################
 	
 	var slip_ratio = slip_vec.y 
@@ -274,17 +260,16 @@ func apply_forces(opposite_comp, delta):
 			y_force += anti_roll * (compress - opposite_comp)
 		return compress
 	else:
+		spin -= sign(spin) * delta * 2 / wheel_moment # stop undriven wheels from spinning endlessly
 		return 0.0
 
 
 func apply_torque(drive, drive_inertia, brake_torque, delta):
-	braketorque = brake_torque
 	var prev_spin = spin
-
 	var net_torque = force_vec.y * tire_radius
 	net_torque += drive
-	
-	if spin < 5 and brake_torque > abs(net_torque):
+#	if spin < 5 and brake_torque > abs(net_torque):
+	if brake_torque > abs(net_torque):
 		spin = 0
 	else:
 		net_torque -= (brake_torque + rolling_resistance) * sign(spin)
@@ -296,8 +281,7 @@ func apply_torque(drive, drive_inertia, brake_torque, delta):
 		return (spin - prev_spin) * (wheel_moment + drive_inertia) / (drive * delta)
 
 
-func applySolidAxleSpin(axlespin, brake_torque):
-	braketorque = brake_torque
+func applySolidAxleSpin(axlespin):
 	spin = axlespin
 
 

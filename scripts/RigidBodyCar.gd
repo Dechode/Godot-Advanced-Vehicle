@@ -184,7 +184,7 @@ func _physics_process(delta):
 		torque_out = 0
 		rpm -= 500 
 	
-	if rpm <= (rpm_idle + 1) and z_vel <= 1:
+	if rpm <= (rpm_idle + 10) and z_vel <= 2:
 		clutch_input = 1.0
 	
 	if selected_gear == 0:
@@ -322,8 +322,8 @@ func rwd(drive, delta):
 			net_torque -= (2 * rear_brake_force + f_rr)  * sign(avg_rear_spin)
 			axle_spin = avg_rear_spin + (delta * net_torque / (wheel_bl.wheel_moment + drive_inertia + wheel_br.wheel_moment ))
 				
-		wheel_br.applySolidAxleSpin(axle_spin, rear_brake_force)
-		wheel_bl.applySolidAxleSpin(axle_spin, rear_brake_force)
+		wheel_br.applySolidAxleSpin(axle_spin)
+		wheel_bl.applySolidAxleSpin(axle_spin)
 
 
 
@@ -367,8 +367,8 @@ func fwd(drive, delta):
 			net_torque -= (2 * front_brake_force + f_rr)  * sign(avg_front_spin)
 			axle_spin = avg_front_spin + (delta * net_torque / (wheel_fl.wheel_moment + drive_inertia + wheel_fr.wheel_moment ))
 			
-		wheel_fr.applySolidAxleSpin(axle_spin, front_brake_force)
-		wheel_fl.applySolidAxleSpin(axle_spin, front_brake_force)
+		wheel_fr.applySolidAxleSpin(axle_spin)
+		wheel_fl.applySolidAxleSpin(axle_spin)
 
 
 func awd(drive, delta):
@@ -427,8 +427,8 @@ func awd(drive, delta):
 			net_torque -= (2 * rear_brake_force + f_rr) * sign(avg_rear_spin)
 			axle_spin = avg_rear_spin + (delta * net_torque / (wheel_bl.wheel_moment + drive_inertia + wheel_br.wheel_moment ))
 		
-		wheel_br.applySolidAxleSpin(axle_spin, rear_brake_force)
-		wheel_bl.applySolidAxleSpin(axle_spin, rear_brake_force)
+		wheel_br.applySolidAxleSpin(axle_spin)
+		wheel_bl.applySolidAxleSpin(axle_spin)
 	
 	if !front_diff_locked:
 		
@@ -453,8 +453,8 @@ func awd(drive, delta):
 			net_torque -= (2 * front_brake_force + f_rr) * sign(avg_front_spin)
 			axle_spin = avg_front_spin + (delta * net_torque / (wheel_fl.wheel_moment + drive_inertia + wheel_fr.wheel_moment ))
 			
-		wheel_fr.applySolidAxleSpin(axle_spin, front_brake_force)
-		wheel_fl.applySolidAxleSpin(axle_spin, front_brake_force)
+		wheel_fr.applySolidAxleSpin(axle_spin)
+		wheel_fl.applySolidAxleSpin(axle_spin)
 
 
 func dragForce():
