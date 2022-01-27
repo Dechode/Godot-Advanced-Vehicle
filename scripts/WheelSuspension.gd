@@ -268,8 +268,8 @@ func apply_torque(drive, drive_inertia, brake_torque, delta):
 	var prev_spin = spin
 	var net_torque = force_vec.y * tire_radius
 	net_torque += drive
-#	if spin < 5 and brake_torque > abs(net_torque):
-	if brake_torque > abs(net_torque):
+	if spin < 5 and brake_torque > abs(net_torque):
+#	if brake_torque > abs(net_torque):
 		spin = 0
 	else:
 		net_torque -= (brake_torque + rolling_resistance) * sign(spin)
