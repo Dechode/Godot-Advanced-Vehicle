@@ -1,4 +1,4 @@
-# Godot-AdvancedVehicle
+# Godot Advanced Vehicle
 A more advanced car controller for the Godot game engine.
 
 ## Description
