@@ -19,8 +19,8 @@ _data = [ Vector2( 0, 0 ), 0.0, 0.0, 0, 0, Vector2( 0.133803, 1 ), 0.0697793, 0.
 _data = [ Vector2( 0, 0 ), 0.0, 0.0, 0, 0, Vector2( 0.0633803, 1 ), -0.422619, -1.12955, 0, 0, Vector2( 0.246479, 0.909091 ), -2.87972, -0.721391, 0, 0, Vector2( 1, 0.709091 ), 0.0, 0.0, 0, 0 ]
 
 [sub_resource type="CylinderShape" id=9]
-radius = 0.35
 height = 0.4
+radius = 0.35
 
 [sub_resource type="CylinderMesh" id=10]
 material = ExtResource( 5 )
@@ -66,7 +66,6 @@ shape = SubResource( 9 )
 [node name="MeshInstance" type="MeshInstance" parent="Wheel_br/WheelBody"]
 transform = Transform( -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 0, 0, 0 )
 mesh = SubResource( 10 )
-material/0 = null
 
 [node name="Wheel_bl" type="RayCast" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.8, 0, 1.5 )
@@ -88,7 +87,6 @@ shape = SubResource( 9 )
 [node name="MeshInstance" type="MeshInstance" parent="Wheel_bl/WheelBody"]
 transform = Transform( -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 0, 0, 0 )
 mesh = SubResource( 10 )
-material/0 = null
 
 [node name="Wheel_fr" type="RayCast" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.8, 0, -1.4 )
@@ -110,7 +108,6 @@ shape = SubResource( 9 )
 [node name="MeshInstance" type="MeshInstance" parent="Wheel_fr/WheelBody"]
 transform = Transform( -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 0, 0, 0 )
 mesh = SubResource( 10 )
-material/0 = null
 
 [node name="Wheel_fl" type="RayCast" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.8, 0, -1.4 )
@@ -132,7 +129,6 @@ shape = SubResource( 9 )
 [node name="MeshInstance" type="MeshInstance" parent="Wheel_fl/WheelBody"]
 transform = Transform( -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 0, 0, 0 )
 mesh = SubResource( 10 )
-material/0 = null
 
 [node name="EngineSound" type="AudioStreamPlayer" parent="."]
 

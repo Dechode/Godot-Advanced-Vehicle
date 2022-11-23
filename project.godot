@@ -9,19 +9,67 @@
 config_version=4
 
 _global_script_classes=[ {
+"base": "Spatial",
+"class": "Aero",
+"language": "GDScript",
+"path": "res://scripts/modular/wang.gd"
+}, {
 "base": "RigidBody",
 "class": "BaseCar",
 "language": "GDScript",
 "path": "res://scripts/RigidBodyCar.gd"
 }, {
+"base": "Node",
+"class": "Brakes",
+"language": "GDScript",
+"path": "res://scripts/modular/brakes.gd"
+}, {
+"base": "Spatial",
+"class": "CarEngine",
+"language": "GDScript",
+"path": "res://scripts/modular/engine.gd"
+}, {
+"base": "Node",
+"class": "Clutch",
+"language": "GDScript",
+"path": "res://scripts/modular/clutch.gd"
+}, {
+"base": "Node",
+"class": "Differential",
+"language": "GDScript",
+"path": "res://scripts/modular/differential.gd"
+}, {
+"base": "Node",
+"class": "GearBox",
+"language": "GDScript",
+"path": "res://scripts/modular/gearbox.gd"
+}, {
+"base": "RigidBody",
+"class": "ModularCar",
+"language": "GDScript",
+"path": "res://scripts/modular/modular_car.gd"
+}, {
 "base": "RayCast",
 "class": "RaycastSuspension",
 "language": "GDScript",
 "path": "res://scripts/WheelSuspension.gd"
+}, {
+"base": "Node",
+"class": "SteeringManager",
+"language": "GDScript",
+"path": "res://scripts/modular/steering.gd"
 } ]
 _global_script_class_icons={
+"Aero": "",
 "BaseCar": "",
-"RaycastSuspension": ""
+"Brakes": "",
+"CarEngine": "",
+"Clutch": "",
+"Differential": "",
+"GearBox": "",
+"ModularCar": "",
+"RaycastSuspension": "",
+"SteeringManager": ""
 }
 
 [application]

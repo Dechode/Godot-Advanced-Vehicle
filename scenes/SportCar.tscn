@@ -183,7 +183,6 @@ tire_rr_vel_curve = SubResource( 7 )
 [node name="MeshInstance" parent="RigidBodyCar/Wheel_br/WheelBody" index="1"]
 transform = Transform( 1.2, 0, 0, 0, 1.2, 0, 0, 0, 1.2, -0.2, 0, 0 )
 mesh = SubResource( 3 )
-material/1 = null
 
 [node name="Wheel_bl" parent="RigidBodyCar" index="2"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.8, -0.203989, 1.27031 )
@@ -200,7 +199,6 @@ tire_rr_vel_curve = SubResource( 7 )
 [node name="MeshInstance" parent="RigidBodyCar/Wheel_bl/WheelBody" index="1"]
 transform = Transform( -1.2, 0, -1.81195e-07, 0, 1.2, 0, 1.81195e-07, 0, -1.2, 0.2, 0, 0 )
 mesh = SubResource( 3 )
-material/1 = null
 
 [node name="Wheel_fr" parent="RigidBodyCar" index="3"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.75, -0.203989, -1.13272 )
@@ -217,7 +215,6 @@ tire_rr_vel_curve = SubResource( 7 )
 [node name="MeshInstance" parent="RigidBodyCar/Wheel_fr/WheelBody" index="1"]
 transform = Transform( 1.2, 0, 0, 0, 1.2, 0, 0, 0, 1.2, -0.2, 0, 0 )
 mesh = SubResource( 3 )
-material/1 = null
 
 [node name="Wheel_fl" parent="RigidBodyCar" index="4"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.8, -0.203989, -1.13272 )
@@ -235,7 +232,6 @@ tire_rr_vel_curve = SubResource( 7 )
 [node name="MeshInstance" parent="RigidBodyCar/Wheel_fl/WheelBody" index="1"]
 transform = Transform( -1.2, 0, -1.81195e-07, 0, 1.2, 0, 1.81195e-07, 0, -1.2, 0.2, 0, 0 )
 mesh = SubResource( 3 )
-material/1 = null
 
 [node name="CamTarget" parent="RigidBodyCar" index="7"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.27116, 0 )
@@ -243,12 +239,6 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.27116, 0 )
 [node name="MeshInstance" type="MeshInstance" parent="RigidBodyCar"]
 transform = Transform( 1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.8, 0, -0.353989, 0.05 )
 mesh = SubResource( 1 )
-material/0 = null
-material/1 = null
-material/2 = null
-material/3 = null
-material/4 = null
-material/5 = null
 
 [node name="CollisionShape" type="CollisionShape" parent="RigidBodyCar"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.314374, 0.05 )
@@ -257,7 +247,5 @@ shape = SubResource( 5 )
 [node name="MeshInstance2" type="MeshInstance" parent="RigidBodyCar"]
 transform = Transform( 1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, 0, 0.246011, 1.65 )
 mesh = SubResource( 2 )
-material/0 = null
-material/1 = null
 
 [editable path="RigidBodyCar"]
