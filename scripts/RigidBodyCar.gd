@@ -39,6 +39,7 @@ export (AudioStream) var engine_sound
 ######### Drivetrain variables #########
 export (DRIVE_TYPE) var drivetype = DRIVE_TYPE.RWD
 export (Array) var gear_ratios = [ 3.1, 2.61, 2.1, 1.72, 1.2, 1.0 ] 
+export var automatic := true
 export (float) var final_drive = 3.7
 export (float) var reverse_ratio = 3.9
 export (float) var gear_inertia = 0.02
@@ -142,8 +143,6 @@ func _process(delta: float) -> void:
 	
 	var rear_brake_input = max(brake_input, handbrake_input)
 	rear_brake_force = max_brake_force * rear_brake_input * (1 - front_brake_bias) * 0.5 # Per wheel
-	
-	var automatic = true
 	
 	if automatic:
 		var shift_time = 700
