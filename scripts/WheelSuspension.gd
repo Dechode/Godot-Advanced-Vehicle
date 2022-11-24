@@ -66,17 +66,13 @@ var spring_curr_length: float = spring_length
 
 
 onready var car = $'..' #Get the parent node as car
-onready var wheelbodycollider = $WheelBody/CollisionShape
-onready var wheelbody = $WheelBody
-onready var wheelmesh = $WheelBody/MeshInstance
+onready var wheelmesh = $MeshInstance
 
 
 func _ready() -> void:
 	var nominal_load = car.weight * 0.25
 	wheel_moment = 0.5 * wheel_mass * pow(tire_radius, 2)
 	set_cast_to(Vector3.DOWN * (spring_length + tire_radius))
-	wheelbodycollider.shape.radius = tire_radius - 0.02
-	wheelbodycollider.shape.height = tire_width
 	
 	peak_sa = lateral_force.get_point_position(1).x
 	peak_sr = longitudinal_force.get_point_position(1).x
@@ -116,10 +112,6 @@ func _process(delta: float) -> void:
 	wheelmesh.rotate_x(wrapf(-spin * delta,0, TAU))
 	if z_vel > 2.0:
 		tireWear(delta, y_force)
-
-
-func _physics_process(delta: float) -> void:
-	wheelbody.transform.origin = Vector3.DOWN * spring_curr_length
 
 
 # Tire wear calculations are totally made up
@@ -180,14 +172,6 @@ func apply_forces(opposite_comp, delta):
 			slip_vec.y = 0.01 * spin # This is to avoid "getting stuck" if local z velocity is absolute 0
 #	print("Spin = " , spin)
 	
-	############### Spin and net torque ###############
-	
-#	var net_torque = force_vec.y * tire_radius
-#	if spin < 5 and braketorque > abs(net_torque):
-#		spin = 0
-#	else:
-#		net_torque -= (braketorque + rolling_resistance) * sign(spin)
-#		spin += delta * net_torque / wheel_moment
 	############### Apply the forces #######################
 	
 	var slip_ratio = slip_vec.y 
