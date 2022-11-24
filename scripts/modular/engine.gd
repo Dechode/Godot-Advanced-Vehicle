@@ -40,6 +40,7 @@ func _ready():
 func set_throttle(value):
 	throttle = value
 
+
 func get_throttle():
 	return throttle
 

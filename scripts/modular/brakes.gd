@@ -20,11 +20,10 @@ var brake_input = 0.0
 func _ready():
 	pass # Replace with function body.
 
-# TODO
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
-#func _process(delta):
-#	brake_input = InputManager.get_brake_input() #Input.get_action_strength("Brake")
+func _process(delta):
+	Input.get_action_strength("Brake")
 
 
 func _physics_process(delta):

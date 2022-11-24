@@ -15,11 +15,12 @@ func _ready():
 	pass # Replace with function body.
 
 
-#func _process(delta: float) -> void:
-
-
 func set_gear(value):
 	selected_gear = value
+
+
+func get_gear():
+	return selected_gear
 
 
 func get_gear_ratio():
@@ -34,7 +35,6 @@ func get_gear_ratio():
 
 
 func apply_torque(input_torque, input_inertia, delta):
-#	print(selected_gear)
 	var output_torque = input_torque * get_gear_ratio()
 	var ratio = get_gear_ratio()
 	var output_inertia = input_inertia + abs(ratio * ratio) * moment_of_inertia

@@ -55,9 +55,9 @@ func apply_torque(input_torque = 0.0, input_inertia = 0.0, delta = 0.0):
 	
 	var i_total = shaft1.moment_of_inertia + shaft2.moment_of_inertia + i
 	
-	if not shaft1 is WheelSusp:
+	if not shaft1 is RaycastSuspension:
 		shaft1.set_input_gearing(input_gearing * final_ratio)
-	if not shaft2 is WheelSusp:
+	if not shaft2 is RaycastSuspension:
 		shaft2.set_input_gearing(input_gearing * final_ratio)
 	
 	var tr1 = shaft1.get_reaction_torque()
@@ -149,7 +149,7 @@ func solid_axle_drive(drive, inertia, delta):
 	var avg_axle_spin = (shaft1_av + shaft2_av) * 0.5 #* (1 / final_ratio)
 	var spin = avg_axle_spin + (delta * 0.5 * drive / inertia) * (1 / final_ratio)
 	
-	if shaft1 is WheelSusp and shaft2 is WheelSusp:
+	if shaft1 is RaycastSuspension and shaft2 is RaycastSuspension:
 		shaft1.apply_spin(spin)
 		shaft2.apply_spin(spin)
 #	else:

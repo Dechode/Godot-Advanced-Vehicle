@@ -106,6 +106,8 @@ var prev_pos: Vector3 = Vector3.ZERO
 var z_vel: float = 0.0
 var x_vel: float = 0.0
 
+var last_shift_time = 0
+
 onready var wheel_fl = $Wheel_fl
 onready var wheel_fr = $Wheel_fr
 onready var wheel_bl = $Wheel_bl
@@ -141,6 +143,31 @@ func _process(delta: float) -> void:
 	var rear_brake_input = max(brake_input, handbrake_input)
 	rear_brake_force = max_brake_force * rear_brake_input * (1 - front_brake_bias) * 0.5 # Per wheel
 	
+	var automatic = true
+	
+	if automatic:
+		var shift_time = 700
+		var next_gear_rpm = 0
+		if selected_gear + 1 < gear_ratios.size():
+			next_gear_rpm = gear_ratios[selected_gear + 1] * final_drive
+		
+		# if torque is bigger in next gear change gear up
+		if engineTorque(next_gear_rpm) > engine_net_torque:
+			if rpm > 0.8 * max_engine_rpm:
+				if Time.get_ticks_msec() - last_shift_time > shift_time:
+					shiftUp()
+					last_shift_time = Time.get_ticks_msec()
+#				print("hep")
+		else:
+			if selected_gear != 0 and rpm < 0.3 * max_engine_rpm:
+				if Time.get_ticks_msec() - last_shift_time > shift_time:
+					shiftDown()
+					last_shift_time = Time.get_ticks_msec()
+#					else:
+#						if Time.get_ticks_msec() - last_shift_time > shift_time:
+#							shiftDown()
+#							last_shift_time = Time.get_ticks_msec()
+#				print("noup")
 
 
 func _physics_process(delta):
@@ -203,8 +230,8 @@ func _physics_process(delta):
 	burnFuel(delta)
 	
 	
-func engineTorque(r_p_m) -> float: 
-	var rpm_factor = clamp(r_p_m / max_engine_rpm, 0.0, 1.0)
+func engineTorque(p_rpm) -> float: 
+	var rpm_factor = clamp(p_rpm / max_engine_rpm, 0.0, 1.0)
 	var torque_factor = torque_curve.interpolate_baked(rpm_factor)
 	return torque_factor * max_torque
 	

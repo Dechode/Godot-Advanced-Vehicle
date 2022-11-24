@@ -178,7 +178,7 @@ func apply_forces(opposite_comp, delta):
 		else:
 #			print("Z vel == 0 but some spin")
 			slip_vec.y = 0.01 * spin # This is to avoid "getting stuck" if local z velocity is absolute 0
-	print("Spin = " , spin)
+#	print("Spin = " , spin)
 	
 	############### Spin and net torque ###############
 	

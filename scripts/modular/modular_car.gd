@@ -24,13 +24,9 @@ func _ready() -> void:
 	for child in get_children():
 		if child is RaycastSuspension:
 			wheels.append(child)
-#		elif child is Aero:
-		elif child.is_in_group("Aero"):
+			
+		if child.is_in_group("Aero"):
 			wings.append(child)
-
-#
-#func _process(delta: float) -> void:
-#	VehicleAPI.set_vehicle_speed(local_vel.z)
 
 
 func _physics_process(delta: float) -> void:
@@ -45,11 +41,6 @@ func _physics_process(delta: float) -> void:
 
 
 func _integrate_forces(state: PhysicsDirectBodyState) -> void:
-#	var collision_count = state.get_contact_count()
-#	var impact_pos = 0
-#	if collision_count > 0:
-#		impact_pos = state.get_contact_local_position(collision_count - 1)
-	
 	var vel2 = local_vel.length_squared()
 	var drag_force = 0.5 * vel2 * cd * frontal_area * air_density if vel2 < 100000 else 0
 	state.add_central_force(-local_vel.normalized() * drag_force)
@@ -64,6 +55,7 @@ func _integrate_forces(state: PhysicsDirectBodyState) -> void:
 			state.add_force(wheel.global_transform.basis.z * wheel.force_vec.y, contact)
 	
 	for wing in wings:
-		state.add_central_force(-local_vel.normalized() * wing.drag_force)
+#		state.add_central_force(-local_vel.normalized() * wing.drag_force)
 		var offset = wing.global_transform.origin - global_transform.origin
+		state.add_force(-local_vel.normalized() * wing.drag_force, offset)
 		state.add_force(wing.global_transform.basis.y * wing.lift_force, offset)
