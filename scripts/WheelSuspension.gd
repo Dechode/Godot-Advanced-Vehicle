@@ -207,7 +207,7 @@ func apply_forces(opposite_comp, delta):
 	
 	# We dont use the modified slip here because the brush tire formula handles slip combination
 	if tire_formula_to_use == TIRE_FORMULAS.BRUSH_TIRE_FORMULA:
-		force_vec = brush_formula(slip_vec, y_force)
+		force_vec = brushFormula(slip_vec, y_force)
 	
 	if is_colliding():
 		var contact = get_collision_point() - car.global_transform.origin
@@ -278,7 +278,7 @@ func pacejka(slip, B, C, D, E, yforce):
 	return yforce * D * sin(C * atan(B * slip - E * (B * slip - atan(B * slip))))
 	
 
-func brush_formula(slip, yforce):
+func brushFormula(slip, yforce):
 	var stiffness = 500000 * tire_stiffness * pow(brush_contact_patch, 2)
 	var friction = mu * yforce
 	var deflect = sqrt(pow(stiffness * slip.y, 2) + pow(stiffness * tan(slip.x), 2))
