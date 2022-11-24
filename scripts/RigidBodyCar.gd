@@ -156,17 +156,12 @@ func _process(delta: float) -> void:
 				if Time.get_ticks_msec() - last_shift_time > shift_time:
 					shiftUp()
 					last_shift_time = Time.get_ticks_msec()
-#				print("hep")
+
 		else:
-			if selected_gear != 0 and rpm < 0.3 * max_engine_rpm:
+			if selected_gear != 0 and rpm < 0.35 * max_engine_rpm:
 				if Time.get_ticks_msec() - last_shift_time > shift_time:
 					shiftDown()
 					last_shift_time = Time.get_ticks_msec()
-#					else:
-#						if Time.get_ticks_msec() - last_shift_time > shift_time:
-#							shiftDown()
-#							last_shift_time = Time.get_ticks_msec()
-#				print("noup")
 
 
 func _physics_process(delta):
