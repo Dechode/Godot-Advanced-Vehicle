@@ -151,17 +151,19 @@ func _process(delta: float) -> void:
 			next_gear_rpm = gear_ratios[selected_gear + 1] * final_drive
 		
 		# if torque is bigger in next gear change gear up
-		if engineTorque(next_gear_rpm) > engine_net_torque:
-			if rpm > 0.8 * max_engine_rpm:
+#		if engineTorque(next_gear_rpm) > engine_net_torque:
+		if rpm > 0.8 * max_engine_rpm:
+			if selected_gear >= 0:
 				if Time.get_ticks_msec() - last_shift_time > shift_time:
 					shiftUp()
-					last_shift_time = Time.get_ticks_msec()
-
-		else:
-			if selected_gear != 0 and rpm < 0.35 * max_engine_rpm:
-				if Time.get_ticks_msec() - last_shift_time > shift_time:
-					shiftDown()
-					last_shift_time = Time.get_ticks_msec()
+		
+		elif selected_gear > 1 and rpm < 0.35 * max_engine_rpm:
+			if Time.get_ticks_msec() - last_shift_time > shift_time:
+				shiftDown()
+				
+		elif selected_gear <= 1 and z_vel < 0.5 and brake_input > 0.2:
+			if Time.get_ticks_msec() - last_shift_time > shift_time:
+				shiftDown()
 
 
 func _physics_process(delta):
@@ -481,7 +483,6 @@ func awd(drive, delta):
 func dragForce():
 	var spd = sqrt(x_vel * x_vel + z_vel * z_vel)
 	var cdrag = 0.5 * cd * frontal_area * air_density
-
 	
 	# fdrag.y is positive in this case because forward is -z in godot 
 	var fdrag: Vector2 = Vector2.ZERO
@@ -503,11 +504,13 @@ func burnFuel(delta):
 func shiftUp():
 	if selected_gear < gear_ratios.size():
 		selected_gear += 1
+		last_shift_time = Time.get_ticks_msec()
 
 
 func shiftDown():
 	if selected_gear > -1:
 		selected_gear -= 1
+		last_shift_time = Time.get_ticks_msec()
 
 
 func engineSound():
