@@ -74,7 +74,7 @@ _global_script_class_icons={
 
 [application]
 
-config/name="AdvancedVehicleDemo"
+config/name="Advanced Vehicle Demo"
 run/main_scene="res://levels/world.tscn"
 config/icon="res://icon.png"
 
