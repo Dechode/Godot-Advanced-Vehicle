@@ -157,18 +157,18 @@ func _process(delta: float) -> void:
 			reversing = true
 		
 		# if torque is bigger in next gear change gear up
-#		if engineTorque(next_gear_rpm) > engine_net_torque:
+		if engineTorque(next_gear_rpm) > torque_out:
 		# if rpm is bigger in next gear change gear up
-		if rpm > 0.85 * max_engine_rpm:
-			if selected_gear >= 0:
-				if Time.get_ticks_msec() - last_shift_time > shift_time:
-					shiftUp()
+			if rpm > 0.85 * max_engine_rpm:
+				if selected_gear >= 0:
+					if Time.get_ticks_msec() - last_shift_time > shift_time:
+						shiftUp()
 		
-		elif selected_gear > 1 and rpm < 0.3 * max_engine_rpm:
+		if selected_gear > 1 and rpm < 0.3 * max_engine_rpm:
 			if Time.get_ticks_msec() - last_shift_time > shift_time:
 				shiftDown()
 				
-		elif abs(selected_gear) <= 1 and abs(z_vel) < 0.5 and brake_input > 0.2:
+		if abs(selected_gear) <= 1 and abs(z_vel) < 0.5 and brake_input > 0.2:
 			if not reversing:
 				if Time.get_ticks_msec() - last_shift_time > shift_time:
 					shiftDown()
