@@ -5,7 +5,10 @@ export (float) var brush_contact_patch = 0.2
 
 
 func get_tire_forces(slip: Vector2, normal_load: float):
-	var stiffness = 500000.0 * tire_softness * 20.0 * pow(brush_contact_patch, 2)
+	var spring_rate = 8000000.0 + 25000000.0 * (1 - tire_softness)
+#	print("Tire Spring Rate = %d" % spring_rate)
+	var stiffness = 0.5 * spring_rate * pow(brush_contact_patch, 2)
+	print("Tire stiffness = %d" % stiffness) 
 	var friction = mu * normal_load
 	var deflect = sqrt(pow(stiffness * slip.y, 2) + pow(stiffness * tan(slip.x), 2))
 

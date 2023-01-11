@@ -2,12 +2,7 @@ extends RayCast
 class_name RaycastSuspension
 
 ############# Choose what tire formula to use #############
-enum TIRE_FORMULAS {
-	SIMPLE_PACEJKA,
-	BRUSH_TIRE_FORMULA,
-	CURVE_BASED_FORMULA,
-}
-export (TIRE_FORMULAS) var tire_formula_to_use = TIRE_FORMULAS.CURVE_BASED_FORMULA
+export var tire_model: Resource 
 
 ############# Suspension stuff #############
 export (float) var spring_length = 0.2
@@ -23,8 +18,8 @@ export (float) var tire_radius = 0.3
 export (float) var tire_width = 0.2
 export (float) var ackermann = 0.15
 export (float) var tire_mu = 0.9
-export (Curve) var tire_wear_mu_curve = null
-export (Curve) var tire_rr_vel_curve = null
+#export (Curve) var tire_wear_mu_curve = null
+#export (Curve) var tire_rr_vel_curve = null
 
 ############# For curve tire formula #############
 export (Curve) var lateral_force = null
@@ -43,7 +38,7 @@ export (float) var pacejka_E = 0.0
 var peak_sr: float = 0.10
 var peak_sa: float = 0.10
 
-var tire_wear: float
+#var tire_wear: float
 
 var mu = 1.0
 var y_force: float = 0.0
@@ -77,12 +72,6 @@ func _ready() -> void:
 	peak_sa = lateral_force.get_point_position(1).x
 	peak_sr = longitudinal_force.get_point_position(1).x
 
-	if tire_formula_to_use == TIRE_FORMULAS.SIMPLE_PACEJKA:
-		peak_sa = get_peak_pacejka(nominal_load, tire_stiffness, pacejka_C_lat, mu, pacejka_E)
-		peak_sr = get_peak_pacejka(nominal_load, tire_stiffness, pacejka_C_long, mu, pacejka_E)
-	print("Peak slip angle = " + str(peak_sa))
-	print("Peak slip ratio = " + str(peak_sr))
-
 
 func get_peak_pacejka(yload, tire_stif, C, friction_coeff, E):
 	var done = false
@@ -109,21 +98,21 @@ func get_peak_pacejka(yload, tire_stif, C, friction_coeff, E):
 
 func _process(delta: float) -> void:
 	wheelmesh.rotate_x(wrapf(-spin * delta,0, TAU))
-	if z_vel > 2.0:
-		tireWear(delta, y_force)
+#	if z_vel > 2.0:
+#		tireWear(delta, y_force)
 
 
 # Tire wear calculations are totally made up
-func tireWear(delta, yload):
-	var larger_slip = max(abs(slip_vec.x), abs(slip_vec.y))
-	tire_wear += larger_slip * mu * delta * 0.01 * yload * 0.0001 / tire_stiffness
-	tire_wear = clamp(tire_wear, 0 ,1)
+#func tireWear(delta, yload):
+#	var larger_slip = max(abs(slip_vec.x), abs(slip_vec.y))
+#	tire_wear += larger_slip * mu * delta * 0.01 * yload * 0.0001 / tire_stiffness
+#	tire_wear = clamp(tire_wear, 0 ,1)
 
 
-func rollingResistance(yload, speed):
-	var spd_factor = clamp(abs(speed) / 44.0, 0.0, 1.0)
-	var crr = rol_res_surface_mul * tire_rr_vel_curve.interpolate_baked(spd_factor)# * sign(speed)
-	return crr * yload
+#func rollingResistance(yload, speed):
+#	var spd_factor = clamp(abs(speed) / 44.0, 0.0, 1.0)
+#	var crr = rol_res_surface_mul * tire_rr_vel_curve.interpolate_baked(spd_factor)# * sign(speed)
+#	return crr * yload
 
 
 func apply_forces(opposite_comp, delta):
@@ -152,7 +141,7 @@ func apply_forces(opposite_comp, delta):
 	y_force = max(0, y_force)
 	prev_compress = compress
 	
-	rolling_resistance = rollingResistance(y_force, z_vel)
+#	rolling_resistance = rollingResistance(y_force, z_vel)
 #	prints("Rolling resistance =", rolling_resistance)
 	############### Slip #######################
 	
@@ -186,52 +175,47 @@ func apply_forces(opposite_comp, delta):
 	var x_force: float = 0.0
 	var z_force: float = 0.0
 	
-	if tire_formula_to_use == TIRE_FORMULAS.CURVE_BASED_FORMULA:
-		x_force = TireForceVol2(abs(sa_modified), y_force, lateral_force) * sign(slip_vec.x)
-		z_force = TireForceVol2(abs(sr_modified), y_force, longitudinal_force) * sign(slip_vec.y)
-		
-	elif tire_formula_to_use == TIRE_FORMULAS.SIMPLE_PACEJKA:
-		x_force = pacejka(abs(sa_modified), tire_stiffness, pacejka_C_lat, mu, pacejka_E ,y_force) * sign(slip_vec.x)
-		z_force = pacejka(abs(sr_modified), tire_stiffness, pacejka_C_long, mu, pacejka_E ,y_force) * sign(slip_vec.y)
-		
-	if resultant_slip != 0:
-		force_vec.x = x_force * abs(normalised_sa / resultant_slip)
-		force_vec.y = z_force * abs(normalised_sr / resultant_slip)
-	else:
-		x_force = 0
-		z_force = 0
-		
-		force_vec.x = x_force
-		force_vec.y = z_force
+#	if tire_formula_to_use == TIRE_FORMULAS.CURVE_BASED_FORMULA:
+#		x_force = TireForceVol2(abs(sa_modified), y_force, lateral_force) * sign(slip_vec.x)
+#		z_force = TireForceVol2(abs(sr_modified), y_force, longitudinal_force) * sign(slip_vec.y)
+#
+#	elif tire_formula_to_use == TIRE_FORMULAS.SIMPLE_PACEJKA:
+#		x_force = pacejka(abs(sa_modified), tire_stiffness, pacejka_C_lat, mu, pacejka_E ,y_force) * sign(slip_vec.x)
+#		z_force = pacejka(abs(sr_modified), tire_stiffness, pacejka_C_long, mu, pacejka_E ,y_force) * sign(slip_vec.y)
 	
-	# We dont use the modified slip here because the brush tire formula handles slip combination
-	if tire_formula_to_use == TIRE_FORMULAS.BRUSH_TIRE_FORMULA:
-		force_vec = brushFormula(slip_vec, y_force)
+#	if resultant_slip != 0:
+#		force_vec.x = x_force * abs(normalised_sa / resultant_slip)
+#		force_vec.y = z_force * abs(normalised_sr / resultant_slip)
+#	else:
+#		force_vec.x = 0
+#		force_vec.y = 0
+	
+	force_vec = tire_model.get_tire_forces(slip_vec, y_force)
 	
 	if is_colliding():
 		var contact = get_collision_point() - car.global_transform.origin
 		var normal = get_collision_normal()
 		var surface
 		
-		var wear_mu = tire_wear_mu_curve.interpolate_baked(tire_wear)
+#		var wear_mu = tire_wear_mu_curve.interpolate_baked(tire_wear)
 		
 		if get_collider().get_groups().size() > 0:
 			surface = get_collider().get_groups()[0]
 		if surface:
 			if surface == "Tarmac":
-				mu = 1.0 * tire_mu * wear_mu
+				mu = 1.0 * tire_mu #* wear_mu
 				rol_res_surface_mul = 0.01
 			elif surface == "Grass":
-				mu = 0.55 * tire_mu * wear_mu
+				mu = 0.55 * tire_mu #* wear_mu
 				rol_res_surface_mul = 0.025
 			elif surface == "Gravel":
-				mu = 0.6 * tire_mu * wear_mu
+				mu = 0.6 * tire_mu #* wear_mu
 				rol_res_surface_mul = 0.03
 			elif surface == "Snow":
-				mu = 0.4 * tire_mu * wear_mu
+				mu = 0.4 * tire_mu #* wear_mu
 				rol_res_surface_mul = 0.035
 		else:
-			mu = 1 * tire_mu * wear_mu
+			mu = 1 * tire_mu #* wear_mu
 #		prints("Z force =", force_vec.y)
 		car.add_force(normal * y_force, contact)
 		car.add_force(global_transform.basis.x * force_vec.x, contact)
@@ -268,32 +252,8 @@ func applySolidAxleSpin(axlespin):
 	spin = axlespin
 
 
-func TireForceVol2(slip: float, normal_load: float, tire_curve: Curve) -> float:
-	var friction = normal_load * mu
-	return tire_curve.interpolate_baked(abs(slip)) * friction * sign(slip)
-
-
 func pacejka(slip, B, C, D, E, yforce):
 	return yforce * D * sin(C * atan(B * slip - E * (B * slip - atan(B * slip))))
-	
-
-func brushFormula(slip, yforce):
-	var stiffness = 500000 * tire_stiffness * pow(brush_contact_patch, 2)
-	var friction = mu * yforce
-	var deflect = sqrt(pow(stiffness * slip.y, 2) + pow(stiffness * tan(slip.x), 2))
-
-	if deflect == 0:
-		return Vector2.ZERO
-	else:
-		var vector = Vector2.ZERO
-		if deflect <= 0.5 * friction * (1 - slip.y):
-			vector.y = stiffness * -slip.y / (1 - slip.y)
-			vector.x = stiffness * tan(slip.x) / (1 - slip.y)
-		else:
-			var brushy = (1 - friction * (1 - slip_vec.y) / (4 * deflect)) / deflect
-			vector.y = -friction * stiffness * -slip.y * brushy
-			vector.x = friction * stiffness * tan(slip.x) * brushy
-		return vector
 
 
 func steer(input, max_steer):
