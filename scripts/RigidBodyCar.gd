@@ -20,15 +20,15 @@ enum DRIVE_TYPE{
 export (float) var max_steer = 0.3
 export (float, 0.0, 1.0) var front_brake_bias = 0.6
 export (float) var Steer_Speed = 5.0
-export (float) var max_brake_force = 500
+export (float) var max_brake_force = 500.0
 export (float) var fuel_tank_size = 40.0 #Liters
-export (float) var fuel_percentage = 100 # % of full tank
+export (float) var fuel_percentage = 100.0 # % of full tank
 
 ######### Engine variables #########
-export (float) var max_torque = 250
+export (float) var max_torque = 250.0
 export (float) var max_engine_rpm = 8000.0
-export (float) var rpm_clutch_out = 1500
-export (float) var rpm_idle = 900
+export (float) var rpm_clutch_out = 1500.0
+export (float) var rpm_idle = 900.0
 export (Curve) var torque_curve = null
 export (float) var engine_drag = 0.03
 export (float) var engine_brake = 10.0
@@ -45,14 +45,14 @@ export (float) var reverse_ratio = 3.9
 export (float) var gear_inertia = 0.02
 export (DIFF_TYPE) var rear_diff = DIFF_TYPE.LIMITED_SLIP
 export (DIFF_TYPE) var front_diff = DIFF_TYPE.LIMITED_SLIP
-export (float) var rear_diff_preload = 50
-export (float) var front_diff_preload = 50
+export (float) var rear_diff_preload = 50.0
+export (float) var front_diff_preload = 50.0
 export var rear_diff_power_ratio: float = 3.5
 export var front_diff_power_ratio: float = 3.5
-export var rear_diff_coast_ratio: float = 1
-export var front_diff_coast_ratio: float = 1
+export var rear_diff_coast_ratio: float = 1.0
+export var front_diff_coast_ratio: float = 1.0
 export (float, 0, 1) var center_split_f_r = 0.4 # AWD torque split front / rear
-export (float) var clutch_friction = 500
+export (float) var clutch_friction = 500.0
 
 ######### Aero #########
 export (float) var cd = 0.3

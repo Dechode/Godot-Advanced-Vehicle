@@ -11,14 +11,14 @@ export (TIRE_FORMULAS) var tire_formula_to_use = TIRE_FORMULAS.CURVE_BASED_FORMU
 
 ############# Suspension stuff #############
 export (float) var spring_length = 0.2
-export (float) var springstiffness = 20000
-export (float) var bump = 5000
-export (float) var rebound = 3000
+export (float) var springstiffness = 20000.0
+export (float) var bump = 5000.0
+export (float) var rebound = 3000.0
 export (float) var anti_roll = 0.0
 
 ############# Tire stuff #############
 
-export (float) var wheel_mass = 15
+export (float) var wheel_mass = 15.0
 export (float) var tire_radius = 0.3
 export (float) var tire_width = 0.2
 export (float) var ackermann = 0.15
@@ -32,7 +32,7 @@ export (Curve) var longitudinal_force = null
 
 ############# For brush tire_formula #############
 export (float) var brush_contact_patch = 0.2
-export (float) var tire_stiffness = 10 # Also used in tire wear
+export (float) var tire_stiffness = 10.0 # Also used in tire wear
 
 ############# For Pacejka tire formula #############
 export (float) var pacejka_C_long = 1.65
