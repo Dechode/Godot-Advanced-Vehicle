@@ -157,7 +157,7 @@ func _process(delta: float) -> void:
 			reversing = true
 		
 		# if torque is bigger in next gear change gear up
-		if engineTorque(next_gear_rpm) > torque_out:
+		if engineTorque(next_gear_rpm) > torque_out - drag_torque:
 		# if rpm is bigger in next gear change gear up
 			if rpm > 0.85 * max_engine_rpm:
 				if selected_gear >= 0:
