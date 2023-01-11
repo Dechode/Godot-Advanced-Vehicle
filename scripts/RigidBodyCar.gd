@@ -19,7 +19,7 @@ enum DRIVE_TYPE{
 
 export (float) var max_steer = 0.3
 export (float, 0.0, 1.0) var front_brake_bias = 0.6
-export (float) var Steer_Speed = 5.0
+export (float) var steer_speed = 5.0
 export (float) var max_brake_force = 500.0
 export (float) var fuel_tank_size = 40.0 #Liters
 export (float) var fuel_percentage = 100.0 # % of full tank
@@ -86,9 +86,10 @@ var engine_angular_vel: float = 0.0
 
 var rear_brake_force: float = 0.0
 var front_brake_force: float = 0.0
+
 var selected_gear: int = 0
 
-var drive_inertia: float = 0.0 #includes every inertia after engine and before wheels (wheels include brakes inertia)
+var drive_inertia: float = 0.2 #includes every inertia after engine and before wheels
 
 var r_split: float = 0.5
 var f_split: float = 0.5
@@ -139,9 +140,8 @@ func _process(delta: float) -> void:
 	
 	drive_inertia = engine_moment + pow(abs(gearRatio()), 2) * gear_inertia
 	
-	front_brake_force = max_brake_force * brake_input * front_brake_bias * 0.5 # Per wheel
-	
 	var rear_brake_input = max(brake_input, handbrake_input)
+	front_brake_force = max_brake_force * brake_input * front_brake_bias * 0.5 # Per wheel
 	rear_brake_force = max_brake_force * rear_brake_input * (1 - front_brake_bias) * 0.5 # Per wheel
 	
 	if automatic:
@@ -183,6 +183,7 @@ func _physics_process(delta):
 	x_vel = local_vel.x
 #	prints("z velocity =", z_vel)
 	dragForce()
+	
 	##### AntiRollBar #####
 	var prev_comp = susp_comp
 	susp_comp[2] = wheel_bl.apply_forces(prev_comp[3], delta)
@@ -192,12 +193,12 @@ func _physics_process(delta):
 	
 	##### Steerin with steer speed #####
 	if (steering_input < steering_amount):
-		steering_amount -= Steer_Speed * delta
+		steering_amount -= steer_speed * delta
 		if (steering_input > steering_amount):
 			steering_amount = steering_input
 	
 	elif (steering_input > steering_amount):
-		steering_amount += Steer_Speed * delta
+		steering_amount += steer_speed * delta
 		if (steering_input < steering_amount):
 			steering_amount = steering_input
 	
