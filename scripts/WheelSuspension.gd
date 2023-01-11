@@ -107,7 +107,6 @@ func get_peak_pacejka(yload, tire_stif, C, friction_coeff, E):
 	return 0.0
 
 
-
 func _process(delta: float) -> void:
 	wheelmesh.rotate_x(wrapf(-spin * delta,0, TAU))
 	if z_vel > 2.0:
