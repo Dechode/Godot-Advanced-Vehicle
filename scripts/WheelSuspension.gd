@@ -173,9 +173,5 @@ func applySolidAxleSpin(axlespin):
 	spin = axlespin
 
 
-func pacejka(slip, B, C, D, E, yforce):
-	return yforce * D * sin(C * atan(B * slip - E * (B * slip - atan(B * slip))))
-
-
 func steer(input, max_steer):
 	rotation.y = max_steer * (input + (1 - cos(input * 0.5 * PI)) * ackermann)

@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=2]
+[gd_scene load_steps=17 format=2]
 
 [ext_resource path="res://scenes/Basecar.tscn" type="PackedScene" id=1]
 [ext_resource path="res://models/KenneyCarKit1/_defaultMat.material" type="Material" id=2]
@@ -6,27 +6,25 @@
 [ext_resource path="res://models/KenneyCarKit1/plastic.material" type="Material" id=4]
 [ext_resource path="res://models/KenneyCarKit1/carTire.material" type="Material" id=5]
 [ext_resource path="res://models/KenneyCarKit1/paintRed.material" type="Material" id=6]
-[ext_resource path="res://scripts/TireModels/brush_tire_model.gd" type="Script" id=7]
 [ext_resource path="res://models/KenneyCarKit1/lightFront.material" type="Material" id=8]
 [ext_resource path="res://models/KenneyCarKit1/lightBack.material" type="Material" id=9]
+[ext_resource path="res://scripts/TireModels/pacejka_tire_model.gd" type="Script" id=10]
 
-[sub_resource type="Resource" id=8]
-resource_local_to_scene = true
-script = ExtResource( 7 )
-tire_stiffness = 0.0
-contact_patch = 0.2
-
-[sub_resource type="Resource" id=9]
-resource_local_to_scene = true
-script = ExtResource( 7 )
-tire_stiffness = 0.0
-contact_patch = 0.2
+[sub_resource type="Resource" id=6]
+script = ExtResource( 10 )
+tire_stiffness = 0.5
 
 [sub_resource type="Resource" id=7]
-resource_local_to_scene = true
-script = ExtResource( 7 )
-tire_stiffness = 0.0
-contact_patch = 0.2
+script = ExtResource( 10 )
+tire_stiffness = 0.5
+
+[sub_resource type="Resource" id=8]
+script = ExtResource( 10 )
+tire_stiffness = 0.5
+
+[sub_resource type="Resource" id=9]
+script = ExtResource( 10 )
+tire_stiffness = 0.5
 
 [sub_resource type="ArrayMesh" id=1]
 resource_name = "sedanSports_Mesh body"
@@ -154,7 +152,7 @@ far = 1000.0
 
 [node name="Wheel_br" parent="RigidBodyCar" index="1"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.75, -0.203989, 1.27031 )
-tire_model = SubResource( 8 )
+tire_model = SubResource( 6 )
 spring_length = 0.15
 spring_stiffness = 35000.0
 bump = 8000.0
@@ -165,7 +163,7 @@ tire_radius = 0.32
 
 [node name="Wheel_bl" parent="RigidBodyCar" index="2"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.8, -0.203989, 1.27031 )
-tire_model = SubResource( 9 )
+tire_model = SubResource( 7 )
 spring_length = 0.15
 spring_stiffness = 35000.0
 bump = 8000.0
@@ -176,7 +174,7 @@ tire_radius = 0.32
 
 [node name="Wheel_fr" parent="RigidBodyCar" index="3"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.75, -0.203989, -1.13272 )
-tire_model = SubResource( 7 )
+tire_model = SubResource( 8 )
 spring_length = 0.15
 spring_stiffness = 35000.0
 bump = 8000.0
@@ -187,7 +185,7 @@ tire_radius = 0.32
 
 [node name="Wheel_fl" parent="RigidBodyCar" index="4"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.8, -0.203989, -1.13272 )
-tire_model = SubResource( 7 )
+tire_model = SubResource( 9 )
 spring_length = 0.15
 spring_stiffness = 35000.0
 bump = 8000.0

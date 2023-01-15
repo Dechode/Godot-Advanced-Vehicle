@@ -49,7 +49,7 @@ export var rear_diff_power_ratio: float = 3.5
 export var front_diff_power_ratio: float = 3.5
 export var rear_diff_coast_ratio: float = 1.0
 export var front_diff_coast_ratio: float = 1.0
-export (float, 0, 1) var center_split_f_r = 0.4 # AWD torque split front / rear
+export (float, 0, 1) var center_split_fr = 0.4 # AWD torque split front / rear
 
 ######### Aero #########
 export (float) var cd = 0.3
@@ -403,8 +403,8 @@ func fwd(drive, delta):
 
 func awd(drive, delta):
 	
-	var rear_drive = drive * (1 - center_split_f_r)
-	var front_drive = drive * center_split_f_r
+	var rear_drive = drive * (1 - center_split_fr)
+	var front_drive = drive * center_split_fr
 	
 	var front_diff_locked = true
 	var rear_diff_locked = true

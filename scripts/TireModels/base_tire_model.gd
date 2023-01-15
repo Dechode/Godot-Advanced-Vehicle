@@ -23,7 +23,7 @@ var load_sensitivity := 1.0
 
 
 # Override this
-func update_tire_forces(slip: Vector2, normal_load: float, mu: float) -> Vector3:
+func update_tire_forces(slip: Vector2, normal_load: float, surface_mu: float) -> Vector3:
 	return Vector3.ZERO
 
 
