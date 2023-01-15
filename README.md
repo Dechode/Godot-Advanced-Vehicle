@@ -5,20 +5,15 @@ A more advanced car controller for the Godot game engine.
 
 Custom rigidbody car controller with raycast suspension for the Godot game engine. This one is a bit more realistic than the built-in vehiclebody with wheelcolliders. Also easy to extend to be even more on the simulation side of vehicle controllers.
 
-As of January 6th 2022 all 3 tire models now use combined slip!
-
 
 Features:
 - RWD, FWD and AWD drivetypes available
-- 3 different tire models to choose from: simple pacejka model, brush tire model and one using godot curves.
+- Pacejka tire model and brush tire model available.
 - Tire wear
 - Fuel consumption using BSFC
-- Torque curve for the engine
-- Simple engine sound
 - Choose between preloaded limited slip diff, open diff and locked diff/solid axle
 - Manual clutch with adjustable clutch friction force
-- Manual gearbox
-- Different surfaces have different friction
+- Manual and automatic gearbox
 
 This project would not have been possible without Wolfes written tutorial of his own car simulator physics. Also huge thank you to Bastiaan Olij for his vehicle demo. See the links in the Acknowledments section for more info.
 
