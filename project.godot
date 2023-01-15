@@ -14,6 +14,16 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://scripts/RigidBodyCar.gd"
 }, {
+"base": "Resource",
+"class": "BaseTireModel",
+"language": "GDScript",
+"path": "res://scripts/TireModels/base_tire_model.gd"
+}, {
+"base": "BaseTireModel",
+"class": "BrushTireModel",
+"language": "GDScript",
+"path": "res://scripts/TireModels/brush_tire_model.gd"
+}, {
 "base": "RayCast",
 "class": "RaycastSuspension",
 "language": "GDScript",
@@ -21,6 +31,8 @@ _global_script_classes=[ {
 } ]
 _global_script_class_icons={
 "BaseCar": "",
+"BaseTireModel": "",
+"BrushTireModel": "",
 "RaycastSuspension": ""
 }
 

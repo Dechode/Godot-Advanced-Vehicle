@@ -46,4 +46,4 @@ func _process(delta: float) -> void:
 	$Panel/WheelFR/TireWearLabel.text = str(stepify(wheel_fr.tire_wear * 100, 0.01))
 	$Panel/WheelBL/TireWearLabel.text = str(stepify(wheel_bl.tire_wear * 100, 0.01))
 	$Panel/WheelBR/TireWearLabel.text = str(stepify(wheel_br.tire_wear * 100, 0.01))
-	
+

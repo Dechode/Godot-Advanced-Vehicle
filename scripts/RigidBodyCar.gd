@@ -19,16 +19,16 @@ enum DRIVE_TYPE{
 
 export (float) var max_steer = 0.3
 export (float, 0.0, 1.0) var front_brake_bias = 0.6
-export (float) var Steer_Speed = 5.0
-export (float) var max_brake_force = 500
+export (float) var steer_speed = 5.0
+export (float) var max_brake_force = 500.0
 export (float) var fuel_tank_size = 40.0 #Liters
-export (float) var fuel_percentage = 100 # % of full tank
+export (float) var fuel_percentage = 100.0 # % of full tank
 
 ######### Engine variables #########
-export (float) var max_torque = 250
+export (float) var max_torque = 250.0
 export (float) var max_engine_rpm = 8000.0
-export (float) var rpm_clutch_out = 1500
-export (float) var rpm_idle = 900
+export (float) var rpm_clutch_out = 1500.0
+export (float) var rpm_idle = 900.0
 export (Curve) var torque_curve = null
 export (float) var engine_drag = 0.03
 export (float) var engine_brake = 10.0
@@ -45,14 +45,14 @@ export (float) var reverse_ratio = 3.9
 export (float) var gear_inertia = 0.02
 export (DIFF_TYPE) var rear_diff = DIFF_TYPE.LIMITED_SLIP
 export (DIFF_TYPE) var front_diff = DIFF_TYPE.LIMITED_SLIP
-export (float) var rear_diff_preload = 50
-export (float) var front_diff_preload = 50
+export (float) var rear_diff_preload = 50.0
+export (float) var front_diff_preload = 50.0
 export var rear_diff_power_ratio: float = 3.5
 export var front_diff_power_ratio: float = 3.5
-export var rear_diff_coast_ratio: float = 1
-export var front_diff_coast_ratio: float = 1
+export var rear_diff_coast_ratio: float = 1.0
+export var front_diff_coast_ratio: float = 1.0
 export (float, 0, 1) var center_split_f_r = 0.4 # AWD torque split front / rear
-export (float) var clutch_friction = 500
+export (float) var clutch_friction = 500.0
 
 ######### Aero #########
 export (float) var cd = 0.3
@@ -86,9 +86,10 @@ var engine_angular_vel: float = 0.0
 
 var rear_brake_force: float = 0.0
 var front_brake_force: float = 0.0
+
 var selected_gear: int = 0
 
-var drive_inertia: float = 0.0 #includes every inertia after engine and before wheels (wheels include brakes inertia)
+var drive_inertia: float = 0.2 #includes every inertia after engine and before wheels
 
 var r_split: float = 0.5
 var f_split: float = 0.5
@@ -139,9 +140,8 @@ func _process(delta: float) -> void:
 	
 	drive_inertia = engine_moment + pow(abs(gearRatio()), 2) * gear_inertia
 	
-	front_brake_force = max_brake_force * brake_input * front_brake_bias * 0.5 # Per wheel
-	
 	var rear_brake_input = max(brake_input, handbrake_input)
+	front_brake_force = max_brake_force * brake_input * front_brake_bias * 0.5 # Per wheel
 	rear_brake_force = max_brake_force * rear_brake_input * (1 - front_brake_bias) * 0.5 # Per wheel
 	
 	if automatic:
@@ -157,8 +157,7 @@ func _process(delta: float) -> void:
 			reversing = true
 		
 		# if torque is bigger in next gear change gear up
-		if engineTorque(next_gear_rpm) > torque_out:
-		# if rpm is bigger in next gear change gear up
+		if engineTorque(next_gear_rpm) > torque_out - drag_torque:
 			if rpm > 0.85 * max_engine_rpm:
 				if selected_gear >= 0:
 					if Time.get_ticks_msec() - last_shift_time > shift_time:
@@ -183,6 +182,7 @@ func _physics_process(delta):
 	x_vel = local_vel.x
 #	prints("z velocity =", z_vel)
 	dragForce()
+	
 	##### AntiRollBar #####
 	var prev_comp = susp_comp
 	susp_comp[2] = wheel_bl.apply_forces(prev_comp[3], delta)
@@ -192,12 +192,12 @@ func _physics_process(delta):
 	
 	##### Steerin with steer speed #####
 	if (steering_input < steering_amount):
-		steering_amount -= Steer_Speed * delta
+		steering_amount -= steer_speed * delta
 		if (steering_input > steering_amount):
 			steering_amount = steering_input
 	
 	elif (steering_input > steering_amount):
-		steering_amount += Steer_Speed * delta
+		steering_amount += steer_speed * delta
 		if (steering_input < steering_amount):
 			steering_amount = steering_input
 	
