@@ -132,6 +132,7 @@ max_engine_rpm = 7500.0
 rpm_clutch_out = 2500.0
 engine_moment = 0.12
 gear_ratios = [ 3.5, 2.3, 1.7, 1.25, 1.0 ]
+automatic = false
 gear_inertia = 0.2
 front_diff = 2
 rear_diff_power_ratio = 3.0
