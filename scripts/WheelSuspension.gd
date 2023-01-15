@@ -6,7 +6,7 @@ export var tire_model: Resource
 
 ############# Suspension stuff #############
 export (float) var spring_length = 0.2
-export (float) var springstiffness = 20000.0
+export (float) var spring_stiffness = 20000.0
 export (float) var bump = 5000.0
 export (float) var rebound = 3000.0
 export (float) var anti_roll = 0.0
@@ -48,7 +48,7 @@ onready var wheelmesh = $MeshInstance
 
 
 func _ready() -> void:
-	var nominal_load = car.weight * 0.25
+#	var nominal_load = car.weight * 0.25
 	wheel_moment = 0.5 * wheel_mass * pow(tire_radius, 2)
 	set_cast_to(Vector3.DOWN * (spring_length + tire_radius))
 
@@ -92,7 +92,7 @@ func apply_forces(opposite_comp, delta):
 		spring_curr_length = spring_length
 		
 	var compress = 1 - spring_curr_length / spring_length
-	y_force = springstiffness * compress * spring_length
+	y_force = spring_stiffness * compress * spring_length
 
 	if (compress - prev_compress) >= 0:
 		y_force += (bump + wheel_mass) * (compress - prev_compress) * spring_length / delta
@@ -117,12 +117,12 @@ func apply_forces(opposite_comp, delta):
 			slip_vec.y = 0.0001 * spin # This is to avoid "getting stuck" if local z velocity is absolute 0
 	
 	############### Calculate and apply the forces #######################
-	var normalised_sr = slip_vec.y / peak_sr
-	var normalised_sa = slip_vec.x / peak_sa
-	var resultant_slip = sqrt(pow(normalised_sr, 2) + pow(normalised_sa, 2))
-
-	var sr_modified = resultant_slip * peak_sr
-	var sa_modified = resultant_slip * peak_sa
+#	var normalised_sr = slip_vec.y / peak_sr
+#	var normalised_sa = slip_vec.x / peak_sa
+#	var resultant_slip = sqrt(pow(normalised_sr, 2) + pow(normalised_sa, 2))
+#
+#	var sr_modified = resultant_slip * peak_sr
+#	var sa_modified = resultant_slip * peak_sa
 	
 #	if resultant_slip != 0:
 #		force_vec.x = force_vec.x * abs(normalised_sa / resultant_slip)

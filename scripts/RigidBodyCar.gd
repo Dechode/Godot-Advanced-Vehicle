@@ -1,6 +1,5 @@
-extends RigidBody
-
 class_name BaseCar
+extends RigidBody
 
 
 enum DIFF_TYPE{
@@ -9,13 +8,11 @@ enum DIFF_TYPE{
 	LOCKED,
 }
 
-
 enum DRIVE_TYPE{
 	FWD,
 	RWD,
 	AWD,
 }
-
 
 export (float) var max_steer = 0.3
 export (float, 0.0, 1.0) var front_brake_bias = 0.6
@@ -35,6 +32,7 @@ export (float) var engine_brake = 10.0
 export (float) var engine_moment = 0.25
 export (float) var engine_bsfc = 0.3
 export (AudioStream) var engine_sound
+export (float) var clutch_friction = 500.0
 
 ######### Drivetrain variables #########
 export (DRIVE_TYPE) var drivetype = DRIVE_TYPE.RWD
@@ -52,7 +50,6 @@ export var front_diff_power_ratio: float = 3.5
 export var rear_diff_coast_ratio: float = 1.0
 export var front_diff_coast_ratio: float = 1.0
 export (float, 0, 1) var center_split_f_r = 0.4 # AWD torque split front / rear
-export (float) var clutch_friction = 500.0
 
 ######### Aero #########
 export (float) var cd = 0.3

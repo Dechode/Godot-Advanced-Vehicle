@@ -38,7 +38,7 @@ func update_tire_wear(delta: float, slip: Vector2, normal_load: float, mu: float
 func update_load_sensitivity(normal_load: float) -> float:
 	var max_mu = 3.0
 	var min_mu = 0.5
-	var nominal_load = 6000
-	var load_factor = normal_load / nominal_load
+	var average_load = 5000
+	var load_factor = normal_load / average_load
 	load_sensitivity = clamp(min_mu + (1 - load_factor) * (max_mu - min_mu), min_mu, max_mu)
 	return load_sensitivity
