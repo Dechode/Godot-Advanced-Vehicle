@@ -24,6 +24,8 @@ func update_tire_forces(slip: Vector2, normal_load: float, surface_mu: float):
 	var b = 2 + tire_stiffness * 18
 	force_vec.x = pacejka(slip.x, b, 1.35, mu, 0, normal_load)
 	force_vec.y = pacejka(slip.y, b, 1.6, mu, 0, normal_load)
+	force_vec.z = pacejka(slip.x, b, 2.0, 0.1 * mu, -20, normal_load)
+	
 	if resultant_slip != 0:
 		force_vec.x = force_vec.x * abs(normalised_sa / resultant_slip)
 		force_vec.y = force_vec.y * abs(normalised_sr / resultant_slip)
