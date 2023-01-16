@@ -159,8 +159,10 @@ func _process(delta: float) -> void:
 				if selected_gear >= 0:
 					if Time.get_ticks_msec() - last_shift_time > shift_time:
 						shiftUp()
-		
-		if selected_gear > 1 and rpm < 0.3 * max_engine_rpm:
+		var prev_gear_rpm = 0
+		if selected_gear -1 > -1:
+			prev_gear_rpm = gear_ratios [selected_gear - 1] * final_drive
+		if selected_gear > 1 and rpm < 0.5 * max_engine_rpm and engineTorque(prev_gear_rpm) > torque_out - drag_torque:
 			if Time.get_ticks_msec() - last_shift_time > shift_time:
 				shiftDown()
 				
