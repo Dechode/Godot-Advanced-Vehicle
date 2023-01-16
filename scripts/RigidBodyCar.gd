@@ -268,10 +268,9 @@ func engage(delta):
 	elif drivetype == DRIVE_TYPE.AWD:
 		gearbox_shaft_speed = (avg_front_spin + avg_rear_spin) * 0.5 * gearRatio()
 		
-#	var speed_error = engine_angular_vel - gearbox_shaft_speed 
-#	var speed_error_scaled = speed_error * AV_2_RPM / max_engine_rpm
-
-	var clutch_torque: float = clutch_friction * (1 - clutch_input)# * (1 - speed_error_scaled)
+	var speed_error = engine_angular_vel - gearbox_shaft_speed
+	var clutch_kick = abs(speed_error) * 0.2
+	var clutch_torque: float = (clutch_friction + clutch_kick) * (1 - clutch_input)# * (1 - speed_error_scaled)
 	
 	if engine_angular_vel > gearbox_shaft_speed:
 		clutch_reaction_torque = -clutch_torque
