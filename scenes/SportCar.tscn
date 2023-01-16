@@ -12,19 +12,19 @@
 
 [sub_resource type="Resource" id=6]
 script = ExtResource( 10 )
-tire_stiffness = 1.0
+tire_stiffness = 0.5
 
 [sub_resource type="Resource" id=7]
 script = ExtResource( 10 )
-tire_stiffness = 1.0
+tire_stiffness = 0.5
 
 [sub_resource type="Resource" id=8]
 script = ExtResource( 10 )
-tire_stiffness = 1.0
+tire_stiffness = 0.5
 
 [sub_resource type="Resource" id=9]
 script = ExtResource( 10 )
-tire_stiffness = 1.0
+tire_stiffness = 0.5
 
 [sub_resource type="ArrayMesh" id=1]
 resource_name = "sedanSports_Mesh body"
