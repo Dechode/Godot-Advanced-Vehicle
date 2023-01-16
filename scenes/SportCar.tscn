@@ -136,7 +136,7 @@ surfaces/1 = {
 [node name="RigidBodyCar" parent="." instance=ExtResource( 1 )]
 mass = 1000.0
 max_steer = 0.4
-max_brake_force = 2700.0
+max_brake_force = 1800.0
 fuel_tank_size = 50.0
 max_torque = 150.0
 max_engine_rpm = 7500.0
@@ -182,6 +182,7 @@ rebound = 11000.0
 anti_roll = 100.0
 wheel_mass = 25.0
 tire_radius = 0.32
+ackermann = -0.15
 
 [node name="Wheel_fl" parent="RigidBodyCar" index="4"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.8, -0.203989, -1.13272 )
@@ -193,7 +194,6 @@ rebound = 11000.0
 anti_roll = 100.0
 wheel_mass = 25.0
 tire_radius = 0.32
-ackermann = -0.15
 
 [node name="CamTarget" parent="RigidBodyCar" index="7"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.27116, 0 )

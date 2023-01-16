@@ -161,7 +161,6 @@ func _process(delta: float) -> void:
 				if Time.get_ticks_msec() - last_shift_time > shift_time:
 					shiftUp()
 		var torque_bigger_prev_gear = engineTorque(prev_gear_rpm) > torque_out - drag_torque
-		print(torque_bigger_prev_gear)
 		if selected_gear > 1 and rpm < 0.5 * max_engine_rpm and torque_bigger_prev_gear:
 			if Time.get_ticks_msec() - last_shift_time > shift_time:
 				shiftDown()
