@@ -143,30 +143,29 @@ func _process(delta: float) -> void:
 	
 	if automatic:
 		var reversing = false
-		
 		var shift_time = 700
 		var next_gear_rpm = 0
+		if selected_gear < gear_ratios.size():
+			next_gear_rpm = gear_ratios[selected_gear] * final_drive * avg_front_spin * AV_2_RPM
 		
-		if selected_gear + 1 < gear_ratios.size():
-			next_gear_rpm = gear_ratios[selected_gear + 1] * final_drive
+		var prev_gear_rpm = 0
+		if selected_gear - 1 > 0:
+			prev_gear_rpm = gear_ratios[selected_gear - 1] * final_drive * avg_front_spin * AV_2_RPM
 		
 		if selected_gear == -1:
 			reversing = true
-		
-		# if torque is bigger in next gear change gear up
-		if engineTorque(next_gear_rpm) > torque_out - drag_torque:
+
+		var torque_bigger_next_gear = engineTorque(next_gear_rpm) > torque_out - drag_torque
+		if torque_bigger_next_gear and selected_gear >= 0:
 			if rpm > 0.85 * max_engine_rpm:
-				if selected_gear >= 0:
-					if Time.get_ticks_msec() - last_shift_time > shift_time:
-						shiftUp()
-		var prev_gear_rpm = 0
-		if selected_gear -1 > -1:
-			prev_gear_rpm = gear_ratios [selected_gear - 1] * final_drive
-		if selected_gear > 1 and rpm < 0.5 * max_engine_rpm and engineTorque(prev_gear_rpm) > torque_out - drag_torque:
+				if Time.get_ticks_msec() - last_shift_time > shift_time:
+					shiftUp()
+		var torque_bigger_prev_gear = engineTorque(prev_gear_rpm) > torque_out - drag_torque
+		print(torque_bigger_prev_gear)
+		if selected_gear > 1 and rpm < 0.5 * max_engine_rpm and torque_bigger_prev_gear:
 			if Time.get_ticks_msec() - last_shift_time > shift_time:
 				shiftDown()
-				
-		if abs(selected_gear) <= 1 and abs(z_vel) < 0.5 and brake_input > 0.2:
+		if abs(selected_gear) <= 1 and abs(z_vel) < 3.0 and brake_input > 0.2:
 			if not reversing:
 				if Time.get_ticks_msec() - last_shift_time > shift_time:
 					shiftDown()
@@ -174,12 +173,12 @@ func _process(delta: float) -> void:
 				if Time.get_ticks_msec() - last_shift_time > shift_time:
 					shiftUp()
 
+
 func _physics_process(delta):
 	local_vel = global_transform.basis.xform_inv((global_transform.origin - prev_pos) / delta)
 	prev_pos = global_transform.origin
 	z_vel = -local_vel.z
 	x_vel = local_vel.x
-#	prints("z velocity =", z_vel)
 	dragForce()
 	
 	##### AntiRollBar #####
@@ -204,7 +203,6 @@ func _physics_process(delta):
 	wheel_fr.steer(steering_amount, max_steer)
 	
 	##### Engine loop #####
-	
 	drag_torque = engine_brake + rpm * engine_drag
 	torque_out = (engineTorque(rpm) + drag_torque ) * throttle_input
 	engine_net_torque = torque_out + clutch_reaction_torque - drag_torque
@@ -282,9 +280,6 @@ func engage(delta):
 	net_drive = drive_reaction_torque * gearRatio() * (1 - clutch_input) 
 	
 	if drivetype == DRIVE_TYPE.RWD:
-#		if avg_rear_spin * sign(gearRatio()) < 0: # Should these still be in here? works better without
-#			net_drive += drag_torque * gearRatio()
-		
 		rwd(net_drive, delta)
 		wheel_fl.apply_torque(0.0, 0.0, front_brake_force, delta)
 		wheel_fr.apply_torque(0.0, 0.0, front_brake_force, delta)
@@ -293,10 +288,6 @@ func engage(delta):
 		awd(net_drive, delta)
 	
 	elif drivetype == DRIVE_TYPE.FWD:
-		
-#		if avg_front_spin * sign(gearRatio()) < 0: # Should these still be in here? works better without
-#			net_drive += drag_torque * gearRatio()
-		
 		fwd(net_drive, delta)
 		wheel_bl.apply_torque(0.0, 0.0, rear_brake_force, delta)
 		wheel_br.apply_torque(0.0, 0.0, rear_brake_force, delta)
@@ -330,7 +321,6 @@ func rwd(drive, delta):
 		diff_locked = false
 	
 	if !diff_locked:
-#		print("Unlocked")
 		var diff_sum: float = 0.0
 		
 		diff_sum -= wheel_br.apply_torque(drive * (1 - r_split), drive_inertia, rear_brake_force, delta)
@@ -340,7 +330,6 @@ func rwd(drive, delta):
 		
 	else:
 		r_split = 0.5
-#		print("Locked")
 		# Initialize net_torque with previous frame's friction
 		var net_torque = (wheel_bl.force_vec.y * wheel_bl.tire_radius + wheel_br.force_vec.y * wheel_br.tire_radius)# * 0.5
 		net_torque += drive
@@ -375,7 +364,6 @@ func fwd(drive, delta):
 		diff_locked = false
 	
 	if !diff_locked:
-#		print("Unlocked")
 		var diff_sum: float = 0.0
 		
 		diff_sum -= wheel_fr.apply_torque(drive * (1 - f_split), drive_inertia, front_brake_force, delta)
@@ -385,7 +373,6 @@ func fwd(drive, delta):
 		
 	else:
 		f_split = 0.5
-#		print("Locked")
 		# Initialize net_torque with previous frame's friction
 		var net_torque = (wheel_fl.force_vec.y * wheel_fl.tire_radius + wheel_fr.force_vec.y * wheel_fr.tire_radius)# * 0.5
 		net_torque += drive
@@ -496,8 +483,6 @@ func dragForce():
 	var fdrag: Vector2 = Vector2.ZERO
 	fdrag.y = cdrag * z_vel * spd
 	fdrag.x = -cdrag * x_vel * spd
-	
-#	prints("drag force vector =", fdrag)
 	
 	add_central_force(global_transform.basis.z * fdrag.y)
 	add_central_force(global_transform.basis.x * fdrag.x)
