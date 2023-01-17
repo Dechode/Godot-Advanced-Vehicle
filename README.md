@@ -31,13 +31,7 @@ Xbox controller:
 - LB for clutch
 
 ## Help
-<<<<<<< HEAD
-
 Make sure the physics FPS is set to atleast 120 or the physics start to get weird. In this project it is set to 240.
-
-=======
-Make sure the physics FPS is set to atleast 120 or the physics start to get weird. In this project it is set to 240.
->>>>>>> dev
 
 ## License
 This project is licensed under the MIT License - see the LICENSE.md file for details. This project also contains models and textures owned by their authors. See links below for exact licenses.
