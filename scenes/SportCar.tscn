@@ -196,7 +196,7 @@ wheel_mass = 25.0
 tire_radius = 0.32
 
 [node name="CamTarget" parent="RigidBodyCar" index="7"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.27116, 0 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.27116, 0.570521 )
 
 [node name="MeshInstance" type="MeshInstance" parent="RigidBodyCar"]
 transform = Transform( 1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.8, 0, -0.353989, 0.05 )
