@@ -55,6 +55,7 @@ func _ready() -> void:
 
 #func _process(delta: float) -> void:
 func _physics_process(delta: float) -> void:
+	wheelmesh.translation.y = -spring_curr_length
 	wheelmesh.rotate_x(wrapf(-spin * delta,0, TAU))
 	if abs(z_vel) > 2.0:
 		tire_wear = tire_model.update_tire_wear(delta, slip_vec, y_force, surface_mu)
@@ -156,8 +157,8 @@ func apply_torque(drive, drive_inertia, brake_torque, delta):
 	var prev_spin = spin
 	var net_torque = force_vec.y * tire_radius
 	net_torque += drive
-#	if spin < 5 and brake_torque > abs(net_torque):
-	if brake_torque > abs(net_torque):
+	if spin < 5 and brake_torque > abs(net_torque):
+#	if brake_torque > abs(net_torque):
 		spin = 0
 	else:
 		net_torque -= (brake_torque + rolling_resistance) * sign(spin)
