@@ -25,14 +25,14 @@ extends Camera3D
 #SOFTWARE.
 
 
-@export (NodePath) var follow_this_path = null
+@export var follow_this_path: NodePath
 
-@export var target_distance = 3.0
-@export var target_height = 1.0
-@export var lerp_speed = 20.0
+@export var target_distance := 3.0
+@export var target_height := 1.0
+@export var lerp_speed := 20.0
 
 var follow_this = null
-var last_lookat
+var last_lookat =  null
 
 
 func _ready():
