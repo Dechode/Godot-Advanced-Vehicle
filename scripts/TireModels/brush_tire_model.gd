@@ -1,7 +1,7 @@
 class_name BrushTireModel
 extends BaseTireModel
 
-export (float) var contact_patch = 0.2
+@export (float) var contact_patch = 0.2
 
 
 func update_tire_forces(slip: Vector2, normal_load: float, surface_mu: float = 1.0) -> Vector3:

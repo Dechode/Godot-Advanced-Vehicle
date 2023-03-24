@@ -19,8 +19,8 @@ bottom_radius = 0.3
 height = 0.2
 radial_segments = 16
 
-[node name="RigidBodyCar" type="RigidBody"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0 )
+[node name="RigidBodyCar" type="RigidBody3D"]
+transform = Transform3D( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0 )
 collision_layer = 2
 mass = 700.0
 script = ExtResource( 1 )
@@ -31,60 +31,60 @@ engine_sound = ExtResource( 3 )
 gear_ratios = [ 3.5, 3.0, 2.5, 1.72, 1.2, 1.0 ]
 gear_inertia = 0.09
 
-[node name="Camera" type="ClippedCamera" parent="."]
-transform = Transform( 1, 0, 0, 0, 0.965926, 0.258819, 0, -0.258819, 0.965926, 0, 1.6, 4.4 )
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D( 1, 0, 0, 0, 0.965926, 0.258819, 0, -0.258819, 0.965926, 0, 1.6, 4.4 )
 script = ExtResource( 6 )
 follow_this_path = NodePath("../CamTarget")
 
-[node name="Wheel_br" type="RayCast" parent="."]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.8, 0, 1.5 )
+[node name="Wheel_br" type="RayCast3D" parent="."]
+transform = Transform3D( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.8, 0, 1.5 )
 enabled = true
 script = ExtResource( 2 )
 springstiffness = 40000.0
 bump = 7000.0
 rebound = 5000.0
 
-[node name="MeshInstance" type="MeshInstance" parent="Wheel_br"]
-transform = Transform( -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 0, 0, 0 )
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Wheel_br"]
+transform = Transform3D( -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 0, 0, 0 )
 mesh = SubResource( 10 )
 skeleton = NodePath("")
 
-[node name="Wheel_bl" type="RayCast" parent="."]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.8, 0, 1.5 )
+[node name="Wheel_bl" type="RayCast3D" parent="."]
+transform = Transform3D( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.8, 0, 1.5 )
 enabled = true
 script = ExtResource( 2 )
 springstiffness = 40000.0
 bump = 7000.0
 rebound = 5000.0
 
-[node name="MeshInstance" type="MeshInstance" parent="Wheel_bl"]
-transform = Transform( -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 0, 0, 0 )
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Wheel_bl"]
+transform = Transform3D( -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 0, 0, 0 )
 mesh = SubResource( 10 )
 skeleton = NodePath("")
 
-[node name="Wheel_fr" type="RayCast" parent="."]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.8, 0, -1.4 )
+[node name="Wheel_fr" type="RayCast3D" parent="."]
+transform = Transform3D( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.8, 0, -1.4 )
 enabled = true
 script = ExtResource( 2 )
 springstiffness = 40000.0
 bump = 7000.0
 rebound = 5000.0
 
-[node name="MeshInstance" type="MeshInstance" parent="Wheel_fr"]
-transform = Transform( -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 0, 0, 0 )
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Wheel_fr"]
+transform = Transform3D( -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 0, 0, 0 )
 mesh = SubResource( 10 )
 skeleton = NodePath("")
 
-[node name="Wheel_fl" type="RayCast" parent="."]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.8, 0, -1.4 )
+[node name="Wheel_fl" type="RayCast3D" parent="."]
+transform = Transform3D( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.8, 0, -1.4 )
 enabled = true
 script = ExtResource( 2 )
 springstiffness = 40000.0
 bump = 7000.0
 rebound = 5000.0
 
-[node name="MeshInstance" type="MeshInstance" parent="Wheel_fl"]
-transform = Transform( -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 0, 0, 0 )
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Wheel_fl"]
+transform = Transform3D( -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 0, 0, 0 )
 mesh = SubResource( 10 )
 skeleton = NodePath("")
 
@@ -99,35 +99,35 @@ script = ExtResource( 4 )
 self_modulate = Color( 1, 1, 1, 0.556863 )
 anchor_top = 1.0
 anchor_bottom = 1.0
-margin_top = -100.0
-margin_right = 200.0
-rect_min_size = Vector2( 200, 100 )
+offset_top = -100.0
+offset_right = 200.0
+custom_minimum_size = Vector2( 200, 100 )
 
 [node name="VBoxContainer" type="VBoxContainer" parent="Gui/Essentials"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 
 [node name="GearLabel" type="Label" parent="Gui/Essentials/VBoxContainer"]
-margin_right = 200.0
-margin_bottom = 14.0
+offset_right = 200.0
+offset_bottom = 14.0
 text = "Gear"
 
 [node name="Speedlabel" type="Label" parent="Gui/Essentials/VBoxContainer"]
-margin_top = 18.0
-margin_right = 200.0
-margin_bottom = 32.0
+offset_top = 18.0
+offset_right = 200.0
+offset_bottom = 32.0
 text = "Speed"
 
 [node name="RpmLabel" type="Label" parent="Gui/Essentials/VBoxContainer"]
-margin_top = 36.0
-margin_right = 200.0
-margin_bottom = 50.0
+offset_top = 36.0
+offset_right = 200.0
+offset_bottom = 50.0
 text = "Rpm"
 
 [node name="FuelLabel" type="Label" parent="Gui/Essentials/VBoxContainer"]
-margin_top = 54.0
-margin_right = 200.0
-margin_bottom = 68.0
+offset_top = 54.0
+offset_right = 200.0
+offset_bottom = 68.0
 text = "Fuel"
 
 [node name="TireInfoApp" parent="Gui" instance=ExtResource( 7 )]
@@ -135,10 +135,10 @@ anchor_left = 0.0
 anchor_top = 0.0
 anchor_right = 0.0
 anchor_bottom = 0.0
-margin_left = 0.0
-margin_top = 0.0
-margin_right = 150.0
-margin_bottom = 200.0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 150.0
+offset_bottom = 200.0
 wheel_fl_path = NodePath("../../Wheel_fl")
 wheel_fr_path = NodePath("../../Wheel_fr")
 wheel_bl_path = NodePath("../../Wheel_bl")
@@ -146,5 +146,5 @@ wheel_br_path = NodePath("../../Wheel_br")
 
 [node name="InputApp" parent="Gui" instance=ExtResource( 8 )]
 
-[node name="CamTarget" type="Position3D" parent="."]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.17515, 0 )
+[node name="CamTarget" type="Marker3D" parent="."]
+transform = Transform3D( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.17515, 0 )

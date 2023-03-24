@@ -3,7 +3,7 @@ extends Resource
 
 const TIRE_WEAR_CURVE = preload("res://resources/tire_wear_curve.tres")
 
-export(float, 0.0 ,1.0) var tire_stiffness = 0.5
+@export var tire_stiffness = 0.5 # (float, 0.0 ,1.0)
 
 # Possible input parameters for tire model
 #export var tire_rated_pressure := 2.0

@@ -7,7 +7,7 @@ func pacejka(slip, B, C, D, E, normal_load):
 
 
 func update_tire_forces(slip: Vector2, normal_load: float, surface_mu: float):
-	var wear_mu = TIRE_WEAR_CURVE.interpolate_baked(tire_wear)
+	var wear_mu = TIRE_WEAR_CURVE.sample_baked(tire_wear)
 	load_sensitivity = update_load_sensitivity(normal_load)
 	var mu = surface_mu * load_sensitivity * wear_mu
 	

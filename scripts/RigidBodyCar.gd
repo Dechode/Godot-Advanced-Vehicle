@@ -1,5 +1,5 @@
 class_name BaseCar
-extends RigidBody
+extends RigidBody3D
 
 
 enum DIFF_TYPE{
@@ -14,47 +14,47 @@ enum DRIVE_TYPE{
 	AWD,
 }
 
-export (float) var max_steer = 0.3
-export (float, 0.0, 1.0) var front_brake_bias = 0.6
-export (float) var steer_speed = 5.0
-export (float) var max_brake_force = 500.0
-export (float) var fuel_tank_size = 40.0 #Liters
-export (float) var fuel_percentage = 100.0 # % of full tank
+@export var max_steer = 0.3
+@export var front_brake_bias = 0.6
+@export var steer_speed = 5.0
+@export var max_brake_force = 500.0
+@export var fuel_tank_size = 40.0 #Liters
+@export var fuel_percentage = 100.0 # % of full tank
 
 ######### Engine variables #########
-export (float) var max_torque = 250.0
-export (float) var max_engine_rpm = 8000.0
-export (float) var rpm_clutch_out = 1500.0
-export (float) var rpm_idle = 900.0
-export (Curve) var torque_curve = null
-export (float) var engine_drag = 0.03
-export (float) var engine_brake = 10.0
-export (float) var engine_moment = 0.25
-export (float) var engine_bsfc = 0.3
-export (AudioStream) var engine_sound
-export (float) var clutch_friction = 500.0
+@export var max_torque = 250.0
+@export var max_engine_rpm = 8000.0
+@export var rpm_clutch_out = 1500.0
+@export var rpm_idle = 900.0
+@export var torque_curve: Curve = null
+@export var engine_drag = 0.03
+@export var engine_brake = 10.0
+@export var engine_moment = 0.25
+@export var engine_bsfc = 0.3
+@export var engine_sound: AudioStreamPlayer
+@export var clutch_friction = 500.0
 
 ######### Drivetrain variables #########
-export (DRIVE_TYPE) var drivetype = DRIVE_TYPE.RWD
-export (Array) var gear_ratios = [ 3.1, 2.61, 2.1, 1.72, 1.2, 1.0 ] 
-export var automatic := true
-export (float) var final_drive = 3.7
-export (float) var reverse_ratio = 3.9
-export (float) var gear_inertia = 0.02
-export (DIFF_TYPE) var rear_diff = DIFF_TYPE.LIMITED_SLIP
-export (DIFF_TYPE) var front_diff = DIFF_TYPE.LIMITED_SLIP
-export (float) var rear_diff_preload = 50.0
-export (float) var front_diff_preload = 50.0
-export var rear_diff_power_ratio: float = 3.5
-export var front_diff_power_ratio: float = 3.5
-export var rear_diff_coast_ratio: float = 1.0
-export var front_diff_coast_ratio: float = 1.0
-export (float, 0, 1) var center_split_fr = 0.4 # AWD torque split front / rear
+@export var drivetype = DRIVE_TYPE.RWD
+@export var gear_ratios = [ 3.1, 2.61, 2.1, 1.72, 1.2, 1.0 ] 
+@export var automatic := true
+@export var final_drive = 3.7
+@export var reverse_ratio = 3.9
+@export var gear_inertia = 0.02
+@export var rear_diff = DIFF_TYPE.LIMITED_SLIP
+@export var front_diff = DIFF_TYPE.LIMITED_SLIP
+@export var rear_diff_preload = 50.0
+@export var front_diff_preload = 50.0
+@export var rear_diff_power_ratio: float = 3.5
+@export var front_diff_power_ratio: float = 3.5
+@export var rear_diff_coast_ratio: float = 1.0
+@export var front_diff_coast_ratio: float = 1.0
+@export var center_split_fr = 0.4 # AWD torque split front / rear
 
 ######### Aero #########
-export (float) var cd = 0.3
-export (float) var air_density = 1.225
-export (float) var frontal_area = 2.0
+@export var cd = 0.3
+@export var air_density = 1.225
+@export var frontal_area = 2.0
 
 ######## CONSTANTS ########
 const PETROL_KG_L: float = 0.7489
@@ -107,11 +107,11 @@ var x_vel: float = 0.0
 
 var last_shift_time = 0
 
-onready var wheel_fl = $Wheel_fl
-onready var wheel_fr = $Wheel_fr
-onready var wheel_bl = $Wheel_bl
-onready var wheel_br = $Wheel_br
-onready var audioplayer = $EngineSound
+@onready var wheel_fl = $Wheel_fl
+@onready var wheel_fr = $Wheel_fr
+@onready var wheel_bl = $Wheel_bl
+@onready var wheel_br = $Wheel_br
+@onready var audioplayer = $EngineSound
 
 
 func _ready() -> void:
@@ -174,7 +174,7 @@ func _process(delta: float) -> void:
 
 
 func _physics_process(delta):
-	local_vel = global_transform.basis.xform_inv((global_transform.origin - prev_pos) / delta)
+	local_vel = (global_transform.origin - prev_pos) / delta * global_transform.basis
 	prev_pos = global_transform.origin
 	z_vel = -local_vel.z
 	x_vel = local_vel.x
@@ -234,7 +234,7 @@ func _physics_process(delta):
 	
 func engineTorque(p_rpm) -> float: 
 	var rpm_factor = clamp(p_rpm / max_engine_rpm, 0.0, 1.0)
-	var torque_factor = torque_curve.interpolate_baked(rpm_factor)
+	var torque_factor = torque_curve.sample_baked(rpm_factor)
 	return torque_factor * max_torque
 	
 
@@ -483,8 +483,8 @@ func dragForce():
 	fdrag.y = cdrag * z_vel * spd
 	fdrag.x = -cdrag * x_vel * spd
 	
-	add_central_force(global_transform.basis.z * fdrag.y)
-	add_central_force(global_transform.basis.x * fdrag.x)
+#	apply_central_force(global_transform.basis.z * fdrag.y)
+#	apply_central_force(global_transform.basis.x * fdrag.x)
 
 
 func burnFuel(delta):

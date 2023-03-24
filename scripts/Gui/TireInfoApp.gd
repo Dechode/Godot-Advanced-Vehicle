@@ -1,10 +1,10 @@
 extends Control
 
 
-export (NodePath) var wheel_fl_path = null
-export (NodePath) var wheel_fr_path = null
-export (NodePath) var wheel_bl_path = null
-export (NodePath) var wheel_br_path = null
+@export (NodePath) var wheel_fl_path = null
+@export (NodePath) var wheel_fr_path = null
+@export (NodePath) var wheel_bl_path = null
+@export (NodePath) var wheel_br_path = null
 
 
 var wheel_fl
@@ -37,13 +37,13 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	if wheels_init != 4:
 		return
-#	$Panel/WheelFL/TireWearLabel.text = "Wear: " + str(stepify(wheel_fl.tire_wear * 100, 0.01))
-#	$Panel/WheelFR/TireWearLabel.text = "Wear: " + str(stepify(wheel_fr.tire_wear * 100, 0.01))
-#	$Panel/WheelBL/TireWearLabel.text = "Wear: " + str(stepify(wheel_bl.tire_wear * 100, 0.01))
-#	$Panel/WheelBR/TireWearLabel.text = "Wear: " + str(stepify(wheel_br.tire_wear * 100, 0.01))
+#	$Panel/WheelFL/TireWearLabel.text = "Wear: " + str(snapped(wheel_fl.tire_wear * 100, 0.01))
+#	$Panel/WheelFR/TireWearLabel.text = "Wear: " + str(snapped(wheel_fr.tire_wear * 100, 0.01))
+#	$Panel/WheelBL/TireWearLabel.text = "Wear: " + str(snapped(wheel_bl.tire_wear * 100, 0.01))
+#	$Panel/WheelBR/TireWearLabel.text = "Wear: " + str(snapped(wheel_br.tire_wear * 100, 0.01))
 
-	$Panel/WheelFL/TireWearLabel.text = str(stepify(wheel_fl.tire_wear * 100, 0.01))
-	$Panel/WheelFR/TireWearLabel.text = str(stepify(wheel_fr.tire_wear * 100, 0.01))
-	$Panel/WheelBL/TireWearLabel.text = str(stepify(wheel_bl.tire_wear * 100, 0.01))
-	$Panel/WheelBR/TireWearLabel.text = str(stepify(wheel_br.tire_wear * 100, 0.01))
+	$Panel/WheelFL/TireWearLabel.text = str(snapped(wheel_fl.tire_wear * 100, 0.01))
+	$Panel/WheelFR/TireWearLabel.text = str(snapped(wheel_fr.tire_wear * 100, 0.01))
+	$Panel/WheelBL/TireWearLabel.text = str(snapped(wheel_bl.tire_wear * 100, 0.01))
+	$Panel/WheelBR/TireWearLabel.text = str(snapped(wheel_br.tire_wear * 100, 0.01))
 

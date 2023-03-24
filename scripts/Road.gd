@@ -22,13 +22,13 @@
 #SOFTWARE.
 
 
-tool
-extends Path
+@tool
+extends Path3D
 
-export var track_width = 8.0 setget set_track_width, get_track_width
-export var lower_ground_width = 12.0 setget set_lower_ground_width, get_lower_ground_width
-#export var rail_distance = 1.0 setget set_rail_distance, get_rail_distance
-#export var post_distance = 1.0 setget set_post_distance, get_post_distance
+@export var track_width = 8.0 : get = get_track_width, set = set_track_width
+@export var lower_ground_width = 12.0 : get = get_lower_ground_width, set = set_lower_ground_width
+#export var rail_distance = 1.0 : get = get_rail_distance, set = set_rail_distance
+#export var post_distance = 1.0 : get = get_post_distance, set = set_post_distance
 
 var is_dirty = true
 
@@ -134,8 +134,8 @@ func _update():
 #	$Posts.multimesh.instance_count = post_count * 2
 	
 #	for i in range(0, post_count):
-#		var t = Transform()
-#		var xf = Transform()
+#		var t = Transform3D()
+#		var xf = Transform3D()
 #		var f = i * real_post_dist
 #
 #		xf.origin = curve.interpolate_baked(f)
@@ -150,17 +150,17 @@ func _update():
 #		var v = Vector3(rail_position, 0.0, 0.0)
 #
 #		t.basis = Basis()
-#		t.origin = xf.xform(-v)
+#		t.origin = xf * -v
 #		$Posts.multimesh.set_instance_transform(i, t)
 #
 #		t.basis = Basis()
-#		t.origin = xf.xform(v)
+#		t.origin = xf * v
 #		$Posts.multimesh.set_instance_transform(post_count + i, t)
 #
 	###################################################################################
 	# update our collision
 	
-#	var collision = $CollisionShape.polygon
+#	var collision = $CollisionShape3D.polygon
 #	collision.set(0, Vector2(-rail_position, 0.0))
 #	collision.set(1, Vector2( rail_position, 0.0))
 #	collision.set(2, Vector2( rail_position, 5.0))
@@ -169,7 +169,7 @@ func _update():
 #	collision.set(5, Vector2(-rail_position - 3.0, -1.0))
 #	collision.set(6, Vector2(-rail_position - 3.0, 5.0))
 #	collision.set(7, Vector2(-rail_position, 5.0))
-#	$CollisionShape.polygon=collision
+#	$CollisionShape3D.polygon=collision
 #
 #
 	is_dirty = false

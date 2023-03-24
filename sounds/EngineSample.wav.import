@@ -1,13 +1,14 @@
 [remap]
 
 importer="wav"
-type="AudioStreamSample"
-path="res://.import/EngineSample.wav-e4f2b54ff5aa4bdfe99a503bb2be1919.sample"
+type="AudioStreamWAV"
+uid="uid://cntdncgh30pxj"
+path="res://.godot/imported/EngineSample.wav-e4f2b54ff5aa4bdfe99a503bb2be1919.sample"
 
 [deps]
 
 source_file="res://sounds/EngineSample.wav"
-dest_files=[ "res://.import/EngineSample.wav-e4f2b54ff5aa4bdfe99a503bb2be1919.sample" ]
+dest_files=["res://.godot/imported/EngineSample.wav-e4f2b54ff5aa4bdfe99a503bb2be1919.sample"]
 
 [params]
 

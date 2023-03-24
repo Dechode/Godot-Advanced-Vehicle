@@ -1,4 +1,4 @@
-extends ClippedCamera
+extends Camera3D
 
 # This script is taken from Bastiaan Olijs vehicle demo, available at https://github.com/BastiaanOlij/vehicle-demo
 
@@ -25,11 +25,11 @@ extends ClippedCamera
 #SOFTWARE.
 
 
-export (NodePath) var follow_this_path = null
+@export (NodePath) var follow_this_path = null
 
-export var target_distance = 3.0
-export var target_height = 1.0
-export var lerp_speed = 20.0
+@export var target_distance = 3.0
+@export var target_height = 1.0
+@export var lerp_speed = 20.0
 
 var follow_this = null
 var last_lookat
@@ -38,11 +38,11 @@ var last_lookat
 func _ready():
 	follow_this = get_node(follow_this_path)
 	last_lookat = follow_this.global_transform.origin
-	set_as_toplevel(true)
+	set_as_top_level(true)
 
 
 func _physics_process(delta):
-	set_as_toplevel(true)
+	set_as_top_level(true)
 	var delta_v = global_transform.origin - follow_this.global_transform.origin
 	var target_pos = global_transform.origin
 
@@ -56,7 +56,7 @@ func _physics_process(delta):
 	else:
 		target_pos.y = follow_this.global_transform.origin.y + target_height
 
-	global_transform.origin = global_transform.origin.linear_interpolate(target_pos, delta * lerp_speed)
-	last_lookat = last_lookat.linear_interpolate(follow_this.global_transform.origin, delta * lerp_speed)
+	global_transform.origin = global_transform.origin.lerp(target_pos, delta * lerp_speed)
+	last_lookat = last_lookat.lerp(follow_this.global_transform.origin, delta * lerp_speed)
 
 	look_at(last_lookat, Vector3(0.0, 1.0, 0.0))
