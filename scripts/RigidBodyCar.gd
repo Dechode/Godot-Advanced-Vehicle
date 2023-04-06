@@ -31,7 +31,7 @@ enum DRIVE_TYPE{
 @export var engine_brake = 10.0
 @export var engine_moment = 0.25
 @export var engine_bsfc = 0.3
-@export var engine_sound: AudioStreamPlayer
+@export var engine_sound: AudioStream
 @export var clutch_friction = 500.0
 
 ######### Drivetrain variables #########
@@ -138,8 +138,8 @@ func _process(delta: float) -> void:
 	drive_inertia = engine_moment + pow(abs(gearRatio()), 2) * gear_inertia
 	
 	var rear_brake_input = max(brake_input, handbrake_input)
-	front_brake_force = max_brake_force * brake_input * front_brake_bias * 0.5 # Per wheel
-	rear_brake_force = max_brake_force * rear_brake_input * (1 - front_brake_bias) * 0.5 # Per wheel
+	front_brake_force = max_brake_force * brake_input * front_brake_bias
+	rear_brake_force = max_brake_force * rear_brake_input * (1 - front_brake_bias)
 	
 	if automatic:
 		var reversing = false
@@ -241,10 +241,10 @@ func engineTorque(p_rpm) -> float:
 func freewheel(delta):
 	clutch_reaction_torque = 0.0
 	avg_front_spin = 0.0
-	wheel_bl.apply_torque(0.0, 0.0, rear_brake_force, delta)
-	wheel_br.apply_torque(0.0, 0.0, rear_brake_force, delta)
-	wheel_fl.apply_torque(0.0, 0.0, front_brake_force, delta)
-	wheel_fr.apply_torque(0.0, 0.0, front_brake_force, delta)
+	wheel_bl.apply_torque(0.0, 0.0, rear_brake_force * 0.5, delta)
+	wheel_br.apply_torque(0.0, 0.0, rear_brake_force * 0.5, delta)
+	wheel_fl.apply_torque(0.0, 0.0, front_brake_force * 0.5, delta)
+	wheel_fr.apply_torque(0.0, 0.0, front_brake_force * 0.5, delta)
 	avg_front_spin += (wheel_fl.spin + wheel_fr.spin) * 0.5
 	speedo = avg_front_spin * wheel_radius * 3.6
 	
@@ -280,16 +280,16 @@ func engage(delta):
 	
 	if drivetype == DRIVE_TYPE.RWD:
 		rwd(net_drive, delta)
-		wheel_fl.apply_torque(0.0, 0.0, front_brake_force, delta)
-		wheel_fr.apply_torque(0.0, 0.0, front_brake_force, delta)
+		wheel_fl.apply_torque(0.0, 0.0, front_brake_force * 0.5, delta)
+		wheel_fr.apply_torque(0.0, 0.0, front_brake_force * 0.5, delta)
 		
 	elif drivetype == DRIVE_TYPE.AWD:
 		awd(net_drive, delta)
 	
 	elif drivetype == DRIVE_TYPE.FWD:
 		fwd(net_drive, delta)
-		wheel_bl.apply_torque(0.0, 0.0, rear_brake_force, delta)
-		wheel_br.apply_torque(0.0, 0.0, rear_brake_force, delta)
+		wheel_bl.apply_torque(0.0, 0.0, rear_brake_force * 0.5, delta)
+		wheel_br.apply_torque(0.0, 0.0, rear_brake_force * 0.5, delta)
 		
 	speedo = avg_front_spin * wheel_radius * 3.6
 
@@ -322,8 +322,8 @@ func rwd(drive, delta):
 	if !diff_locked:
 		var diff_sum: float = 0.0
 		
-		diff_sum -= wheel_br.apply_torque(drive * (1 - r_split), drive_inertia, rear_brake_force, delta)
-		diff_sum += wheel_bl.apply_torque(drive * r_split, drive_inertia, rear_brake_force, delta)
+		diff_sum -= wheel_br.apply_torque(drive * (1 - r_split), drive_inertia, rear_brake_force * 0.5, delta)
+		diff_sum += wheel_bl.apply_torque(drive * r_split, drive_inertia, rear_brake_force * 0.5, delta)
 		
 		r_split = 0.5 * (clamp(diff_sum, -1, 1) + 1)
 		
@@ -338,7 +338,7 @@ func rwd(drive, delta):
 			axle_spin = 0.0
 		else:
 			var f_rr = (wheel_bl.rolling_resistance + wheel_br.rolling_resistance)
-			net_torque -= (2 * rear_brake_force + f_rr)  * sign(avg_rear_spin)
+			net_torque -= (rear_brake_force + f_rr)  * sign(avg_rear_spin)
 			axle_spin = avg_rear_spin + (delta * net_torque / (wheel_bl.wheel_moment + drive_inertia + wheel_br.wheel_moment ))
 				
 		wheel_br.applySolidAxleSpin(axle_spin)
@@ -365,8 +365,8 @@ func fwd(drive, delta):
 	if !diff_locked:
 		var diff_sum: float = 0.0
 		
-		diff_sum -= wheel_fr.apply_torque(drive * (1 - f_split), drive_inertia, front_brake_force, delta)
-		diff_sum += wheel_fl.apply_torque(drive * f_split, drive_inertia, front_brake_force, delta)
+		diff_sum -= wheel_fr.apply_torque(drive * (1 - f_split), drive_inertia, front_brake_force * 0.5, delta)
+		diff_sum += wheel_fl.apply_torque(drive * f_split, drive_inertia, front_brake_force * 0.5, delta)
 		
 		f_split = 0.5 * (clamp(diff_sum, -1, 1) + 1)
 		
@@ -381,7 +381,7 @@ func fwd(drive, delta):
 			axle_spin = 0.0
 		else:
 			var f_rr = (wheel_fl.rolling_resistance + wheel_fr.rolling_resistance)
-			net_torque -= (2 * front_brake_force + f_rr)  * sign(avg_front_spin)
+			net_torque -= (front_brake_force + f_rr)  * sign(avg_front_spin)
 			axle_spin = avg_front_spin + (delta * net_torque / (wheel_fl.wheel_moment + drive_inertia + wheel_fr.wheel_moment ))
 			
 		wheel_fr.applySolidAxleSpin(axle_spin)
@@ -424,8 +424,8 @@ func awd(drive, delta):
 	if !rear_diff_locked:
 		var rear_diff_sum: float = 0.0
 		
-		rear_diff_sum -= wheel_br.apply_torque(rear_drive * (1 - r_split), drive_inertia, rear_brake_force, delta)
-		rear_diff_sum += wheel_bl.apply_torque(rear_drive * r_split, drive_inertia, rear_brake_force, delta)
+		rear_diff_sum -= wheel_br.apply_torque(rear_drive * (1 - r_split), drive_inertia, rear_brake_force * 0.5, delta)
+		rear_diff_sum += wheel_bl.apply_torque(rear_drive * r_split, drive_inertia, rear_brake_force * 0.5, delta)
 		
 		r_split = 0.5 * (clamp(rear_diff_sum, -1, 1) + 1)
 		
@@ -441,7 +441,7 @@ func awd(drive, delta):
 			axle_spin = 0.0
 		else:
 			var f_rr = (wheel_bl.rolling_resistance + wheel_br.rolling_resistance)
-			net_torque -= (2 * rear_brake_force + f_rr) * sign(avg_rear_spin)
+			net_torque -= (rear_brake_force + f_rr) * sign(avg_rear_spin)
 			axle_spin = avg_rear_spin + (delta * net_torque / (wheel_bl.wheel_moment + drive_inertia + wheel_br.wheel_moment ))
 		
 		wheel_br.applySolidAxleSpin(axle_spin)
@@ -451,8 +451,8 @@ func awd(drive, delta):
 		
 		var front_diff_sum: float = 0.0
 		
-		front_diff_sum -= wheel_fr.apply_torque(front_drive * (1 - f_split), drive_inertia, front_brake_force, delta)
-		front_diff_sum += wheel_fl.apply_torque(front_drive * f_split, drive_inertia, front_brake_force, delta)
+		front_diff_sum -= wheel_fr.apply_torque(front_drive * (1 - f_split), drive_inertia, front_brake_force * 0.5, delta)
+		front_diff_sum += wheel_fl.apply_torque(front_drive * f_split, drive_inertia, front_brake_force * 0.5, delta)
 		
 		f_split = 0.5 * (clamp(front_diff_sum, -1, 1) + 1)
 	else:
@@ -467,7 +467,7 @@ func awd(drive, delta):
 			axle_spin = 0.0
 		else:
 			var f_rr = (wheel_fl.rolling_resistance + wheel_fr.rolling_resistance)
-			net_torque -= (2 * front_brake_force + f_rr) * sign(avg_front_spin)
+			net_torque -= (front_brake_force + f_rr) * sign(avg_front_spin)
 			axle_spin = avg_front_spin + (delta * net_torque / (wheel_fl.wheel_moment + drive_inertia + wheel_fr.wheel_moment ))
 			
 		wheel_fr.applySolidAxleSpin(axle_spin)

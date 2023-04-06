@@ -1,8 +1,9 @@
-[gd_scene load_steps=17 format=3 uid="uid://m4urncdemtj7"]
+[gd_scene load_steps=18 format=3 uid="uid://m4urncdemtj7"]
 
-[ext_resource type="PackedScene" path="res://scenes/Basecar.tscn" id="1"]
+[ext_resource type="PackedScene" uid="uid://bvukqew7inmoq" path="res://scenes/Basecar.tscn" id="1"]
 [ext_resource type="Material" path="res://models/KenneyCarKit1/_defaultMat.material" id="2"]
 [ext_resource type="Material" path="res://models/KenneyCarKit1/window.material" id="3"]
+[ext_resource type="AudioStream" path="res://sounds/tres/EngineSample.tres" id="3_8rnyb"]
 [ext_resource type="Material" path="res://models/KenneyCarKit1/plastic.material" id="4"]
 [ext_resource type="Material" path="res://models/KenneyCarKit1/carTire.material" id="5"]
 [ext_resource type="Material" path="res://models/KenneyCarKit1/paintRed.material" id="6"]
@@ -122,7 +123,7 @@ _surfaces = [{
 [node name="RigidBodyCar" parent="." instance=ExtResource("1")]
 mass = 1000.0
 max_steer = 0.4
-max_brake_force = 1800.0
+max_brake_force = 3000.0
 fuel_tank_size = 50.0
 max_torque = 150.0
 max_engine_rpm = 7500.0
@@ -130,17 +131,18 @@ rpm_clutch_out = 2500.0
 engine_moment = 0.12
 clutch_friction = 300.0
 gear_ratios = [3.5, 2.3, 1.7, 1.25, 1.0]
+automatic = false
 gear_inertia = 0.2
 
 [node name="Camera3D" parent="RigidBodyCar" index="0"]
-transform = Transform3D(1, 2.75852e-15, -1.02949e-14, 0, 0.965926, 0.258819, 1.06581e-14, -0.258819, 0.965926, -0.0299997, 2.42084, 7.20093)
+transform = Transform3D(1, 2.75852e-15, -1.02949e-14, 0, 0.965926, 0.258819, 1.06581e-14, -0.258819, 0.965926, -0.0299997, 2.14271, 7.20093)
 far = 1000.0
 
 [node name="Wheel_br" parent="RigidBodyCar" index="1"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.75, -0.203989, 1.27031)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.75, -0.340573, 1.27031)
 tire_model = SubResource("6")
 spring_length = 0.15
-spring_stiffness = 35000.0
+spring_stiffness = 45000.0
 bump = 8000.0
 rebound = 11000.0
 anti_roll = 100.0
@@ -148,10 +150,10 @@ wheel_mass = 25.0
 tire_radius = 0.32
 
 [node name="Wheel_bl" parent="RigidBodyCar" index="2"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.8, -0.203989, 1.27031)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.8, -0.340573, 1.27031)
 tire_model = SubResource("7")
 spring_length = 0.15
-spring_stiffness = 35000.0
+spring_stiffness = 45000.0
 bump = 8000.0
 rebound = 11000.0
 anti_roll = 100.0
@@ -159,10 +161,10 @@ wheel_mass = 25.0
 tire_radius = 0.32
 
 [node name="Wheel_fr" parent="RigidBodyCar" index="3"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.75, -0.203989, -1.13272)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.75, -0.340573, -1.13272)
 tire_model = SubResource("8")
 spring_length = 0.15
-spring_stiffness = 35000.0
+spring_stiffness = 45000.0
 bump = 8000.0
 rebound = 11000.0
 anti_roll = 100.0
@@ -171,66 +173,59 @@ tire_radius = 0.32
 ackermann = -0.15
 
 [node name="Wheel_fl" parent="RigidBodyCar" index="4"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.8, -0.203989, -1.13272)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.8, -0.340573, -1.13272)
 tire_model = SubResource("9")
 spring_length = 0.15
-spring_stiffness = 35000.0
+spring_stiffness = 45000.0
 bump = 8000.0
 rebound = 11000.0
 anti_roll = 100.0
 wheel_mass = 25.0
 tire_radius = 0.32
 
+[node name="EngineSound" parent="RigidBodyCar" index="5"]
+stream = ExtResource("3_8rnyb")
+
 [node name="Gui" parent="RigidBodyCar" index="6"]
-layout_mode = 3
-anchors_preset = 15
+grow_horizontal = 2
+grow_vertical = 2
 
 [node name="Essentials" parent="RigidBodyCar/Gui" index="0"]
 layout_mode = 1
 anchors_preset = 2
-offset_top = -116.0
+offset_top = -142.0
+offset_right = 206.0
 grow_vertical = 0
 
 [node name="VBoxContainer" parent="RigidBodyCar/Gui/Essentials" index="0"]
 layout_mode = 1
-anchors_preset = 2
-anchor_top = 1.0
-anchor_right = 0.0
-offset_top = -116.0
-offset_right = 203.0
-grow_vertical = 0
-
-[node name="GearLabel" parent="RigidBodyCar/Gui/Essentials/VBoxContainer" index="0"]
-layout_mode = 2
-
-[node name="Speedlabel" parent="RigidBodyCar/Gui/Essentials/VBoxContainer" index="1"]
-layout_mode = 2
-
-[node name="RpmLabel" parent="RigidBodyCar/Gui/Essentials/VBoxContainer" index="2"]
-layout_mode = 2
-
-[node name="FuelLabel" parent="RigidBodyCar/Gui/Essentials/VBoxContainer" index="3"]
-layout_mode = 2
+anchors_preset = 15
+grow_horizontal = 2
+grow_vertical = 2
 
 [node name="TireInfoApp" parent="RigidBodyCar/Gui" index="1"]
-anchors_preset = 0
+layout_mode = 1
+offset_right = 188.0
 
 [node name="InputApp" parent="RigidBodyCar/Gui" index="2"]
-anchors_preset = 0
+layout_mode = 1
+anchors_preset = 3
+grow_horizontal = 0
+grow_vertical = 0
 
 [node name="CamTarget" parent="RigidBodyCar" index="7"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.27116, 0.570521)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.99303, 0.570521)
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="RigidBodyCar"]
-transform = Transform3D(1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.8, 0, -0.353989, 0.05)
+transform = Transform3D(1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.8, 0, -0.632119, 0.05)
 mesh = SubResource("1")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="RigidBodyCar"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.314374, 0.05)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.0362443, 0.05)
 shape = SubResource("5")
 
 [node name="MeshInstance2" type="MeshInstance3D" parent="RigidBodyCar"]
-transform = Transform3D(1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, 0, 0.246011, 1.65)
+transform = Transform3D(1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, 0, -0.0321187, 1.65)
 mesh = SubResource("2")
 
 [editable path="RigidBodyCar"]
