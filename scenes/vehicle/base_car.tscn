@@ -1,20 +1,20 @@
-[gd_scene load_steps=11 format=3 uid="uid://bvukqew7inmoq"]
+[gd_scene load_steps=11 format=3]
 
-[ext_resource type="Script" path="res://scripts/RigidBodyCar.gd" id="1"]
-[ext_resource type="Script" path="res://scripts/WheelSuspension.gd" id="2"]
-[ext_resource type="AudioStream" path="res://sounds/tres/EngineSample.tres" id="3"]
-[ext_resource type="Script" path="res://scripts/Gui/Gui.gd" id="4"]
-[ext_resource type="Material" path="res://materials/tire.tres" id="5"]
-[ext_resource type="Script" path="res://scripts/Camera.gd" id="6"]
-[ext_resource type="PackedScene" path="res://scenes/GuiApps/TireInfoApp.tscn" id="7"]
-[ext_resource type="PackedScene" path="res://scenes/GuiApps/InputApp.tscn" id="8"]
+[ext_resource type="Script" path="res://scenes/vehicle/base_car.gd" id="1_n8n57"]
+[ext_resource type="AudioStream" path="res://sounds/tres/engine_sample.tres" id="2_om5dm"]
+[ext_resource type="Script" path="res://scenes/camera.gd" id="3_5upga"]
+[ext_resource type="Script" path="res://scenes/vehicle/wheel_suspension.gd" id="4_6hvcn"]
+[ext_resource type="Material" path="res://materials/tire.tres" id="5_cuc4d"]
+[ext_resource type="Script" path="res://scenes/gui/gui.gd" id="6_5k76b"]
+[ext_resource type="PackedScene" path="res://scenes/gui/tireinfo_app.tscn" id="7_ijsux"]
+[ext_resource type="PackedScene" path="res://scenes/gui/input_app.tscn" id="8_8j787"]
 
 [sub_resource type="Curve" id="8"]
 _data = [Vector2(0, 0.563636), 0.0, 0.0, 0, 0, Vector2(0.575472, 1), 0.0, 0.0, 0, 0, Vector2(0.962264, 0.809091), -0.335178, -0.335178, 0, 0, Vector2(1, 0.109091), -6.85253, 0.0, 0, 0]
 point_count = 4
 
 [sub_resource type="CylinderMesh" id="10"]
-material = ExtResource("5")
+material = ExtResource("5_cuc4d")
 top_radius = 0.3
 bottom_radius = 0.3
 height = 0.2
@@ -24,22 +24,22 @@ radial_segments = 16
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
 collision_layer = 2
 mass = 700.0
-script = ExtResource("1")
+script = ExtResource("1_n8n57")
 rpm_clutch_out = 2000.0
 torque_curve = SubResource("8")
 engine_moment = 0.2
-engine_sound = ExtResource("3")
+engine_sound = ExtResource("2_om5dm")
 gear_ratios = [3.5, 3.0, 2.5, 1.72, 1.2, 1.0]
 gear_inertia = 0.09
 
 [node name="Camera3D" type="Camera3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 0.965926, 0.258819, 0, -0.258819, 0.965926, 0, 1.6, 4.4)
-script = ExtResource("6")
+script = ExtResource("3_5upga")
 follow_this_path = NodePath("../CamTarget")
 
 [node name="Wheel_br" type="RayCast3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.8, 0, 1.5)
-script = ExtResource("2")
+script = ExtResource("4_6hvcn")
 bump = 7000.0
 rebound = 5000.0
 
@@ -50,7 +50,7 @@ skeleton = NodePath("")
 
 [node name="Wheel_bl" type="RayCast3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.8, 0, 1.5)
-script = ExtResource("2")
+script = ExtResource("4_6hvcn")
 bump = 7000.0
 rebound = 5000.0
 
@@ -61,7 +61,7 @@ skeleton = NodePath("")
 
 [node name="Wheel_fr" type="RayCast3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.8, 0, -1.4)
-script = ExtResource("2")
+script = ExtResource("4_6hvcn")
 bump = 7000.0
 rebound = 5000.0
 
@@ -72,7 +72,7 @@ skeleton = NodePath("")
 
 [node name="Wheel_fl" type="RayCast3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.8, 0, -1.4)
-script = ExtResource("2")
+script = ExtResource("4_6hvcn")
 bump = 7000.0
 rebound = 5000.0
 
@@ -88,7 +88,9 @@ layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-script = ExtResource("4")
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("6_5k76b")
 
 [node name="Essentials" type="Panel" parent="Gui"]
 self_modulate = Color(1, 1, 1, 0.556863)
@@ -120,7 +122,7 @@ text = "Rpm"
 layout_mode = 2
 text = "Fuel"
 
-[node name="TireInfoApp" parent="Gui" instance=ExtResource("7")]
+[node name="TireInfoApp" parent="Gui" instance=ExtResource("7_ijsux")]
 anchors_preset = 0
 anchor_left = 0.0
 anchor_top = 0.0
@@ -135,7 +137,7 @@ wheel_fr_path = NodePath("../../Wheel_fr")
 wheel_bl_path = NodePath("../../Wheel_bl")
 wheel_br_path = NodePath("../../Wheel_br")
 
-[node name="InputApp" parent="Gui" instance=ExtResource("8")]
+[node name="InputApp" parent="Gui" instance=ExtResource("8_8j787")]
 anchors_preset = 0
 
 [node name="CamTarget" type="Marker3D" parent="."]

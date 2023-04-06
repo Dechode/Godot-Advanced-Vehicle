@@ -1,6 +1,6 @@
-[gd_scene load_steps=14 format=2]
+[gd_scene load_steps=14 format=3]
 
-[ext_resource path="res://scenes/SportCar.tscn" type="PackedScene" id=1]
+[ext_resource type="PackedScene" uid="uid://m4urncdemtj7" path="res://scenes/vehicle/SportCar.tscn" id="1"]
 
 [sub_resource type="BoxMesh" id=1]
 size = Vector3( 200, 2, 2000 )

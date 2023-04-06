@@ -1,8 +1,8 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=5 format=3]
 
-[ext_resource path="res://scripts/Road.gd" type="Script" id=1]
-[ext_resource path="res://materials/tarmac.tres" type="Material" id=2]
-[ext_resource path="res://materials/gravel.tres" type="Material" id=3]
+[ext_resource type="Script" path="res://scenes/road.gd" id="1"]
+[ext_resource type="Material" path="res://materials/tarmac.tres" id="2"]
+[ext_resource type="Material" path="res://materials/gravel.tres" id="3"]
 
 [sub_resource type="Curve3D" id=1]
 _data = {

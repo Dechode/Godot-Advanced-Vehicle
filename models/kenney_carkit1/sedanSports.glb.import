@@ -3,13 +3,13 @@
 importer="scene"
 importer_version=1
 type="PackedScene"
-uid="uid://bwmpep5o2d7fr"
-path="res://.godot/imported/wheelDefault.glb-fba36eedf6c755549b39fcd43e11ac12.scn"
+uid="uid://cakhmlww2amtf"
+path="res://.godot/imported/sedanSports.glb-b51bc01146d3d5b3675a97877dfd4ded.scn"
 
 [deps]
 
-source_file="res://models/KenneyCarKit1/wheelDefault.glb"
-dest_files=["res://.godot/imported/wheelDefault.glb-fba36eedf6c755549b39fcd43e11ac12.scn"]
+source_file="res://models/kenney_carkit1/sedanSports.glb"
+dest_files=["res://.godot/imported/sedanSports.glb-b51bc01146d3d5b3675a97877dfd4ded.scn"]
 
 [params]
 
