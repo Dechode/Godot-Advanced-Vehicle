@@ -1,13 +1,11 @@
-[gd_scene load_steps=11 format=3]
+[gd_scene load_steps=9 format=3 uid="uid://exyybiakl0yk"]
 
 [ext_resource type="Script" path="res://scenes/vehicle/base_car.gd" id="1_n8n57"]
 [ext_resource type="AudioStream" path="res://sounds/tres/engine_sample.tres" id="2_om5dm"]
 [ext_resource type="Script" path="res://scenes/camera.gd" id="3_5upga"]
 [ext_resource type="Script" path="res://scenes/vehicle/wheel_suspension.gd" id="4_6hvcn"]
 [ext_resource type="Material" path="res://materials/tire.tres" id="5_cuc4d"]
-[ext_resource type="Script" path="res://scenes/gui/gui.gd" id="6_5k76b"]
-[ext_resource type="PackedScene" path="res://scenes/gui/tireinfo_app.tscn" id="7_ijsux"]
-[ext_resource type="PackedScene" path="res://scenes/gui/input_app.tscn" id="8_8j787"]
+[ext_resource type="PackedScene" uid="uid://djbt3ltge1aat" path="res://scenes/gui/gui.tscn" id="6_cp0hb"]
 
 [sub_resource type="Curve" id="8"]
 _data = [Vector2(0, 0.563636), 0.0, 0.0, 0, 0, Vector2(0.575472, 1), 0.0, 0.0, 0, 0, Vector2(0.962264, 0.809091), -0.335178, -0.335178, 0, 0, Vector2(1, 0.109091), -6.85253, 0.0, 0, 0]
@@ -83,62 +81,9 @@ skeleton = NodePath("")
 
 [node name="EngineSound" type="AudioStreamPlayer" parent="."]
 
-[node name="Gui" type="Control" parent="."]
-layout_mode = 3
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-script = ExtResource("6_5k76b")
-
-[node name="Essentials" type="Panel" parent="Gui"]
-self_modulate = Color(1, 1, 1, 0.556863)
-custom_minimum_size = Vector2(200, 100)
-layout_mode = 0
-anchor_top = 1.0
-anchor_bottom = 1.0
-offset_top = -100.0
-offset_right = 200.0
-
-[node name="VBoxContainer" type="VBoxContainer" parent="Gui/Essentials"]
-layout_mode = 0
-anchor_right = 1.0
-anchor_bottom = 1.0
-
-[node name="GearLabel" type="Label" parent="Gui/Essentials/VBoxContainer"]
-layout_mode = 2
-text = "Gear"
-
-[node name="Speedlabel" type="Label" parent="Gui/Essentials/VBoxContainer"]
-layout_mode = 2
-text = "Speed"
-
-[node name="RpmLabel" type="Label" parent="Gui/Essentials/VBoxContainer"]
-layout_mode = 2
-text = "Rpm"
-
-[node name="FuelLabel" type="Label" parent="Gui/Essentials/VBoxContainer"]
-layout_mode = 2
-text = "Fuel"
-
-[node name="TireInfoApp" parent="Gui" instance=ExtResource("7_ijsux")]
-anchors_preset = 0
-anchor_left = 0.0
-anchor_top = 0.0
-anchor_right = 0.0
-anchor_bottom = 0.0
-offset_left = 0.0
-offset_top = 0.0
-offset_right = 150.0
-offset_bottom = 200.0
-wheel_fl_path = NodePath("../../Wheel_fl")
-wheel_fr_path = NodePath("../../Wheel_fr")
-wheel_bl_path = NodePath("../../Wheel_bl")
-wheel_br_path = NodePath("../../Wheel_br")
-
-[node name="InputApp" parent="Gui" instance=ExtResource("8_8j787")]
-anchors_preset = 0
-
 [node name="CamTarget" type="Marker3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.17515, 0)
+
+[node name="Gui" parent="." instance=ExtResource("6_cp0hb")]
+
+[editable path="Gui"]

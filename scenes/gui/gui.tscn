@@ -1,7 +1,7 @@
-[gd_scene load_steps=4 format=3]
+[gd_scene load_steps=4 format=3 uid="uid://djbt3ltge1aat"]
 
 [ext_resource type="Script" path="res://scenes/gui/gui.gd" id="1_bv3ap"]
-[ext_resource type="PackedScene" path="res://scenes/gui/tireinfo_app.tscn" id="2_6tyms"]
+[ext_resource type="PackedScene" uid="uid://dacyugrkjb2o4" path="res://scenes/gui/tireinfo_app.tscn" id="2_6tyms"]
 [ext_resource type="PackedScene" path="res://scenes/gui/input_app.tscn" id="3_m5e8j"]
 
 [node name="Gui" type="Control"]
@@ -9,16 +9,20 @@ layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 script = ExtResource("1_bv3ap")
 
 [node name="Essentials" type="Panel" parent="."]
 self_modulate = Color(1, 1, 1, 0.556863)
 custom_minimum_size = Vector2(200, 100)
-layout_mode = 0
+layout_mode = 1
+anchors_preset = 2
 anchor_top = 1.0
 anchor_bottom = 1.0
-offset_top = -100.0
-offset_right = 200.0
+offset_top = -144.0
+offset_right = 216.0
+grow_vertical = 0
 
 [node name="VBoxContainer" type="VBoxContainer" parent="Essentials"]
 layout_mode = 0
@@ -51,6 +55,8 @@ offset_left = 0.0
 offset_top = 0.0
 offset_right = 150.0
 offset_bottom = 200.0
+grow_horizontal = 1
+grow_vertical = 1
 wheel_fl_path = NodePath("../../Wheel_fl")
 wheel_fr_path = NodePath("../../Wheel_fr")
 wheel_bl_path = NodePath("../../Wheel_bl")

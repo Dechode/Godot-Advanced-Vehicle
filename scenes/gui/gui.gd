@@ -11,7 +11,7 @@ extends Control
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
-	speedlabel.text = str("Speed = ") + str(int(car.speedo))
-	gearlabel.text = str("gear = ") + str(car.selected_gear)
-	rpmlabel.text = str("RPM = ") + str(int(car.rpm))
+	speedlabel.text = "Speed = %d" % int(car.speedo)
+	gearlabel.text = "gear = %d" % car.selected_gear
+	rpmlabel.text = "RPM = %d" % int(car.rpm)
 	fuellabel.text = "Fuel = %3.2f" % car.fuel

@@ -1,127 +1,80 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=2 format=3 uid="uid://dacyugrkjb2o4"]
 
 [ext_resource type="Script" path="res://scenes/gui/tireinfo_app.gd" id="1"]
 
 [node name="TireInfoApp" type="Control"]
+layout_mode = 3
+anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -150.0
-offset_top = -200.0
-offset_right = 50.0
-offset_bottom = 100.0
-script = ExtResource( 1 )
-__meta__ = {
-"_edit_use_anchors_": false
-}
+offset_left = -100.0
+offset_top = -150.0
+offset_right = 100.0
+offset_bottom = 150.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+script = ExtResource("1")
 
 [node name="Panel" type="Panel" parent="."]
-self_modulate = Color( 1, 1, 1, 0.556863 )
+self_modulate = Color(1, 1, 1, 0.556863)
+layout_mode = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
-__meta__ = {
-"_edit_use_anchors_": false
-}
 
-[node name="WheelFL" type="Label" parent="Panel"]
-offset_right = 59.0
-offset_bottom = 14.0
-text = "Wheel FL"
-
-[node name="TireWear" type="Label" parent="Panel/WheelFL"]
-offset_top = 20.0
-offset_right = 40.0
-offset_bottom = 34.0
-text = "Wear"
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="TireWearLabel" type="Label" parent="Panel/WheelFL"]
-offset_top = 40.0
-offset_right = 49.0
-offset_bottom = 54.0
-text = "0.0"
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="WheelFR" type="Label" parent="Panel"]
-anchor_left = 1.0
-anchor_right = 1.0
-offset_left = -85.0
-offset_right = -24.9999
-offset_bottom = 14.0
-text = "Wheel FR"
-
-[node name="TireWear" type="Label" parent="Panel/WheelFR"]
-offset_top = 20.0
-offset_right = 40.0
-offset_bottom = 34.0
-text = "Wear"
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="TireWearLabel" type="Label" parent="Panel/WheelFR"]
-offset_top = 40.0
-offset_right = 49.0
-offset_bottom = 54.0
-text = "0.0"
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="WheelBL" type="Label" parent="Panel"]
-anchor_top = 1.0
-anchor_bottom = 1.0
-offset_top = -14.0
-offset_right = 61.0
-text = "Wheel BL"
-
-[node name="TireWear" type="Label" parent="Panel/WheelBL"]
-offset_top = -20.0
-offset_right = 49.0
-offset_bottom = -6.0
-text = "Wear"
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="TireWearLabel" type="Label" parent="Panel/WheelBL"]
-offset_top = -40.0
-offset_right = 49.0
-offset_bottom = -26.0
-text = "0.0"
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="WheelBR" type="Label" parent="Panel"]
-anchor_left = 1.0
-anchor_top = 1.0
+[node name="VBoxContainer" type="VBoxContainer" parent="Panel"]
+layout_mode = 1
+anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -85.0
-offset_top = -14.0
-offset_right = -23.0
-text = "Wheel BR"
+grow_horizontal = 2
+grow_vertical = 2
 
-[node name="TireWear" type="Label" parent="Panel/WheelBR"]
-offset_top = -20.0
-offset_right = 49.0
-offset_bottom = -6.0
-text = "Wear"
-__meta__ = {
-"_edit_use_anchors_": false
-}
+[node name="HBoxContainer" type="HBoxContainer" parent="Panel/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
 
-[node name="TireWearLabel" type="Label" parent="Panel/WheelBR"]
-offset_top = -40.0
-offset_right = 49.0
-offset_bottom = -26.0
+[node name="WheelFL" type="VBoxContainer" parent="Panel/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="TireWearLabel" type="Label" parent="Panel/VBoxContainer/HBoxContainer/WheelFL"]
+layout_mode = 2
 text = "0.0"
-__meta__ = {
-"_edit_use_anchors_": false
-}
+horizontal_alignment = 1
+
+[node name="WheelFR" type="VBoxContainer" parent="Panel/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="TireWearLabel" type="Label" parent="Panel/VBoxContainer/HBoxContainer/WheelFR"]
+layout_mode = 2
+text = "0.0"
+horizontal_alignment = 1
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="Panel/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="WheelBL" type="VBoxContainer" parent="Panel/VBoxContainer/HBoxContainer2"]
+layout_mode = 2
+size_flags_horizontal = 3
+alignment = 2
+
+[node name="TireWearLabel" type="Label" parent="Panel/VBoxContainer/HBoxContainer2/WheelBL"]
+layout_mode = 2
+text = "0.0"
+horizontal_alignment = 1
+
+[node name="WheelBR" type="VBoxContainer" parent="Panel/VBoxContainer/HBoxContainer2"]
+layout_mode = 2
+size_flags_horizontal = 3
+alignment = 2
+
+[node name="TireWearLabel" type="Label" parent="Panel/VBoxContainer/HBoxContainer2/WheelBR"]
+layout_mode = 2
+text = "0.0"
+horizontal_alignment = 1
