@@ -61,6 +61,10 @@ const PETROL_KG_L: float = 0.7489
 const NM_2_KW: int = 9549
 const AV_2_RPM: float = 60 / TAU
 
+
+#####
+var clutch
+
 ######### Controller inputs #########
 var throttle_input: float = 0.0
 var steering_input: float = 0.0
@@ -115,6 +119,8 @@ var last_shift_time = 0
 
 
 func _ready() -> void:
+	clutch = Clutch.new()
+	clutch.friction = clutch_friction
 	wheel_radius = wheel_fl.tire_radius
 	fuel = fuel_tank_size * fuel_percentage * 0.01
 	self.mass += fuel * PETROL_KG_L
@@ -267,14 +273,10 @@ func engage(delta):
 		
 	var speed_error = engine_angular_vel - gearbox_shaft_speed
 	var clutch_kick = abs(speed_error) * 0.2
-	var clutch_torque: float = (clutch_friction + clutch_kick) * (1 - clutch_input)# * (1 - speed_error_scaled)
-	
-	if engine_angular_vel > gearbox_shaft_speed:
-		clutch_reaction_torque = -clutch_torque
-		drive_reaction_torque = clutch_torque
-	else:
-		clutch_reaction_torque = clutch_torque
-		drive_reaction_torque = -clutch_torque
+
+	var reaction_torques = clutch.get_reaction_torques(engine_angular_vel, gearbox_shaft_speed, clutch_input, clutch_kick)
+	drive_reaction_torque = reaction_torques.x
+	clutch_reaction_torque = reaction_torques.y
 	
 	net_drive = drive_reaction_torque * gearRatio() * (1 - clutch_input) 
 	
