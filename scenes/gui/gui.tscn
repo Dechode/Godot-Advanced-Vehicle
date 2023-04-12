@@ -20,14 +20,17 @@ layout_mode = 1
 anchors_preset = 2
 anchor_top = 1.0
 anchor_bottom = 1.0
-offset_top = -144.0
-offset_right = 216.0
+offset_top = -141.0
+offset_right = 200.0
 grow_vertical = 0
 
 [node name="VBoxContainer" type="VBoxContainer" parent="Essentials"]
-layout_mode = 0
+layout_mode = 1
+anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 
 [node name="GearLabel" type="Label" parent="Essentials/VBoxContainer"]
 layout_mode = 2
@@ -53,8 +56,8 @@ anchor_right = 0.0
 anchor_bottom = 0.0
 offset_left = 0.0
 offset_top = 0.0
-offset_right = 150.0
-offset_bottom = 200.0
+offset_right = 164.0
+offset_bottom = 242.0
 grow_horizontal = 1
 grow_vertical = 1
 wheel_fl_path = NodePath("../../Wheel_fl")
@@ -63,4 +66,9 @@ wheel_bl_path = NodePath("../../Wheel_bl")
 wheel_br_path = NodePath("../../Wheel_br")
 
 [node name="InputApp" parent="." instance=ExtResource("3_m5e8j")]
-anchors_preset = 0
+layout_mode = 1
+anchors_preset = 3
+offset_left = -283.0
+offset_top = -158.0
+grow_horizontal = 0
+grow_vertical = 0

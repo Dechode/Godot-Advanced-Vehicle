@@ -18,7 +18,6 @@ metallic = 1.0
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_e7knm"]
 resource_name = "_defaultMat"
 vertex_color_use_as_albedo = true
-albedo_color = Color(1, 1, 1, 1)
 metallic = 1.0
 
 [sub_resource type="ArrayMesh" id="ArrayMesh_qnnfo"]
@@ -277,4 +276,5 @@ visible = false
 visible = false
 
 [editable path="RigidBodyCar"]
+[editable path="RigidBodyCar/Gui"]
 [editable path="RigidBodyCar/sedanSports"]
