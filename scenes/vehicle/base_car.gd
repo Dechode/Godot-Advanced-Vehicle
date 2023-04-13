@@ -14,12 +14,12 @@ enum DRIVE_TYPE{
 	AWD,
 }
 
-@export var max_steer = 0.3
-@export var front_brake_bias = 0.6
-@export var steer_speed = 5.0
-@export var max_brake_force = 500.0
-@export var fuel_tank_size = 40.0 #Liters
-@export var fuel_percentage = 100.0 # % of full tank
+@export var max_steer := 0.3
+@export var front_brake_bias := 0.6
+@export var steer_speed := 5.0
+@export var max_brake_force := 500.0
+@export var fuel_tank_size := 40.0 #Liters
+@export var fuel_percentage := 100.0 # % of full tank
 
 ######### Engine variables #########
 @export var max_torque = 250.0
@@ -40,7 +40,7 @@ enum DRIVE_TYPE{
 @export var automatic := true
 @export var final_drive = 3.7
 @export var reverse_ratio = 3.9
-@export var gear_inertia = 0.02
+@export var gear_inertia = 0.12
 @export var rear_diff = DIFF_TYPE.LIMITED_SLIP
 @export var front_diff = DIFF_TYPE.LIMITED_SLIP
 @export var rear_diff_preload = 50.0
@@ -61,9 +61,9 @@ const PETROL_KG_L: float = 0.7489
 const NM_2_KW: int = 9549
 const AV_2_RPM: float = 60 / TAU
 
-
 #####
-var clutch
+
+var drivetrain: DriveTrain
 
 ######### Controller inputs #########
 var throttle_input: float = 0.0
@@ -92,13 +92,9 @@ var selected_gear: int = 0
 
 var drive_inertia: float = 0.2 #includes every inertia after engine and before wheels
 
-var r_split: float = 0.5
-var f_split: float = 0.5
-
 var steering_amount: float = 0.0
 
 var speedo: float = 0.0
-var wheel_radius: float = 0.0
 var susp_comp: Array = [0.5, 0.5, 0.5, 0.5]
 
 var avg_rear_spin = 0.0
@@ -116,12 +112,21 @@ var last_shift_time = 0
 @onready var wheel_bl = $Wheel_bl
 @onready var wheel_br = $Wheel_br
 @onready var audioplayer = $EngineSound
-
+@onready var clutch := Clutch.new()
 
 func _ready() -> void:
-	clutch = Clutch.new()
+	
 	clutch.friction = clutch_friction
-	wheel_radius = wheel_fl.tire_radius
+
+	drivetrain = DriveTrain.new()
+	drivetrain.rear_diff = rear_diff
+	drivetrain.front_diff = front_diff
+	drivetrain.gear_inertia = gear_inertia
+	drivetrain.gear_ratios = gear_ratios
+	drivetrain.rear_diff_preload = rear_diff_preload
+	drivetrain.front_diff_preload = front_diff_preload
+	drivetrain.set_input_inertia(engine_moment)
+
 	fuel = fuel_tank_size * fuel_percentage * 0.01
 	self.mass += fuel * PETROL_KG_L
 
@@ -140,13 +145,7 @@ func _process(delta: float) -> void:
 	throttle_input = Input.get_action_strength("Throttle")
 	handbrake_input = Input.get_action_strength("Handbrake")
 	clutch_input = Input.get_action_strength("Clutch")
-	
-	drive_inertia = engine_moment + pow(abs(gearRatio()), 2) * gear_inertia
-	
-	var rear_brake_input = max(brake_input, handbrake_input)
-	front_brake_force = max_brake_force * brake_input * front_brake_bias
-	rear_brake_force = max_brake_force * rear_brake_input * (1 - front_brake_bias)
-	
+
 	if automatic:
 		var reversing = false
 		var shift_time = 700
@@ -244,15 +243,27 @@ func engineTorque(p_rpm) -> float:
 	return torque_factor * max_torque
 	
 
+func brakes(p_brake_input: float, delta):
+	var clamping_force := p_brake_input * max_brake_force * 0.5 
+	var brake_pad_mu := 0.4
+	var effective_radius := 0.25
+	var braking_force := 2.0 * brake_pad_mu * clamping_force
+
+	var front_brake_torque := braking_force * effective_radius * front_brake_bias
+	var rear_brake_torque := braking_force * effective_radius * (1 - front_brake_bias)
+
+	wheel_bl.apply_brake_torque(rear_brake_torque, delta)
+	wheel_br.apply_brake_torque(rear_brake_torque, delta)
+	wheel_fl.apply_brake_torque(front_brake_torque, delta)
+	wheel_fr.apply_brake_torque(front_brake_torque, delta)
+
+
 func freewheel(delta):
 	clutch_reaction_torque = 0.0
 	avg_front_spin = 0.0
-	wheel_bl.apply_torque(0.0, 0.0, rear_brake_force * 0.5, delta)
-	wheel_br.apply_torque(0.0, 0.0, rear_brake_force * 0.5, delta)
-	wheel_fl.apply_torque(0.0, 0.0, front_brake_force * 0.5, delta)
-	wheel_fr.apply_torque(0.0, 0.0, front_brake_force * 0.5, delta)
+	brakes(brake_input, delta)
 	avg_front_spin += (wheel_fl.spin + wheel_fr.spin) * 0.5
-	speedo = avg_front_spin * wheel_radius * 3.6
+	speedo = avg_front_spin * wheel_fl.tire_radius * 3.6
 	
 	
 func engage(delta):
@@ -262,14 +273,14 @@ func engage(delta):
 	avg_rear_spin += (wheel_bl.spin + wheel_br.spin) * 0.5
 	avg_front_spin += (wheel_fl.spin + wheel_fr.spin) * 0.5
 	
-	var gearbox_shaft_speed: float
+	var gearbox_shaft_speed: float = 0.0
 	
 	if drivetype == DRIVE_TYPE.RWD:
-		gearbox_shaft_speed = avg_rear_spin * gearRatio() 
+		gearbox_shaft_speed = avg_rear_spin * drivetrain.get_gearing() 
 	elif drivetype == DRIVE_TYPE.FWD:
-		gearbox_shaft_speed = avg_front_spin * gearRatio() 
+		gearbox_shaft_speed = avg_front_spin * drivetrain.get_gearing() 
 	elif drivetype == DRIVE_TYPE.AWD:
-		gearbox_shaft_speed = (avg_front_spin + avg_rear_spin) * 0.5 * gearRatio()
+		gearbox_shaft_speed = (avg_front_spin + avg_rear_spin) * 0.5 * drivetrain.get_gearing()
 		
 	var speed_error = engine_angular_vel - gearbox_shaft_speed
 	var clutch_kick = abs(speed_error) * 0.2
@@ -278,203 +289,11 @@ func engage(delta):
 	drive_reaction_torque = reaction_torques.x
 	clutch_reaction_torque = reaction_torques.y
 	
-	net_drive = drive_reaction_torque * gearRatio() * (1 - clutch_input) 
-	
-	if drivetype == DRIVE_TYPE.RWD:
-		rwd(net_drive, delta)
-		wheel_fl.apply_torque(0.0, 0.0, front_brake_force * 0.5, delta)
-		wheel_fr.apply_torque(0.0, 0.0, front_brake_force * 0.5, delta)
-		
-	elif drivetype == DRIVE_TYPE.AWD:
-		awd(net_drive, delta)
-	
-	elif drivetype == DRIVE_TYPE.FWD:
-		fwd(net_drive, delta)
-		wheel_bl.apply_torque(0.0, 0.0, rear_brake_force * 0.5, delta)
-		wheel_br.apply_torque(0.0, 0.0, rear_brake_force * 0.5, delta)
-		
-	speedo = avg_front_spin * wheel_radius * 3.6
+	net_drive = drive_reaction_torque * (1 - clutch_input) 
+	drivetrain.drivetrain(net_drive, [wheel_bl, wheel_br, wheel_fl, wheel_fr], delta)
+	brakes(brake_input, delta)
 
-
-func gearRatio():
-	if selected_gear > 0:
-		return gear_ratios[selected_gear - 1] * final_drive
-	elif selected_gear == -1:
-		return -reverse_ratio * final_drive
-	else:
-		return 0.0
-
-
-func rwd(drive, delta):
-	var diff_locked = true
-	var t_error = wheel_bl.force_vec.y * wheel_bl.tire_radius - wheel_br.force_vec.y * wheel_br.tire_radius
-	
-	if drive * sign(gearRatio()) > 0: # We are powering
-		if abs(t_error) > rear_diff_preload * rear_diff_power_ratio:
-			diff_locked = false
-	else: # We are coasting
-		if abs(t_error) > rear_diff_preload * rear_diff_coast_ratio:
-			diff_locked = false
-	
-	if rear_diff == DIFF_TYPE.LOCKED:
-		diff_locked = true
-	elif rear_diff == DIFF_TYPE.OPEN_DIFF:
-		diff_locked = false
-	
-	if !diff_locked:
-		var diff_sum: float = 0.0
-		
-		diff_sum -= wheel_br.apply_torque(drive * (1 - r_split), drive_inertia, rear_brake_force * 0.5, delta)
-		diff_sum += wheel_bl.apply_torque(drive * r_split, drive_inertia, rear_brake_force * 0.5, delta)
-		
-		r_split = 0.5 * (clamp(diff_sum, -1, 1) + 1)
-		
-	else:
-		r_split = 0.5
-		# Initialize net_torque with previous frame's friction
-		var net_torque = (wheel_bl.force_vec.y * wheel_bl.tire_radius + wheel_br.force_vec.y * wheel_br.tire_radius)# * 0.5
-		net_torque += drive
-		var axle_spin = 0.0
-		# Stop wheel if brakes overwhelm other forces
-		if avg_rear_spin < 5 and rear_brake_force > abs(net_torque):
-			axle_spin = 0.0
-		else:
-			var f_rr = (wheel_bl.rolling_resistance + wheel_br.rolling_resistance)
-			net_torque -= (rear_brake_force + f_rr)  * sign(avg_rear_spin)
-			axle_spin = avg_rear_spin + (delta * net_torque / (wheel_bl.wheel_moment + drive_inertia + wheel_br.wheel_moment ))
-				
-		wheel_br.applySolidAxleSpin(axle_spin)
-		wheel_bl.applySolidAxleSpin(axle_spin)
-
-
-
-func fwd(drive, delta):
-	var diff_locked = true
-	var t_error = wheel_fl.force_vec.y * wheel_fl.tire_radius - wheel_fr.force_vec.y * wheel_fr.tire_radius
-	
-	if drive * sign(gearRatio()) > 0: # We are powering
-		if abs(t_error) > front_diff_preload * front_diff_power_ratio:
-			diff_locked = false
-	else: # We are coasting
-		if abs(t_error) > front_diff_preload * front_diff_coast_ratio:
-			diff_locked = false
-	
-	if front_diff == DIFF_TYPE.LOCKED:
-		diff_locked = true
-	elif front_diff == DIFF_TYPE.OPEN_DIFF:
-		diff_locked = false
-	
-	if !diff_locked:
-		var diff_sum: float = 0.0
-		
-		diff_sum -= wheel_fr.apply_torque(drive * (1 - f_split), drive_inertia, front_brake_force * 0.5, delta)
-		diff_sum += wheel_fl.apply_torque(drive * f_split, drive_inertia, front_brake_force * 0.5, delta)
-		
-		f_split = 0.5 * (clamp(diff_sum, -1, 1) + 1)
-		
-	else:
-		f_split = 0.5
-		# Initialize net_torque with previous frame's friction
-		var net_torque = (wheel_fl.force_vec.y * wheel_fl.tire_radius + wheel_fr.force_vec.y * wheel_fr.tire_radius)# * 0.5
-		net_torque += drive
-		var axle_spin = 0.0
-		# Stop wheel if brakes overwhelm other forces
-		if avg_front_spin < 5 and front_brake_force > abs(net_torque):
-			axle_spin = 0.0
-		else:
-			var f_rr = (wheel_fl.rolling_resistance + wheel_fr.rolling_resistance)
-			net_torque -= (front_brake_force + f_rr)  * sign(avg_front_spin)
-			axle_spin = avg_front_spin + (delta * net_torque / (wheel_fl.wheel_moment + drive_inertia + wheel_fr.wheel_moment ))
-			
-		wheel_fr.applySolidAxleSpin(axle_spin)
-		wheel_fl.applySolidAxleSpin(axle_spin)
-
-
-func awd(drive, delta):
-	
-	var rear_drive = drive * (1 - center_split_fr)
-	var front_drive = drive * center_split_fr
-	
-	var front_diff_locked = true
-	var rear_diff_locked = true
-	
-	var front_t_error = wheel_fl.force_vec.y * wheel_fl.tire_radius - wheel_fr.force_vec.y * wheel_fr.tire_radius
-	var rear_t_error = wheel_bl.force_vec.y * wheel_bl.tire_radius - wheel_br.force_vec.y * wheel_br.tire_radius
-	
-	if drive * sign(gearRatio()) > 0: # We are powering
-		if abs(rear_t_error) > rear_diff_preload * rear_diff_power_ratio:
-			rear_diff_locked = false
-			
-		if abs(front_t_error) > front_diff_preload * front_diff_power_ratio:
-			front_diff_locked = false
-			
-	else: # We are coasting
-		if abs(rear_t_error) > rear_diff_preload * rear_diff_coast_ratio:
-			rear_diff_locked = false
-		
-		if abs(front_t_error) > front_diff_preload * front_diff_power_ratio:
-			front_diff_locked = false
-	
-	
-	if rear_diff == DIFF_TYPE.LOCKED:
-		rear_diff_locked = true
-	
-	if front_diff == DIFF_TYPE.LOCKED:
-		front_diff_locked = true
-	
-	
-	if !rear_diff_locked:
-		var rear_diff_sum: float = 0.0
-		
-		rear_diff_sum -= wheel_br.apply_torque(rear_drive * (1 - r_split), drive_inertia, rear_brake_force * 0.5, delta)
-		rear_diff_sum += wheel_bl.apply_torque(rear_drive * r_split, drive_inertia, rear_brake_force * 0.5, delta)
-		
-		r_split = 0.5 * (clamp(rear_diff_sum, -1, 1) + 1)
-		
-	else:
-		r_split = 0.5
-		
-		# Initialize net_torque with previous frame's friction
-		var net_torque = (wheel_bl.force_vec.y * wheel_bl.tire_radius + wheel_br.force_vec.y * wheel_br.tire_radius)# * 0.5
-		net_torque += rear_drive
-		var axle_spin = 0.0
-		# Stop wheel if brakes overwhelm other forces
-		if avg_rear_spin < 5 and rear_brake_force > abs(net_torque):
-			axle_spin = 0.0
-		else:
-			var f_rr = (wheel_bl.rolling_resistance + wheel_br.rolling_resistance)
-			net_torque -= (rear_brake_force + f_rr) * sign(avg_rear_spin)
-			axle_spin = avg_rear_spin + (delta * net_torque / (wheel_bl.wheel_moment + drive_inertia + wheel_br.wheel_moment ))
-		
-		wheel_br.applySolidAxleSpin(axle_spin)
-		wheel_bl.applySolidAxleSpin(axle_spin)
-	
-	if !front_diff_locked:
-		
-		var front_diff_sum: float = 0.0
-		
-		front_diff_sum -= wheel_fr.apply_torque(front_drive * (1 - f_split), drive_inertia, front_brake_force * 0.5, delta)
-		front_diff_sum += wheel_fl.apply_torque(front_drive * f_split, drive_inertia, front_brake_force * 0.5, delta)
-		
-		f_split = 0.5 * (clamp(front_diff_sum, -1, 1) + 1)
-	else:
-		f_split = 0.5
-		
-		# Initialize net_torque with previous frame's friction
-		var net_torque = (wheel_fl.force_vec.y * wheel_fl.tire_radius + wheel_fr.force_vec.y * wheel_fr.tire_radius)# * 0.5
-		net_torque += front_drive
-		var axle_spin = 0.0
-		# Stop wheel if brakes overwhelm other forces
-		if avg_front_spin < 5 and front_brake_force > abs(net_torque):
-			axle_spin = 0.0
-		else:
-			var f_rr = (wheel_fl.rolling_resistance + wheel_fr.rolling_resistance)
-			net_torque -= (front_brake_force + f_rr) * sign(avg_front_spin)
-			axle_spin = avg_front_spin + (delta * net_torque / (wheel_fl.wheel_moment + drive_inertia + wheel_fr.wheel_moment ))
-			
-		wheel_fr.applySolidAxleSpin(axle_spin)
-		wheel_fl.applySolidAxleSpin(axle_spin)
-
+	speedo = avg_front_spin * wheel_fl.tire_radius * 3.6
 
 func dragForce():
 	var spd = sqrt(x_vel * x_vel + z_vel * z_vel)
@@ -499,12 +318,14 @@ func shiftUp():
 	if selected_gear < gear_ratios.size():
 		selected_gear += 1
 		last_shift_time = Time.get_ticks_msec()
+		drivetrain.set_selected_gear(selected_gear)
 
 
 func shiftDown():
 	if selected_gear > -1:
 		selected_gear -= 1
 		last_shift_time = Time.get_ticks_msec()
+		drivetrain.set_selected_gear(selected_gear)
 
 
 func engineSound():
@@ -521,3 +342,4 @@ func engineSound():
 
 func stopEngineSound():
 	audioplayer.stop()
+

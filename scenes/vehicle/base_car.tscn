@@ -23,12 +23,14 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
 collision_layer = 2
 mass = 700.0
 script = ExtResource("1_n8n57")
+max_brake_force = 5000.0
 rpm_clutch_out = 2000.0
 torque_curve = SubResource("8")
 engine_moment = 0.2
 engine_sound = ExtResource("2_om5dm")
 gear_ratios = [3.5, 3.0, 2.5, 1.72, 1.2, 1.0]
 gear_inertia = 0.09
+rear_diff = 2
 
 [node name="Camera3D" type="Camera3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 0.965926, 0.258819, 0, -0.258819, 0.965926, 0, 1.6, 4.4)

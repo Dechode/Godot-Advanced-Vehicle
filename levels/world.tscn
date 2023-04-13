@@ -1,6 +1,6 @@
 [gd_scene load_steps=11 format=3 uid="uid://x5af4u1lm676"]
 
-[ext_resource type="PackedScene" uid="uid://dqqcf60u11tfq" path="res://scenes/vehicle/kenney_sport_car.tscn" id="1"]
+[ext_resource type="PackedScene" uid="uid://bj844rjx101hk" path="res://scenes/vehicle/kenney_sport_car.tscn" id="1"]
 [ext_resource type="PackedScene" path="res://scenes/track.tscn" id="2"]
 
 [sub_resource type="FastNoiseLite" id="FastNoiseLite_otdr6"]

@@ -27,7 +27,7 @@ var surface_mu = 1.0
 var y_force: float = 0.0
 #var braketorque: float = 0.0
 
-var wheel_moment: float = 0.0
+var wheel_inertia: float = 0.0
 var spin: float = 0.0
 var z_vel: float = 0.0
 var local_vel
@@ -49,7 +49,7 @@ var spring_curr_length: float = spring_length
 
 func _ready() -> void:
 #	var nominal_load = car.weight * 0.25
-	wheel_moment = 0.5 * wheel_mass * pow(tire_radius, 2)
+	wheel_inertia = 0.5 * wheel_mass * pow(tire_radius, 2)
 	set_target_position(Vector3.DOWN * (spring_length + tire_radius))
 
 
@@ -134,30 +134,46 @@ func apply_forces(opposite_comp, delta):
 			y_force += anti_roll * (compress - opposite_comp)
 		return compress
 	else:
-		spin -= sign(spin) * delta * 2 / wheel_moment # stop undriven wheels from spinning endlessly
+		spin -= sign(spin) * delta * 2 / wheel_inertia # stop undriven wheels from spinning endlessly
 		return 0.0
 
 
-func apply_torque(drive, drive_inertia, brake_torque, delta):
+func apply_torque(drive, drive_inertia, delta):
+	#print(drive)
 	var prev_spin = spin
 	var net_torque = force_vec.y * tire_radius
 	net_torque += drive
-	if spin < 5 and brake_torque > abs(net_torque):
-#	if brake_torque > abs(net_torque):
-		spin = 0
-	else:
-		net_torque -= (brake_torque + rolling_resistance) * sign(spin)
-		spin += delta * net_torque / (wheel_moment + drive_inertia)
+	net_torque -= rolling_resistance * sign(spin)
+	spin += delta * net_torque / (wheel_inertia + drive_inertia)
 
 	if drive * delta == 0:
 		return 0.5
 	else:
-		return (spin - prev_spin) * (wheel_moment + drive_inertia) / (drive * delta)
+		return (spin - prev_spin) * (wheel_inertia + drive_inertia) / (drive * delta)
 
 
-func applySolidAxleSpin(axlespin):
-	spin = axlespin
+func apply_brake_torque(brake_torque, delta):
+	#print(brake_torque)
+	var net_torque = force_vec.y * tire_radius
+	if spin < 5 and brake_torque > abs(net_torque):
+		spin = 0
+	else:
+		net_torque -= (brake_torque + rolling_resistance) * sign(spin)
+	spin += delta * net_torque / (wheel_inertia)
+
+
+func set_spin(value):
+	spin = value 
+
+
+func get_spin():
+	return spin
+
+
+func get_reaction_torque():
+	return force_vec.y * tire_radius
 
 
 func steer(input, max_steer):
 	rotation.y = max_steer * (input + (1 - cos(input * 0.5 * PI)) * ackermann)
+
