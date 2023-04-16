@@ -1,28 +1,85 @@
-[gd_resource type="Resource" script_class="CarParameters" load_steps=9 format=3 uid="uid://bsj8ccoshh6vk"]
+[gd_resource type="Resource" script_class="CarParameters" load_steps=14 format=3 uid="uid://bsj8ccoshh6vk"]
 
 [ext_resource type="AudioStream" path="res://sounds/tres/engine_sample.tres" id="1_wqlgx"]
 [ext_resource type="Script" path="res://scenes/vehicle/car_params.gd" id="2_8ru0w"]
-[ext_resource type="Script" path="res://scenes/vehicle/tire_models/pacejka_tire_model.gd" id="3_gmpsj"]
-
-[sub_resource type="Resource" id="Resource_72lcd"]
-script = ExtResource("3_gmpsj")
-tire_stiffness = 0.5
-
-[sub_resource type="Resource" id="Resource_v65xd"]
-script = ExtResource("3_gmpsj")
-tire_stiffness = 0.5
-
-[sub_resource type="Resource" id="Resource_jf0f4"]
-script = ExtResource("3_gmpsj")
-tire_stiffness = 0.5
-
-[sub_resource type="Resource" id="Resource_16e4l"]
-script = ExtResource("3_gmpsj")
-tire_stiffness = 0.5
+[ext_resource type="Script" path="res://scenes/vehicle/wheel_params.gd" id="3_scbug"]
+[ext_resource type="Script" path="res://scenes/vehicle/tire_models/brush_tire_model.gd" id="4_ko3mn"]
 
 [sub_resource type="Curve" id="Curve_g3qlw"]
 _data = [Vector2(0, 0.463636), 0.0, 0.0, 0, 0, Vector2(0.4, 0.945454), 0.0, 0.0, 0, 0, Vector2(0.646753, 1), 0.0, 0.0, 0, 0, Vector2(1, 0.290909), -4.9, 0.0, 0, 0]
 point_count = 4
+
+[sub_resource type="Resource" id="Resource_6pktc"]
+script = ExtResource("4_ko3mn")
+contact_patch = 0.2
+tire_stiffness = 0.5
+
+[sub_resource type="Resource" id="Resource_il6r5"]
+script = ExtResource("3_scbug")
+tire_model = SubResource("Resource_6pktc")
+spring_length = 0.15
+spring_stiffness = 45000.0
+bump = 10000.0
+rebound = 11000.0
+wheel_mass = 20.0
+tire_radius = 0.3
+tire_width = 0.225
+ackermann = 0.15
+anti_roll = 50
+
+[sub_resource type="Resource" id="Resource_56orc"]
+script = ExtResource("4_ko3mn")
+contact_patch = 0.2
+tire_stiffness = 0.5
+
+[sub_resource type="Resource" id="Resource_cd0yq"]
+script = ExtResource("3_scbug")
+tire_model = SubResource("Resource_56orc")
+spring_length = 0.15
+spring_stiffness = 45000.0
+bump = 10000.0
+rebound = 11000.0
+wheel_mass = 20.0
+tire_radius = 0.3
+tire_width = 0.225
+ackermann = 0.15
+anti_roll = 50
+
+[sub_resource type="Resource" id="Resource_7505j"]
+script = ExtResource("4_ko3mn")
+contact_patch = 0.2
+tire_stiffness = 0.5
+
+[sub_resource type="Resource" id="Resource_w4her"]
+script = ExtResource("3_scbug")
+tire_model = SubResource("Resource_7505j")
+spring_length = 0.15
+spring_stiffness = 45000.0
+bump = 10000.0
+rebound = 11000.0
+wheel_mass = 20.0
+tire_radius = 0.3
+tire_width = 0.225
+ackermann = 0.15
+anti_roll = 50
+
+[sub_resource type="Resource" id="Resource_xhiev"]
+script = ExtResource("4_ko3mn")
+contact_patch = 0.2
+tire_stiffness = 0.5
+
+[sub_resource type="Resource" id="Resource_28mq2"]
+script = ExtResource("3_scbug")
+tire_model = SubResource("Resource_xhiev")
+spring_length = 0.15
+spring_stiffness = 45000.0
+bump = 10000.0
+rebound = 11000.0
+wheel_mass = 20.0
+tire_radius = 0.3
+tire_width = 0.225
+ackermann = 0.15
+anti_roll = 50
 
 [resource]
 script = ExtResource("2_8ru0w")
@@ -33,7 +90,7 @@ max_brake_force = 20000.0
 brake_effective_radius = 0.25
 fuel_tank_size = 40.0
 fuel_percentage = 100.0
-max_torque = 250.0
+max_torque = 150.0
 max_engine_rpm = 8000.0
 rpm_idle = 900.0
 torque_curve = SubResource("Curve_g3qlw")
@@ -42,7 +99,7 @@ engine_brake = 10.0
 engine_moment = 0.25
 engine_bsfc = 0.3
 engine_sound = ExtResource("1_wqlgx")
-clutch_friction = 500.0
+clutch_friction = 300.0
 drivetype = 1
 automatic = false
 gear_ratios = [3.1, 2.61, 2.1, 1.72, 1.2, 1.0]
@@ -61,41 +118,7 @@ center_split_fr = 0.4
 cd = 0.3
 air_density = 1.225
 frontal_area = 2.0
-tire_model_fl = SubResource("Resource_jf0f4")
-tire_model_fr = SubResource("Resource_16e4l")
-tire_model_bl = SubResource("Resource_72lcd")
-tire_model_br = SubResource("Resource_v65xd")
-spring_length_fl = 0.2
-spring_length_fr = 0.2
-spring_length_bl = 0.2
-spring_length_br = 0.2
-spring_stiffness_fl = 45000.0
-spring_stiffness_fr = 45000.0
-spring_stiffness_bl = 45000.0
-spring_stiffness_br = 45000.0
-bump_fl = 10000.0
-bump_fr = 10000.0
-bump_bl = 10000.0
-bump_br = 10000.0
-rebound_fl = 11000.0
-rebound_fr = 11000.0
-rebound_bl = 11000.0
-rebound_br = 11000.0
-anti_roll_front = 50.0
-anti_roll_rear = 50.0
-wheel_mass_fl = 20.0
-wheel_mass_fr = 20.0
-wheel_mass_bl = 20.0
-wheel_mass_br = 20.0
-tire_radius_fl = 0.3
-tire_radius_fr = 0.3
-tire_radius_bl = 0.3
-tire_radius_br = 0.3
-tire_width_fl = 0.2
-tire_width_fr = 0.2
-tire_width_bl = 0.2
-tire_width_br = 0.2
-ackermann_fl = 0.15
-ackermann_fr = -0.15
-ackermann_bl = 0.0
-ackermann_br = 0.0
+wheel_params_fl = SubResource("Resource_w4her")
+wheel_params_fr = SubResource("Resource_28mq2")
+wheel_params_bl = SubResource("Resource_il6r5")
+wheel_params_br = SubResource("Resource_cd0yq")

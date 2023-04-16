@@ -87,49 +87,10 @@ func _ready() -> void:
 	drivetrain.set_rear_diff_preload(car_params.rear_diff_preload)
 	drivetrain.set_input_inertia(car_params.engine_moment)
 	
-	wheel_fl.spring_length = car_params.spring_length_fl
-	wheel_fl.spring_stiffness = car_params.spring_stiffness_fl
-	wheel_fl.bump = car_params.bump_fl
-	wheel_fl.rebound = car_params.rebound_fl
-	wheel_fl.anti_roll = car_params.anti_roll_front
-	wheel_fl.tire_model = car_params.tire_model_fl
-	wheel_fl.tire_radius = car_params.tire_radius_fl
-	wheel_fl.wheel_mass = car_params.wheel_mass_fl
-	wheel_fl.tire_width = car_params.tire_width_fl
-	wheel_fl.ackermann = car_params.ackermann_fl
-	
-	wheel_fr.spring_length = car_params.spring_length_fr
-	wheel_fr.spring_stiffness = car_params.spring_stiffness_fr
-	wheel_fr.bump = car_params.bump_fr
-	wheel_fr.rebound = car_params.rebound_fr
-	wheel_fr.anti_roll = car_params.anti_roll_front
-	wheel_fr.tire_model = car_params.tire_model_fr
-	wheel_fr.tire_radius = car_params.tire_radius_fr
-	wheel_fr.wheel_mass = car_params.wheel_mass_fr
-	wheel_fr.tire_width = car_params.tire_width_fr
-	wheel_fr.ackermann = car_params.ackermann_fr
-	
-	wheel_bl.spring_length = car_params.spring_length_bl
-	wheel_bl.spring_stiffness = car_params.spring_stiffness_bl
-	wheel_bl.bump = car_params.bump_bl
-	wheel_bl.rebound = car_params.rebound_bl
-	wheel_bl.anti_roll = car_params.anti_roll_front
-	wheel_bl.tire_model = car_params.tire_model_bl
-	wheel_bl.tire_radius = car_params.tire_radius_bl
-	wheel_bl.wheel_mass = car_params.wheel_mass_bl
-	wheel_bl.tire_width = car_params.tire_width_bl
-	wheel_bl.ackermann = car_params.ackermann_bl
-	
-	wheel_br.spring_length = car_params.spring_length_br
-	wheel_br.spring_stiffness = car_params.spring_stiffness_br
-	wheel_br.bump = car_params.bump_br
-	wheel_br.rebound = car_params.rebound_br
-	wheel_br.anti_roll = car_params.anti_roll_rear
-	wheel_br.tire_model = car_params.tire_model_br
-	wheel_br.tire_radius = car_params.tire_radius_br
-	wheel_br.wheel_mass = car_params.wheel_mass_br
-	wheel_br.tire_width = car_params.tire_width_br
-	wheel_br.ackermann = car_params.ackermann_br
+	wheel_fl.set_params(car_params.wheel_params_fl)
+	wheel_fr.set_params(car_params.wheel_params_fr)
+	wheel_bl.set_params(car_params.wheel_params_bl)
+	wheel_br.set_params(car_params.wheel_params_br)
 	
 	fuel = car_params.fuel_tank_size * car_params.fuel_percentage * 0.01
 	self.mass += fuel * PETROL_KG_L

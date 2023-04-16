@@ -48,6 +48,21 @@ func _ready() -> void:
 	wheel_inertia = 0.5 * wheel_mass * pow(tire_radius, 2)
 	set_target_position(Vector3.DOWN * (spring_length + tire_radius))
 
+func set_params(params: WheelSuspensionParameters):
+	tire_model =  params.tire_model
+	spring_length = params.spring_length
+	spring_stiffness = params.spring_stiffness
+	bump = params.bump
+	rebound = params.rebound
+	wheel_mass = params.wheel_mass
+	tire_radius = params.tire_radius
+	tire_width = params.tire_width
+	ackermann = params.ackermann
+	anti_roll = params.anti_roll
+	
+	wheel_inertia = 0.5 * wheel_mass * pow(tire_radius, 2)
+	set_target_position(Vector3.DOWN * (spring_length + tire_radius))
+
 
 #func _process(delta: float) -> void:
 func _physics_process(delta: float) -> void:
