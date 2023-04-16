@@ -25,13 +25,13 @@ var tire_wear: float = 0.0
 
 var surface_mu = 1.0
 var y_force: float = 0.0
-#var braketorque: float = 0.0
 
 var wheel_inertia: float = 0.0
 var spin: float = 0.0
 var z_vel: float = 0.0
 var local_vel
 
+# TODO
 var rolling_resistance: float = 0.0 #Vector2 = Vector2.ZERO
 var rol_res_surface_mul: float = 0.02
 
@@ -107,19 +107,18 @@ func apply_forces(opposite_comp, delta):
 	slip_vec.x = asin(clamp(-planar_vect.x, -1, 1)) # X slip is lateral slip
 	slip_vec.y = 0.0 # Y slip is the longitudinal Z slip
 	
-	if is_colliding() and z_vel != 0:
-	#if not 0:
-		slip_vec.y = (z_vel - spin * tire_radius) / abs(z_vel)
-	else:
-#		if spin == 0:
-		if is_zero_approx(spin):
-			slip_vec.y = 0.0
-		else:
-			slip_vec.y = 0.0001 * spin # This is to avoid "getting stuck" if local z velocity is absolute 0
-	
-	force_vec = tire_model.update_tire_forces(slip_vec, y_force, surface_mu)
-	
 	if is_colliding():
+#		if z_vel != 0:
+		if not is_zero_approx(z_vel):
+			slip_vec.y = (z_vel - spin * tire_radius) / abs(z_vel)
+		else:
+			if is_zero_approx(spin):
+				slip_vec.y = 0.0
+			else:
+				slip_vec.y = 0.0001 * spin # This is to avoid "getting stuck" if local z velocity is absolute 0
+	
+		force_vec = tire_model.update_tire_forces(slip_vec, y_force, surface_mu)
+		
 		var contact = get_collision_point() - car.global_transform.origin
 		var normal = get_collision_normal()
 		
@@ -138,28 +137,20 @@ func apply_forces(opposite_comp, delta):
 		return 0.0
 
 
-func apply_torque(drive, drive_inertia, delta):
-	#print(drive)
+func apply_torque(drive_torque, brake_torque, drive_inertia, delta):
 	var prev_spin = spin
 	var net_torque = force_vec.y * tire_radius
-	net_torque += drive
-	net_torque -= rolling_resistance * sign(spin)
-	spin += delta * net_torque / (wheel_inertia + drive_inertia)
-
-	if drive * delta == 0:
-		return 0.5
-	else:
-		return (spin - prev_spin) * (wheel_inertia + drive_inertia) / (drive * delta)
-
-
-func apply_brake_torque(brake_torque, delta):
-	#print(brake_torque)
-	var net_torque = force_vec.y * tire_radius
-	if spin < 5 and brake_torque > abs(net_torque):
+	net_torque += drive_torque
+	if abs(spin) < 5 and brake_torque > abs(net_torque):
 		spin = 0
 	else:
 		net_torque -= (brake_torque + rolling_resistance) * sign(spin)
-	spin += delta * net_torque / (wheel_inertia)
+		spin += delta * net_torque / (wheel_inertia + drive_inertia)
+
+	if drive_torque * delta == 0:
+		return 0.5
+	else:
+		return (spin - prev_spin) * (wheel_inertia + drive_inertia) / (drive_torque * delta)
 
 
 func set_spin(value):

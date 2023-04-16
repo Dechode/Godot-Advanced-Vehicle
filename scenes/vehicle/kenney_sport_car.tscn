@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=3 uid="uid://bj844rjx101hk"]
+[gd_scene load_steps=17 format=3 uid="uid://dqqcf60u11tfq"]
 
 [ext_resource type="PackedScene" uid="uid://exyybiakl0yk" path="res://scenes/vehicle/base_car.tscn" id="1_rpk6a"]
 [ext_resource type="Script" path="res://scenes/vehicle/tire_models/pacejka_tire_model.gd" id="2_txwus"]
@@ -174,15 +174,16 @@ size = Vector3(2, 1.19631, 4.5)
 [node name="RigidBodyCar" parent="." instance=ExtResource("1_rpk6a")]
 mass = 1000.0
 max_steer = 0.4
+max_brake_force = 20000.0
 fuel_tank_size = 50.0
 max_torque = 150.0
 max_engine_rpm = 7500.0
 rpm_clutch_out = 2500.0
-engine_moment = 0.12
 clutch_friction = 300.0
 gear_ratios = [3.5, 2.3, 1.7, 1.25, 1.0]
 automatic = false
-gear_inertia = 0.1
+gear_inertia = 0.15
+rear_diff = 0
 
 [node name="Camera3D" parent="RigidBodyCar" index="0"]
 transform = Transform3D(1, 2.75852e-15, -1.02949e-14, 0, 0.965926, 0.258819, 1.06581e-14, -0.258819, 0.965926, -0.0299997, 2.14271, 7.20093)

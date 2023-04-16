@@ -64,6 +64,7 @@ const AV_2_RPM: float = 60 / TAU
 #####
 
 var drivetrain: DriveTrain
+var clutch = Clutch
 
 ######### Controller inputs #########
 var throttle_input: float = 0.0
@@ -85,8 +86,8 @@ var drive_reaction_torque = 0.0
 var rpm: float = 0.0
 var engine_angular_vel: float = 0.0
 
-var rear_brake_force: float = 0.0
-var front_brake_force: float = 0.0
+var rear_brake_torque: float = 0.0
+var front_brake_torque: float = 0.0
 
 var selected_gear: int = 0
 
@@ -112,19 +113,30 @@ var last_shift_time = 0
 @onready var wheel_bl = $Wheel_bl
 @onready var wheel_br = $Wheel_br
 @onready var audioplayer = $EngineSound
-@onready var clutch := Clutch.new()
+
+
+func _init() -> void:
+	clutch = Clutch.new()
+	drivetrain = DriveTrain.new()
+
 
 func _ready() -> void:
-	
 	clutch.friction = clutch_friction
 
-	drivetrain = DriveTrain.new()
 	drivetrain.rear_diff = rear_diff
 	drivetrain.front_diff = front_diff
 	drivetrain.gear_inertia = gear_inertia
 	drivetrain.gear_ratios = gear_ratios
-	drivetrain.rear_diff_preload = rear_diff_preload
-	drivetrain.front_diff_preload = front_diff_preload
+	drivetrain.reverse_ratio = reverse_ratio
+	drivetrain.final_drive = final_drive
+	drivetrain.front_diff_power_ratio = front_diff_power_ratio
+	drivetrain.rear_diff_power_ratio = rear_diff_power_ratio
+	drivetrain.front_diff_coast_ratio = front_diff_coast_ratio
+	drivetrain.rear_diff_coast_ratio = rear_diff_coast_ratio
+	drivetrain.automatic = automatic
+	drivetrain.drivetype = drivetype
+	drivetrain.set_front_diff_preload(front_diff_preload)
+	drivetrain.set_rear_diff_preload(rear_diff_preload)
 	drivetrain.set_input_inertia(engine_moment)
 
 	fuel = fuel_tank_size * fuel_percentage * 0.01
@@ -139,13 +151,16 @@ func _unhandled_input(event: InputEvent) -> void:
 
 
 func _process(delta: float) -> void:
-	
 	brake_input = Input.get_action_strength("Brake")
 	steering_input = Input.get_action_strength("SteerLeft") - Input.get_action_strength("SteerRight")
 	throttle_input = Input.get_action_strength("Throttle")
 	handbrake_input = Input.get_action_strength("Handbrake")
 	clutch_input = Input.get_action_strength("Clutch")
-
+	
+	var brakes_torques = get_brake_torques(brake_input, delta)
+	front_brake_torque = brakes_torques.x
+	rear_brake_torque = brakes_torques.y
+	
 	if automatic:
 		var reversing = false
 		var shift_time = 700
@@ -241,27 +256,29 @@ func engineTorque(p_rpm) -> float:
 	var rpm_factor = clamp(p_rpm / max_engine_rpm, 0.0, 1.0)
 	var torque_factor = torque_curve.sample_baked(rpm_factor)
 	return torque_factor * max_torque
-	
 
-func brakes(p_brake_input: float, delta):
+
+func get_brake_torques(p_brake_input: float, delta):
 	var clamping_force := p_brake_input * max_brake_force * 0.5 
 	var brake_pad_mu := 0.4
 	var effective_radius := 0.25
 	var braking_force := 2.0 * brake_pad_mu * clamping_force
-
-	var front_brake_torque := braking_force * effective_radius * front_brake_bias
-	var rear_brake_torque := braking_force * effective_radius * (1 - front_brake_bias)
-
-	wheel_bl.apply_brake_torque(rear_brake_torque, delta)
-	wheel_br.apply_brake_torque(rear_brake_torque, delta)
-	wheel_fl.apply_brake_torque(front_brake_torque, delta)
-	wheel_fr.apply_brake_torque(front_brake_torque, delta)
+	
+	var torques := Vector2.ZERO
+	
+	torques.x = braking_force * effective_radius * front_brake_bias
+	torques.y = braking_force * effective_radius * (1 - front_brake_bias)
+	return torques
 
 
 func freewheel(delta):
 	clutch_reaction_torque = 0.0
 	avg_front_spin = 0.0
-	brakes(brake_input, delta)
+#	var brakes_torques = get_brake_torques(brake_input, delta)
+	wheel_fl.apply_torque(0.0, front_brake_torque, 0.0, delta)
+	wheel_fr.apply_torque(0.0, front_brake_torque, 0.0, delta)
+	wheel_bl.apply_torque(0.0, rear_brake_torque, 0.0, delta)
+	wheel_br.apply_torque(0.0, rear_brake_torque, 0.0, delta)
 	avg_front_spin += (wheel_fl.spin + wheel_fr.spin) * 0.5
 	speedo = avg_front_spin * wheel_fl.tire_radius * 3.6
 	
@@ -289,9 +306,9 @@ func engage(delta):
 	drive_reaction_torque = reaction_torques.x
 	clutch_reaction_torque = reaction_torques.y
 	
-	net_drive = drive_reaction_torque * (1 - clutch_input) 
-	drivetrain.drivetrain(net_drive, [wheel_bl, wheel_br, wheel_fl, wheel_fr], delta)
-	brakes(brake_input, delta)
+	net_drive = drive_reaction_torque * (1 - clutch_input)
+	
+	drivetrain.drivetrain(net_drive, rear_brake_torque, front_brake_torque, [wheel_bl, wheel_br, wheel_fl, wheel_fr], delta)
 
 	speedo = avg_front_spin * wheel_fl.tire_radius * 3.6
 
@@ -301,11 +318,11 @@ func dragForce():
 	
 	# fdrag.y is positive in this case because forward is -z in godot 
 	var fdrag: Vector2 = Vector2.ZERO
-	fdrag.y = cdrag * z_vel * spd
-	fdrag.x = -cdrag * x_vel * spd
+	fdrag.y = clamp(cdrag * z_vel * spd, -100000, 100000)
+	fdrag.x = clamp(-cdrag * x_vel * spd, -100000, 100000)
 	
-#	apply_central_force(global_transform.basis.z * fdrag.y)
-#	apply_central_force(global_transform.basis.x * fdrag.x)
+	apply_central_force(global_transform.basis.z.normalized() * fdrag.y)
+	apply_central_force(global_transform.basis.x.normalized() * fdrag.x)
 
 
 func burnFuel(delta):
