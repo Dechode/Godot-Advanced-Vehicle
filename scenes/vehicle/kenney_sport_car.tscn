@@ -1,12 +1,14 @@
-[gd_scene load_steps=17 format=3 uid="uid://dqqcf60u11tfq"]
+[gd_scene load_steps=18 format=3 uid="uid://dqqcf60u11tfq"]
 
 [ext_resource type="PackedScene" uid="uid://exyybiakl0yk" path="res://scenes/vehicle/base_car.tscn" id="1_rpk6a"]
-[ext_resource type="Script" path="res://scenes/vehicle/tire_models/pacejka_tire_model.gd" id="2_txwus"]
+[ext_resource type="Resource" uid="uid://bsj8ccoshh6vk" path="res://resources/car_setups/kenney_sport_car.tres" id="2_7jgdf"]
+[ext_resource type="Script" path="res://scenes/vehicle/tire_models/brush_tire_model.gd" id="2_sbvb8"]
 [ext_resource type="AudioStream" path="res://sounds/tres/engine_sample.tres" id="3_u8x6m"]
 [ext_resource type="PackedScene" uid="uid://d25y57k2nxxox" path="res://models/kenney_carkit1/sedan_sports.tscn" id="4_yl31q"]
 
-[sub_resource type="Resource" id="6"]
-script = ExtResource("2_txwus")
+[sub_resource type="Resource" id="Resource_mufku"]
+script = ExtResource("2_sbvb8")
+contact_patch = 0.2
 tire_stiffness = 0.5
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_pkjmk"]
@@ -70,8 +72,9 @@ _surfaces = [{
 blend_shape_mode = 0
 shadow_mesh = SubResource("ArrayMesh_qnnfo")
 
-[sub_resource type="Resource" id="7"]
-script = ExtResource("2_txwus")
+[sub_resource type="Resource" id="Resource_a5213"]
+script = ExtResource("2_sbvb8")
+contact_patch = 0.2
 tire_stiffness = 0.5
 
 [sub_resource type="ArrayMesh" id="ArrayMesh_j4x36"]
@@ -102,8 +105,9 @@ _surfaces = [{
 blend_shape_mode = 0
 shadow_mesh = SubResource("ArrayMesh_qnnfo")
 
-[sub_resource type="Resource" id="8"]
-script = ExtResource("2_txwus")
+[sub_resource type="Resource" id="Resource_g7mp8"]
+script = ExtResource("2_sbvb8")
+contact_patch = 0.2
 tire_stiffness = 0.5
 
 [sub_resource type="ArrayMesh" id="ArrayMesh_87r5k"]
@@ -134,8 +138,9 @@ _surfaces = [{
 blend_shape_mode = 0
 shadow_mesh = SubResource("ArrayMesh_qnnfo")
 
-[sub_resource type="Resource" id="9"]
-script = ExtResource("2_txwus")
+[sub_resource type="Resource" id="Resource_nm1fb"]
+script = ExtResource("2_sbvb8")
+contact_patch = 0.2
 tire_stiffness = 0.5
 
 [sub_resource type="ArrayMesh" id="ArrayMesh_yr68v"]
@@ -173,17 +178,7 @@ size = Vector3(2, 1.19631, 4.5)
 
 [node name="RigidBodyCar" parent="." instance=ExtResource("1_rpk6a")]
 mass = 1000.0
-max_steer = 0.4
-max_brake_force = 20000.0
-fuel_tank_size = 50.0
-max_torque = 150.0
-max_engine_rpm = 7500.0
-rpm_clutch_out = 2500.0
-clutch_friction = 300.0
-gear_ratios = [3.5, 2.3, 1.7, 1.25, 1.0]
-automatic = false
-gear_inertia = 0.15
-rear_diff = 0
+car_params = ExtResource("2_7jgdf")
 
 [node name="Camera3D" parent="RigidBodyCar" index="0"]
 transform = Transform3D(1, 2.75852e-15, -1.02949e-14, 0, 0.965926, 0.258819, 1.06581e-14, -0.258819, 0.965926, -0.0299997, 2.14271, 7.20093)
@@ -191,7 +186,7 @@ far = 1000.0
 
 [node name="Wheel_br" parent="RigidBodyCar" index="1"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.75, -0.340573, 1.27031)
-tire_model = SubResource("6")
+tire_model = SubResource("Resource_mufku")
 spring_length = 0.15
 spring_stiffness = 45000.0
 bump = 10000.0
@@ -206,7 +201,7 @@ mesh = SubResource("ArrayMesh_uwn7h")
 
 [node name="Wheel_bl" parent="RigidBodyCar" index="2"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.8, -0.340573, 1.27031)
-tire_model = SubResource("7")
+tire_model = SubResource("Resource_a5213")
 spring_length = 0.15
 spring_stiffness = 45000.0
 bump = 10000.0
@@ -221,7 +216,7 @@ mesh = SubResource("ArrayMesh_j4x36")
 
 [node name="Wheel_fr" parent="RigidBodyCar" index="3"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.75, -0.340573, -1.13272)
-tire_model = SubResource("8")
+tire_model = SubResource("Resource_g7mp8")
 spring_length = 0.15
 spring_stiffness = 45000.0
 bump = 10000.0
@@ -237,7 +232,7 @@ mesh = SubResource("ArrayMesh_87r5k")
 
 [node name="Wheel_fl" parent="RigidBodyCar" index="4"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.8, -0.340573, -1.13272)
-tire_model = SubResource("9")
+tire_model = SubResource("Resource_nm1fb")
 spring_length = 0.15
 spring_stiffness = 45000.0
 bump = 10000.0

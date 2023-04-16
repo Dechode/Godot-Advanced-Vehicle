@@ -12,14 +12,10 @@ extends RayCast3D
 @export var anti_roll = 0.0
 
 ############# Tire stuff #############
-
 @export var wheel_mass = 15.0
 @export var tire_radius = 0.3
 @export var tire_width = 0.2
 @export var ackermann = 0.15
-
-var peak_sr: float = 0.10
-var peak_sa: float = 0.10
 
 var tire_wear: float = 0.0
 
@@ -88,6 +84,7 @@ func apply_forces(opposite_comp, delta):
 			elif surface == "Snow":
 				surface_mu = 0.4
 				rol_res_surface_mul = 0.035
+		
 		spring_curr_length = get_collision_point().distance_to(global_transform.origin) - tire_radius
 	else:
 		spring_curr_length = spring_length

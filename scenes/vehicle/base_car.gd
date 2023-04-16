@@ -1,60 +1,7 @@
 class_name BaseCar
 extends RigidBody3D
 
-
-enum DIFF_TYPE{
-	LIMITED_SLIP,
-	OPEN_DIFF,
-	LOCKED,
-}
-
-enum DRIVE_TYPE{
-	FWD,
-	RWD,
-	AWD,
-}
-
-@export var max_steer := 0.3
-@export var front_brake_bias := 0.6
-@export var steer_speed := 5.0
-@export var max_brake_force := 500.0
-@export var fuel_tank_size := 40.0 #Liters
-@export var fuel_percentage := 100.0 # % of full tank
-
-######### Engine variables #########
-@export var max_torque = 250.0
-@export var max_engine_rpm = 8000.0
-@export var rpm_clutch_out = 1500.0
-@export var rpm_idle = 900.0
-@export var torque_curve: Curve = null
-@export var engine_drag = 0.03
-@export var engine_brake = 10.0
-@export var engine_moment = 0.25
-@export var engine_bsfc = 0.3
-@export var engine_sound: AudioStream
-@export var clutch_friction = 500.0
-
-######### Drivetrain variables #########
-@export var drivetype = DRIVE_TYPE.RWD
-@export var gear_ratios = [ 3.1, 2.61, 2.1, 1.72, 1.2, 1.0 ] 
-@export var automatic := true
-@export var final_drive = 3.7
-@export var reverse_ratio = 3.9
-@export var gear_inertia = 0.12
-@export var rear_diff = DIFF_TYPE.LIMITED_SLIP
-@export var front_diff = DIFF_TYPE.LIMITED_SLIP
-@export var rear_diff_preload = 50.0
-@export var front_diff_preload = 50.0
-@export var rear_diff_power_ratio: float = 3.5
-@export var front_diff_power_ratio: float = 3.5
-@export var rear_diff_coast_ratio: float = 1.0
-@export var front_diff_coast_ratio: float = 1.0
-@export var center_split_fr = 0.4 # AWD torque split front / rear
-
-######### Aero #########
-@export var cd = 0.3
-@export var air_density = 1.225
-@export var frontal_area = 2.0
+@export var car_params: CarParameters
 
 ######## CONSTANTS ########
 const PETROL_KG_L: float = 0.7489
@@ -98,8 +45,8 @@ var steering_amount: float = 0.0
 var speedo: float = 0.0
 var susp_comp: Array = [0.5, 0.5, 0.5, 0.5]
 
-var avg_rear_spin = 0.0
-var avg_front_spin = 0.0
+var avg_rear_spin := 0.0
+var avg_front_spin := 0.0
 
 var local_vel: Vector3 = Vector3.ZERO
 var prev_pos: Vector3 = Vector3.ZERO
@@ -108,46 +55,91 @@ var x_vel: float = 0.0
 
 var last_shift_time = 0
 
-@onready var wheel_fl = $Wheel_fl
-@onready var wheel_fr = $Wheel_fr
-@onready var wheel_bl = $Wheel_bl
-@onready var wheel_br = $Wheel_br
+@onready var wheel_fl = $Wheel_fl as RaycastSuspension
+@onready var wheel_fr = $Wheel_fr as RaycastSuspension
+@onready var wheel_bl = $Wheel_bl as RaycastSuspension
+@onready var wheel_br = $Wheel_br as RaycastSuspension
 @onready var audioplayer = $EngineSound
 
 
 func _init() -> void:
 	clutch = Clutch.new()
 	drivetrain = DriveTrain.new()
+	car_params = CarParameters.new()
 
 
 func _ready() -> void:
-	clutch.friction = clutch_friction
+	clutch.friction = car_params.clutch_friction
 
-	drivetrain.rear_diff = rear_diff
-	drivetrain.front_diff = front_diff
-	drivetrain.gear_inertia = gear_inertia
-	drivetrain.gear_ratios = gear_ratios
-	drivetrain.reverse_ratio = reverse_ratio
-	drivetrain.final_drive = final_drive
-	drivetrain.front_diff_power_ratio = front_diff_power_ratio
-	drivetrain.rear_diff_power_ratio = rear_diff_power_ratio
-	drivetrain.front_diff_coast_ratio = front_diff_coast_ratio
-	drivetrain.rear_diff_coast_ratio = rear_diff_coast_ratio
-	drivetrain.automatic = automatic
-	drivetrain.drivetype = drivetype
-	drivetrain.set_front_diff_preload(front_diff_preload)
-	drivetrain.set_rear_diff_preload(rear_diff_preload)
-	drivetrain.set_input_inertia(engine_moment)
-
-	fuel = fuel_tank_size * fuel_percentage * 0.01
+	drivetrain.rear_diff = car_params.rear_diff
+	drivetrain.front_diff = car_params.front_diff
+	drivetrain.gear_inertia = car_params.gear_inertia
+	drivetrain.gear_ratios = car_params.gear_ratios
+	drivetrain.reverse_ratio = car_params.reverse_ratio
+	drivetrain.final_drive = car_params.final_drive
+	drivetrain.front_diff_power_ratio = car_params.front_diff_power_ratio
+	drivetrain.rear_diff_power_ratio = car_params.rear_diff_power_ratio
+	drivetrain.front_diff_coast_ratio = car_params.front_diff_coast_ratio
+	drivetrain.rear_diff_coast_ratio = car_params.rear_diff_coast_ratio
+	drivetrain.automatic = car_params.automatic
+	drivetrain.drivetype = car_params.drivetype
+	drivetrain.set_front_diff_preload(car_params.front_diff_preload)
+	drivetrain.set_rear_diff_preload(car_params.rear_diff_preload)
+	drivetrain.set_input_inertia(car_params.engine_moment)
+	
+	wheel_fl.spring_length = car_params.spring_length_fl
+	wheel_fl.spring_stiffness = car_params.spring_stiffness_fl
+	wheel_fl.bump = car_params.bump_fl
+	wheel_fl.rebound = car_params.rebound_fl
+	wheel_fl.anti_roll = car_params.anti_roll_front
+	wheel_fl.tire_model = car_params.tire_model_fl
+	wheel_fl.tire_radius = car_params.tire_radius_fl
+	wheel_fl.wheel_mass = car_params.wheel_mass_fl
+	wheel_fl.tire_width = car_params.tire_width_fl
+	wheel_fl.ackermann = car_params.ackermann_fl
+	
+	wheel_fr.spring_length = car_params.spring_length_fr
+	wheel_fr.spring_stiffness = car_params.spring_stiffness_fr
+	wheel_fr.bump = car_params.bump_fr
+	wheel_fr.rebound = car_params.rebound_fr
+	wheel_fr.anti_roll = car_params.anti_roll_front
+	wheel_fr.tire_model = car_params.tire_model_fr
+	wheel_fr.tire_radius = car_params.tire_radius_fr
+	wheel_fr.wheel_mass = car_params.wheel_mass_fr
+	wheel_fr.tire_width = car_params.tire_width_fr
+	wheel_fr.ackermann = car_params.ackermann_fr
+	
+	wheel_bl.spring_length = car_params.spring_length_bl
+	wheel_bl.spring_stiffness = car_params.spring_stiffness_bl
+	wheel_bl.bump = car_params.bump_bl
+	wheel_bl.rebound = car_params.rebound_bl
+	wheel_bl.anti_roll = car_params.anti_roll_front
+	wheel_bl.tire_model = car_params.tire_model_bl
+	wheel_bl.tire_radius = car_params.tire_radius_bl
+	wheel_bl.wheel_mass = car_params.wheel_mass_bl
+	wheel_bl.tire_width = car_params.tire_width_bl
+	wheel_bl.ackermann = car_params.ackermann_bl
+	
+	wheel_br.spring_length = car_params.spring_length_br
+	wheel_br.spring_stiffness = car_params.spring_stiffness_br
+	wheel_br.bump = car_params.bump_br
+	wheel_br.rebound = car_params.rebound_br
+	wheel_br.anti_roll = car_params.anti_roll_rear
+	wheel_br.tire_model = car_params.tire_model_br
+	wheel_br.tire_radius = car_params.tire_radius_br
+	wheel_br.wheel_mass = car_params.wheel_mass_br
+	wheel_br.tire_width = car_params.tire_width_br
+	wheel_br.ackermann = car_params.ackermann_br
+	
+	fuel = car_params.fuel_tank_size * car_params.fuel_percentage * 0.01
 	self.mass += fuel * PETROL_KG_L
 
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed("ShiftUp"):
-		shiftUp()
+		shift_up()
 	if event.is_action_pressed("ShiftDown"):
-		shiftDown()
+		shift_down()
 
 
 func _process(delta: float) -> void:
@@ -161,36 +153,36 @@ func _process(delta: float) -> void:
 	front_brake_torque = brakes_torques.x
 	rear_brake_torque = brakes_torques.y
 	
-	if automatic:
+	if car_params.automatic:
 		var reversing = false
 		var shift_time = 700
 		var next_gear_rpm = 0
-		if selected_gear < gear_ratios.size():
-			next_gear_rpm = gear_ratios[selected_gear] * final_drive * avg_front_spin * AV_2_RPM
+		if selected_gear < car_params.gear_ratios.size():
+			next_gear_rpm = car_params.gear_ratios[selected_gear] * drivetrain.final_drive * avg_front_spin * AV_2_RPM
 		
 		var prev_gear_rpm = 0
 		if selected_gear - 1 > 0:
-			prev_gear_rpm = gear_ratios[selected_gear - 1] * final_drive * avg_front_spin * AV_2_RPM
+			prev_gear_rpm = car_params.gear_ratios[selected_gear - 1] * drivetrain.final_drive * avg_front_spin * AV_2_RPM
 		
 		if selected_gear == -1:
 			reversing = true
 
-		var torque_bigger_next_gear = engineTorque(next_gear_rpm) > torque_out - drag_torque
+		var torque_bigger_next_gear = get_engine_torque(next_gear_rpm) > torque_out - drag_torque
 		if torque_bigger_next_gear and selected_gear >= 0:
-			if rpm > 0.85 * max_engine_rpm:
+			if rpm > 0.85 * car_params.max_engine_rpm:
 				if Time.get_ticks_msec() - last_shift_time > shift_time:
-					shiftUp()
-		var torque_bigger_prev_gear = engineTorque(prev_gear_rpm) > torque_out - drag_torque
-		if selected_gear > 1 and rpm < 0.5 * max_engine_rpm and torque_bigger_prev_gear:
+					shift_up()
+		var torque_bigger_prev_gear = get_engine_torque(prev_gear_rpm) > torque_out - drag_torque
+		if selected_gear > 1 and rpm < 0.5 * car_params.max_engine_rpm and torque_bigger_prev_gear:
 			if Time.get_ticks_msec() - last_shift_time > shift_time:
-				shiftDown()
+				shift_down()
 		if abs(selected_gear) <= 1 and abs(z_vel) < 3.0 and brake_input > 0.2:
 			if not reversing:
 				if Time.get_ticks_msec() - last_shift_time > shift_time:
-					shiftDown()
+					shift_down()
 			else:
 				if Time.get_ticks_msec() - last_shift_time > shift_time:
-					shiftUp()
+					shift_up()
 
 
 func _physics_process(delta):
@@ -198,7 +190,7 @@ func _physics_process(delta):
 	prev_pos = global_transform.origin
 	z_vel = -local_vel.z
 	x_vel = local_vel.x
-	dragForce()
+	drag_force()
 	
 	##### AntiRollBar #####
 	var prev_comp = susp_comp
@@ -209,31 +201,31 @@ func _physics_process(delta):
 	
 	##### Steerin with steer speed #####
 	if (steering_input < steering_amount):
-		steering_amount -= steer_speed * delta
+		steering_amount -= car_params.steer_speed * delta
 		if (steering_input > steering_amount):
 			steering_amount = steering_input
 	
 	elif (steering_input > steering_amount):
-		steering_amount += steer_speed * delta
+		steering_amount += car_params.steer_speed * delta
 		if (steering_input < steering_amount):
 			steering_amount = steering_input
 	
-	wheel_fl.steer(steering_amount, max_steer)
-	wheel_fr.steer(steering_amount, max_steer)
+	wheel_fl.steer(steering_amount, car_params.max_steer)
+	wheel_fr.steer(steering_amount, car_params.max_steer)
 	
 	##### Engine loop #####
-	drag_torque = engine_brake + rpm * engine_drag
-	torque_out = (engineTorque(rpm) + drag_torque ) * throttle_input
+	drag_torque = car_params.engine_brake + rpm * car_params.engine_drag
+	torque_out = (get_engine_torque(rpm) + drag_torque ) * throttle_input
 	engine_net_torque = torque_out + clutch_reaction_torque - drag_torque
 	
-	rpm += AV_2_RPM * delta * engine_net_torque / engine_moment
+	rpm += AV_2_RPM * delta * engine_net_torque / car_params.engine_moment
 	engine_angular_vel = rpm / AV_2_RPM
 	
-	if rpm >= max_engine_rpm:
+	if rpm >= car_params.max_engine_rpm:
 		torque_out = 0
 		rpm -= 500 
 	
-	if rpm <= (rpm_idle + 10) and z_vel <= 2:
+	if rpm <= (car_params.rpm_idle + 10) and z_vel <= 2:
 		clutch_input = 1.0
 	
 	if selected_gear == 0:
@@ -241,33 +233,33 @@ func _physics_process(delta):
 	else:
 		engage(delta)
 		
-	rpm = max(rpm , rpm_idle)
+	rpm = max(rpm , car_params.rpm_idle)
 	
 	if fuel <= 0.0:
 		torque_out = 0.0
 		rpm = 0.0
-		stopEngineSound()
+		stop_engine_sound()
 	
-	engineSound()
-	burnFuel(delta)
+	play_engine_sound()
+	burn_fuel(delta)
 	
 	
-func engineTorque(p_rpm) -> float: 
-	var rpm_factor = clamp(p_rpm / max_engine_rpm, 0.0, 1.0)
-	var torque_factor = torque_curve.sample_baked(rpm_factor)
-	return torque_factor * max_torque
+func get_engine_torque(p_rpm) -> float: 
+	var rpm_factor = clamp(p_rpm / car_params.max_engine_rpm, 0.0, 1.0)
+	var torque_factor = car_params.torque_curve.sample_baked(rpm_factor)
+	return torque_factor * car_params.max_torque
 
 
 func get_brake_torques(p_brake_input: float, delta):
-	var clamping_force := p_brake_input * max_brake_force * 0.5 
+	var clamping_force := p_brake_input * car_params.max_brake_force * 0.5 
 	var brake_pad_mu := 0.4
 	var effective_radius := 0.25
 	var braking_force := 2.0 * brake_pad_mu * clamping_force
 	
 	var torques := Vector2.ZERO
 	
-	torques.x = braking_force * effective_radius * front_brake_bias
-	torques.y = braking_force * effective_radius * (1 - front_brake_bias)
+	torques.x = braking_force * car_params.brake_effective_radius * car_params.front_brake_bias
+	torques.y = braking_force * car_params.brake_effective_radius * (1 - car_params.front_brake_bias)
 	return torques
 
 
@@ -292,11 +284,11 @@ func engage(delta):
 	
 	var gearbox_shaft_speed: float = 0.0
 	
-	if drivetype == DRIVE_TYPE.RWD:
+	if car_params.drivetype == car_params.DRIVE_TYPE.RWD:
 		gearbox_shaft_speed = avg_rear_spin * drivetrain.get_gearing() 
-	elif drivetype == DRIVE_TYPE.FWD:
+	elif car_params.drivetype == car_params.DRIVE_TYPE.FWD:
 		gearbox_shaft_speed = avg_front_spin * drivetrain.get_gearing() 
-	elif drivetype == DRIVE_TYPE.AWD:
+	elif car_params.drivetype == car_params.DRIVE_TYPE.AWD:
 		gearbox_shaft_speed = (avg_front_spin + avg_rear_spin) * 0.5 * drivetrain.get_gearing()
 		
 	var speed_error = engine_angular_vel - gearbox_shaft_speed
@@ -312,9 +304,9 @@ func engage(delta):
 
 	speedo = avg_front_spin * wheel_fl.tire_radius * 3.6
 
-func dragForce():
+func drag_force():
 	var spd = sqrt(x_vel * x_vel + z_vel * z_vel)
-	var cdrag = 0.5 * cd * frontal_area * air_density
+	var cdrag = 0.5 * car_params.cd * car_params.frontal_area * car_params.air_density
 	
 	# fdrag.y is positive in this case because forward is -z in godot 
 	var fdrag: Vector2 = Vector2.ZERO
@@ -325,31 +317,31 @@ func dragForce():
 	apply_central_force(global_transform.basis.x.normalized() * fdrag.x)
 
 
-func burnFuel(delta):
-	var fuel_burned = engine_bsfc * torque_out * rpm * delta / (3600 * PETROL_KG_L * NM_2_KW)
+func burn_fuel(delta):
+	var fuel_burned = car_params.engine_bsfc * torque_out * rpm * delta / (3600 * PETROL_KG_L * NM_2_KW)
 	fuel -= fuel_burned
 	self.mass -= fuel_burned * PETROL_KG_L
 
 
-func shiftUp():
-	if selected_gear < gear_ratios.size():
+func shift_up():
+	if selected_gear < car_params.gear_ratios.size():
 		selected_gear += 1
 		last_shift_time = Time.get_ticks_msec()
 		drivetrain.set_selected_gear(selected_gear)
 
 
-func shiftDown():
+func shift_down():
 	if selected_gear > -1:
 		selected_gear -= 1
 		last_shift_time = Time.get_ticks_msec()
 		drivetrain.set_selected_gear(selected_gear)
 
 
-func engineSound():
+func play_engine_sound():
 	var pitch_scaler = rpm / 1000
-	if rpm >= rpm_idle and rpm < max_engine_rpm:
-		if audioplayer.stream != engine_sound:
-			audioplayer.set_stream(engine_sound)
+	if rpm >= car_params.rpm_idle and rpm < car_params.max_engine_rpm:
+		if audioplayer.stream != car_params.engine_sound:
+			audioplayer.set_stream(car_params.engine_sound)
 		if !audioplayer.playing:
 			audioplayer.play()
 	
@@ -357,6 +349,6 @@ func engineSound():
 		audioplayer.pitch_scale = pitch_scaler
 
 
-func stopEngineSound():
+func stop_engine_sound():
 	audioplayer.stop()
 

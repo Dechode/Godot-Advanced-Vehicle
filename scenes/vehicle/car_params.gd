@@ -37,7 +37,7 @@ enum DRIVE_TYPE{
 
 ######### Drivetrain variables #########
 @export var drivetype = DRIVE_TYPE.RWD
-@export var automatic := true
+@export var automatic := false
 
 @export var gear_ratios = [ 3.1, 2.61, 2.1, 1.72, 1.2, 1.0 ] 
 @export var final_drive = 3.7
@@ -46,11 +46,11 @@ enum DRIVE_TYPE{
 
 @export var front_diff = DIFF_TYPE.LIMITED_SLIP
 @export var front_diff_preload = 50.0
-@export var front_diff_power_ratio: float = 3.5
+@export var front_diff_power_ratio: float = 2.0
 @export var front_diff_coast_ratio: float = 1.0
 @export var rear_diff = DIFF_TYPE.LIMITED_SLIP
 @export var rear_diff_preload = 50.0
-@export var rear_diff_power_ratio: float = 3.5
+@export var rear_diff_power_ratio: float = 2.0
 @export var rear_diff_coast_ratio: float = 1.0
 
 @export var center_split_fr = 0.4 # AWD torque split front / rear
@@ -61,17 +61,52 @@ enum DRIVE_TYPE{
 @export var frontal_area = 2.0
 
 ######## Choose what tire formula to use ########
-@export var tire_model: BaseTireModel 
+@export var tire_model_fl: BaseTireModel 
+@export var tire_model_fr: BaseTireModel 
+@export var tire_model_bl: BaseTireModel 
+@export var tire_model_br: BaseTireModel 
 
 ######## Suspension ########
-@export var spring_length = 0.2
-@export var spring_stiffness = 45000.0
-@export var bump = 10000.0
-@export var rebound = 11000.0
-@export var anti_roll = 50.0
+@export var spring_length_fl = 0.2
+@export var spring_length_fr = 0.2
+@export var spring_length_bl = 0.2
+@export var spring_length_br = 0.2
+
+@export var spring_stiffness_fl = 45000.0
+@export var spring_stiffness_fr = 45000.0
+@export var spring_stiffness_bl = 45000.0
+@export var spring_stiffness_br = 45000.0
+
+@export var bump_fl = 10000.0
+@export var bump_fr = 10000.0
+@export var bump_bl = 10000.0
+@export var bump_br = 10000.0
+
+@export var rebound_fl = 11000.0
+@export var rebound_fr = 11000.0
+@export var rebound_bl = 11000.0
+@export var rebound_br = 11000.0
+
+@export var anti_roll_front = 50.0
+@export var anti_roll_rear = 50.0
 
 ######## Tire stuff ########
-@export var wheel_mass = 20.0
-@export var tire_radius = 0.3
-@export var tire_width = 0.2
-@export var ackermann = 0.15
+@export var wheel_mass_fl = 20.0
+@export var wheel_mass_fr = 20.0
+@export var wheel_mass_bl = 20.0
+@export var wheel_mass_br = 20.0
+
+@export var tire_radius_fl = 0.3
+@export var tire_radius_fr = 0.3
+@export var tire_radius_bl = 0.3
+@export var tire_radius_br = 0.3
+
+@export var tire_width_fl = 0.2
+@export var tire_width_fr = 0.2
+@export var tire_width_bl = 0.2
+@export var tire_width_br = 0.2
+
+@export var ackermann_fl = 0.15
+@export var ackermann_fr = -0.15
+@export var ackermann_bl = 0.0
+@export var ackermann_br = 0.0
