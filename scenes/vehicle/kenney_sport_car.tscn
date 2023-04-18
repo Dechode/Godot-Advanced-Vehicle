@@ -180,11 +180,13 @@ size = Vector3(2, 1.19631, 4.5)
 mass = 1000.0
 car_params = ExtResource("2_7jgdf")
 
-[node name="Camera3D" parent="RigidBodyCar" index="0"]
+[node name="CenterOfMass" type="Node3D" parent="RigidBodyCar"]
+
+[node name="Camera3D" parent="RigidBodyCar" index="1"]
 transform = Transform3D(1, 2.75852e-15, -1.02949e-14, 0, 0.965926, 0.258819, 1.06581e-14, -0.258819, 0.965926, -0.0299997, 2.14271, 7.20093)
 far = 1000.0
 
-[node name="Wheel_br" parent="RigidBodyCar" index="1"]
+[node name="Wheel_br" parent="RigidBodyCar" index="2"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.75, -0.340573, 1.27031)
 tire_model = SubResource("Resource_mufku")
 spring_length = 0.15
@@ -199,7 +201,7 @@ tire_radius = 0.32
 transform = Transform3D(1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, -0.1, 0, 0)
 mesh = SubResource("ArrayMesh_uwn7h")
 
-[node name="Wheel_bl" parent="RigidBodyCar" index="2"]
+[node name="Wheel_bl" parent="RigidBodyCar" index="3"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.8, -0.340573, 1.27031)
 tire_model = SubResource("Resource_a5213")
 spring_length = 0.15
@@ -214,7 +216,7 @@ tire_radius = 0.32
 transform = Transform3D(-1.5, 0, -2.26494e-07, 0, 1.5, 0, 2.26494e-07, 0, -1.5, 0.0666667, 0, 0)
 mesh = SubResource("ArrayMesh_j4x36")
 
-[node name="Wheel_fr" parent="RigidBodyCar" index="3"]
+[node name="Wheel_fr" parent="RigidBodyCar" index="4"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.75, -0.340573, -1.13272)
 tire_model = SubResource("Resource_g7mp8")
 spring_length = 0.15
@@ -230,7 +232,7 @@ ackermann = -0.15
 transform = Transform3D(1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, -0.1, 0, 0)
 mesh = SubResource("ArrayMesh_87r5k")
 
-[node name="Wheel_fl" parent="RigidBodyCar" index="4"]
+[node name="Wheel_fl" parent="RigidBodyCar" index="5"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.8, -0.340573, -1.13272)
 tire_model = SubResource("Resource_nm1fb")
 spring_length = 0.15
@@ -245,10 +247,10 @@ tire_radius = 0.32
 transform = Transform3D(-1.5, 0, -1.31134e-07, 0, 1.5, 0, 1.31134e-07, 0, -1.5, 0.1, 0, 0)
 mesh = SubResource("ArrayMesh_yr68v")
 
-[node name="EngineSound" parent="RigidBodyCar" index="5"]
+[node name="EngineSound" parent="RigidBodyCar" index="6"]
 stream = ExtResource("3_u8x6m")
 
-[node name="CamTarget" parent="RigidBodyCar" index="6"]
+[node name="CamTarget" parent="RigidBodyCar" index="7"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.99303, 0.570521)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="RigidBodyCar"]

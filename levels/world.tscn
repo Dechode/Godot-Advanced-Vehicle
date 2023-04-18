@@ -65,7 +65,7 @@ polygon = PackedVector2Array(-7.0655, 0, -7.0655, -0.1, 7.0655, -0.1, 7.0655, 0)
 polygon = PackedVector2Array(-9.0655, -0.1, 9.0655, -0.1, 16.931, -4.01, 17.031, -4.1, -17.031, -4.1, -16.931, -4)
 
 [node name="Sportcar" parent="." instance=ExtResource("1")]
-transform = Transform3D(0.833779, 0, 0.552097, 0, 1, 0, -0.552097, 0, 0.833779, 39.2642, 2.75676, 76.6809)
+transform = Transform3D(0.833779, 0, 0.552097, 0, 1, 0, -0.552097, 0, 0.833779, 39.2642, 2.76994, 76.6809)
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_1y4ai")

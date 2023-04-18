@@ -6,10 +6,15 @@ extends RayCast3D
 
 ############# Suspension stuff #############
 @export var spring_length = 0.2
-@export var spring_stiffness = 20000.0
-@export var bump = 5000.0
-@export var rebound = 3000.0
+@export var spring_stiffness = 45.0
+@export var bump = 3.5
+@export var rebound = 4.0
 @export var anti_roll = 0.0
+
+var mm_load_spring:float = 0
+var prev_mm_load_spring:float = 0
+var mm_per_second:float = 0
+var N_load_spring:float = 0
 
 ############# Tire stuff #############
 @export var wheel_mass = 15.0
@@ -35,7 +40,6 @@ var force_vec = Vector3.ZERO
 var slip_vec: Vector2 = Vector2.ZERO
 var prev_pos: Vector3 = Vector3.ZERO
 
-var prev_compress: float = 0.0
 var spring_curr_length: float = spring_length
 
 
@@ -103,17 +107,27 @@ func apply_forces(opposite_comp, delta):
 		spring_curr_length = get_collision_point().distance_to(global_transform.origin) - tire_radius
 	else:
 		spring_curr_length = spring_length
-		
-	var compress = 1 - spring_curr_length / spring_length
-	y_force = spring_stiffness * compress * spring_length
-
-	if (compress - prev_compress) >= 0:
-		y_force += (bump + wheel_mass) * (compress - prev_compress) * spring_length / delta
-	else:
-		y_force += rebound * (compress - prev_compress) * spring_length  / delta
 	
+	#
+	#Calculate the spring load in mm (asolut)
+	mm_load_spring = (spring_length - spring_curr_length) * 1000
+	#
+	#Calculate spring movement in mm per seconds
+	mm_per_second = (mm_load_spring - prev_mm_load_spring) / delta
+	prev_mm_load_spring = mm_load_spring
+	#
+	#Calculate the force of the spring in N (mm * N/mm  equals m * kN/m)
+	N_load_spring = mm_load_spring * spring_stiffness
+	#
+	#Calculate the damping force in N and add it to N_load_spring
+	if mm_per_second >= 0:
+		N_load_spring += mm_per_second * bump # bump
+	else :
+		N_load_spring += mm_per_second * rebound # rebound
+	
+	y_force = N_load_spring
+
 	y_force = max(0, y_force)
-	prev_compress = compress
 	
 	############### Slip #######################
 	slip_vec.x = asin(clamp(-planar_vect.x, -1, 1)) # X slip is lateral slip
@@ -140,10 +154,11 @@ func apply_forces(opposite_comp, delta):
 		car.apply_force(global_transform.basis.z * force_vec.y, contact)
 		
 		### Return suspension compress info for the car bodys antirollbar calculations
-		if compress !=0:
-			compress = 1 - (spring_curr_length / spring_length)
-			y_force += anti_roll * (compress - opposite_comp)
-		return compress
+		#
+		#Now calculate the anti roll bar based on mm-difference between left and right
+		if mm_load_spring !=0:
+			y_force += anti_roll * (mm_load_spring - opposite_comp)
+		return mm_load_spring
 	else:
 		spin -= sign(spin) * delta * 2 / wheel_inertia # stop undriven wheels from spinning endlessly
 		return 0.0
