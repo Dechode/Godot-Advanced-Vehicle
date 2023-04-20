@@ -11,10 +11,10 @@ extends RayCast3D
 @export var rebound = 4.0
 @export var anti_roll = 0.0
 
-var mm_load_spring:float = 0
-var prev_mm_load_spring:float = 0
-var mm_per_second:float = 0
-var N_load_spring:float = 0
+var spring_load_mm:float = 0
+var prev_spring_load_mm:float = 0
+var spring_speed_mm_per_seconds:float = 0
+var spring_load_newton:float = 0
 
 ############# Tire stuff #############
 @export var wheel_mass = 15.0
@@ -110,22 +110,22 @@ func apply_forces(opposite_comp, delta):
 	
 	#
 	#Calculate the spring load in mm (asolut)
-	mm_load_spring = (spring_length - spring_curr_length) * 1000
+	spring_load_mm = (spring_length - spring_curr_length) * 1000
 	#
 	#Calculate spring movement in mm per seconds
-	mm_per_second = (mm_load_spring - prev_mm_load_spring) / delta
-	prev_mm_load_spring = mm_load_spring
+	spring_speed_mm_per_seconds = (spring_load_mm - prev_spring_load_mm) / delta
+	prev_spring_load_mm = spring_load_mm
 	#
 	#Calculate the force of the spring in N (mm * N/mm  equals m * kN/m)
-	N_load_spring = mm_load_spring * spring_stiffness
+	spring_load_newton = spring_load_mm * spring_stiffness
 	#
 	#Calculate the damping force in N and add it to N_load_spring
-	if mm_per_second >= 0:
-		N_load_spring += mm_per_second * bump # bump
+	if spring_speed_mm_per_seconds >= 0:
+		spring_load_newton += spring_speed_mm_per_seconds * bump # bump
 	else :
-		N_load_spring += mm_per_second * rebound # rebound
+		spring_load_newton += spring_speed_mm_per_seconds * rebound # rebound
 	
-	y_force = N_load_spring
+	y_force = spring_load_newton
 
 	y_force = max(0, y_force)
 	
@@ -156,9 +156,9 @@ func apply_forces(opposite_comp, delta):
 		### Return suspension compress info for the car bodys antirollbar calculations
 		#
 		#Now calculate the anti roll bar based on mm-difference between left and right
-		if mm_load_spring !=0:
-			y_force += anti_roll * (mm_load_spring - opposite_comp)
-		return mm_load_spring
+		if spring_load_mm !=0:
+			y_force += anti_roll * (spring_load_mm - opposite_comp)
+		return spring_load_mm
 	else:
 		spin -= sign(spin) * delta * 2 / wheel_inertia # stop undriven wheels from spinning endlessly
 		return 0.0

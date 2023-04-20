@@ -60,7 +60,6 @@ var last_shift_time = 0
 @onready var wheel_bl = $Wheel_bl as RaycastSuspension
 @onready var wheel_br = $Wheel_br as RaycastSuspension
 @onready var audioplayer = $EngineSound
-@onready var car_centre_of_mass = $CenterOfMass
 
 
 func _init() -> void:
@@ -95,11 +94,6 @@ func _ready() -> void:
 	
 	fuel = car_params.fuel_tank_size * car_params.fuel_percentage * 0.01
 	self.mass += fuel * PETROL_KG_L
-	
-	#
-	#Move the car_centre_of_mass node to the position you want the COM to be
-	center_of_mass_mode = RigidBody3D.CENTER_OF_MASS_MODE_CUSTOM
-	center_of_mass = car_centre_of_mass.position
 
 
 func _unhandled_input(event: InputEvent) -> void:
