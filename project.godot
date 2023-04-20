@@ -15,6 +15,10 @@ run/main_scene="res://levels/world.tscn"
 config/features=PackedStringArray("4.0")
 config/icon="res://icon.png"
 
+[dotnet]
+
+project/assembly_name="Advanced Vehicle Demo"
+
 [editor_plugins]
 
 enabled=PackedStringArray()
