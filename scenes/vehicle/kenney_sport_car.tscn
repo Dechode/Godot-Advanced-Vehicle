@@ -182,6 +182,7 @@ car_params = ExtResource("2_7jgdf")
 
 [node name="Camera3D" parent="RigidBodyCar" index="0"]
 transform = Transform3D(1, 2.75852e-15, -1.02949e-14, 0, 0.965926, 0.258819, 1.06581e-14, -0.258819, 0.965926, -0.0299997, 2.14271, 7.20093)
+current = true
 far = 1000.0
 
 [node name="Wheel_br" parent="RigidBodyCar" index="1"]

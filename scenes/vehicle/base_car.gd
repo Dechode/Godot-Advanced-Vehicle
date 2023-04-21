@@ -112,7 +112,7 @@ func _process(delta: float) -> void:
 	
 	var brakes_torques = get_brake_torques(brake_input, delta)
 	front_brake_torque = brakes_torques.x
-	rear_brake_torque = brakes_torques.y
+	rear_brake_torque = max(brakes_torques.y, handbrake_input * car_params.max_handbrake_torque)
 	
 	if car_params.automatic:
 		var reversing = false
@@ -186,7 +186,7 @@ func _physics_process(delta):
 		torque_out = 0
 		rpm -= 500 
 	
-	if rpm <= (car_params.rpm_idle + 10) and z_vel <= 2:
+	if rpm <= car_params.rpm_idle + 10:
 		clutch_input = 1.0
 	
 	if selected_gear == 0:

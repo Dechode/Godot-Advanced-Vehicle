@@ -87,6 +87,7 @@ max_steer = 0.3
 front_brake_bias = 0.6
 steer_speed = 5.0
 max_brake_force = 20000.0
+max_handbrake_torque = 4000.0
 brake_effective_radius = 0.25
 fuel_tank_size = 40.0
 fuel_percentage = 100.0
