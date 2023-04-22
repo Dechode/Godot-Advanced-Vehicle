@@ -78,6 +78,7 @@ func _physics_process(delta: float) -> void:
 
 func apply_forces(opposite_comp, delta):
 	############# Local forward velocity #############
+	force_vec = Vector3.ZERO
 	
 	local_vel = (global_transform.origin - prev_pos) / delta * global_transform.basis
 	z_vel = -local_vel.z
