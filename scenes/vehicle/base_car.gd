@@ -112,7 +112,7 @@ func _process(delta: float) -> void:
 	
 	var brakes_torques = get_brake_torques(brake_input, delta)
 	front_brake_torque = brakes_torques.x
-	rear_brake_torque = max(brakes_torques.y, handbrake_input * car_params.max_handbrake_torque)
+	rear_brake_torque = brakes_torques.y + handbrake_input * car_params.max_handbrake_torque
 	
 	if car_params.automatic:
 		var reversing = false
