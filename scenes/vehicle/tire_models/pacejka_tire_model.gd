@@ -11,8 +11,8 @@ func update_tire_forces(slip: Vector2, normal_load: float, surface_mu: float):
 	load_sensitivity = update_load_sensitivity(normal_load)
 	var mu = surface_mu * load_sensitivity * wear_mu
 	
-	var peak_sr := 0.1
-	var peak_sa := 0.1
+	var peak_sa := 0.40 - tire_stiffness * 0.350
+	var peak_sr := 0.35 - tire_stiffness * 0.325
 	var normalised_sr = slip.y / peak_sr
 	var normalised_sa = slip.x / peak_sa
 	var resultant_slip = sqrt(pow(normalised_sr, 2) + pow(normalised_sa, 2))
