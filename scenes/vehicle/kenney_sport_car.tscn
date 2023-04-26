@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=3 uid="uid://dqqcf60u11tfq"]
+[gd_scene load_steps=15 format=3 uid="uid://dqqcf60u11tfq"]
 
 [ext_resource type="PackedScene" uid="uid://exyybiakl0yk" path="res://scenes/vehicle/base_car.tscn" id="1_rpk6a"]
 [ext_resource type="Resource" uid="uid://bsj8ccoshh6vk" path="res://resources/car_setups/kenney_sport_car.tres" id="2_7jgdf"]
@@ -6,7 +6,7 @@
 [ext_resource type="AudioStream" path="res://sounds/tres/engine_sample.tres" id="3_u8x6m"]
 [ext_resource type="PackedScene" uid="uid://d25y57k2nxxox" path="res://models/kenney_carkit1/sedan_sports.tscn" id="4_yl31q"]
 
-[sub_resource type="Resource" id="Resource_mufku"]
+[sub_resource type="Resource" id="Resource_0mdd6"]
 script = ExtResource("2_sbvb8")
 contact_patch = 0.2
 tire_stiffness = 0.5
@@ -72,11 +72,6 @@ _surfaces = [{
 blend_shape_mode = 0
 shadow_mesh = SubResource("ArrayMesh_qnnfo")
 
-[sub_resource type="Resource" id="Resource_a5213"]
-script = ExtResource("2_sbvb8")
-contact_patch = 0.2
-tire_stiffness = 0.5
-
 [sub_resource type="ArrayMesh" id="ArrayMesh_j4x36"]
 resource_name = "sedanSports_Mesh wheel_frontLeft"
 _surfaces = [{
@@ -105,11 +100,6 @@ _surfaces = [{
 blend_shape_mode = 0
 shadow_mesh = SubResource("ArrayMesh_qnnfo")
 
-[sub_resource type="Resource" id="Resource_g7mp8"]
-script = ExtResource("2_sbvb8")
-contact_patch = 0.2
-tire_stiffness = 0.5
-
 [sub_resource type="ArrayMesh" id="ArrayMesh_87r5k"]
 resource_name = "sedanSports_Mesh wheel_frontLeft"
 _surfaces = [{
@@ -137,11 +127,6 @@ _surfaces = [{
 }]
 blend_shape_mode = 0
 shadow_mesh = SubResource("ArrayMesh_qnnfo")
-
-[sub_resource type="Resource" id="Resource_nm1fb"]
-script = ExtResource("2_sbvb8")
-contact_patch = 0.2
-tire_stiffness = 0.5
 
 [sub_resource type="ArrayMesh" id="ArrayMesh_yr68v"]
 resource_name = "sedanSports_Mesh wheel_frontLeft"
@@ -187,7 +172,7 @@ far = 1000.0
 
 [node name="Wheel_br" parent="RigidBodyCar" index="1"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.75, -0.340573, 1.27031)
-tire_model = SubResource("Resource_mufku")
+tire_model = SubResource("Resource_0mdd6")
 spring_length = 0.15
 spring_stiffness = 45000.0
 bump = 10000.0
@@ -202,7 +187,7 @@ mesh = SubResource("ArrayMesh_uwn7h")
 
 [node name="Wheel_bl" parent="RigidBodyCar" index="2"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.8, -0.340573, 1.27031)
-tire_model = SubResource("Resource_a5213")
+tire_model = SubResource("Resource_0mdd6")
 spring_length = 0.15
 spring_stiffness = 45000.0
 bump = 10000.0
@@ -217,7 +202,7 @@ mesh = SubResource("ArrayMesh_j4x36")
 
 [node name="Wheel_fr" parent="RigidBodyCar" index="3"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.75, -0.340573, -1.13272)
-tire_model = SubResource("Resource_g7mp8")
+tire_model = SubResource("Resource_0mdd6")
 spring_length = 0.15
 spring_stiffness = 45000.0
 bump = 10000.0
@@ -233,7 +218,7 @@ mesh = SubResource("ArrayMesh_87r5k")
 
 [node name="Wheel_fl" parent="RigidBodyCar" index="4"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.8, -0.340573, -1.13272)
-tire_model = SubResource("Resource_nm1fb")
+tire_model = SubResource("Resource_0mdd6")
 spring_length = 0.15
 spring_stiffness = 45000.0
 bump = 10000.0
