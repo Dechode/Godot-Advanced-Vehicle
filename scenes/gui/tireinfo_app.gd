@@ -38,8 +38,8 @@ func _process(delta: float) -> void:
 	if wheels_init != 4:
 		return
 
-	$Panel/VBoxContainer/HBoxContainer/WheelFL/TireWearLabel.text = str(snapped(wheel_fl.tire_wear * 100, 0.01))
-	$Panel/VBoxContainer/HBoxContainer/WheelFR/TireWearLabel.text = str(snapped(wheel_fr.tire_wear * 100, 0.01))
-	$Panel/VBoxContainer/HBoxContainer2/WheelBL/TireWearLabel.text = str(snapped(wheel_bl.tire_wear * 100, 0.01))
-	$Panel/VBoxContainer/HBoxContainer2/WheelBR/TireWearLabel.text = str(snapped(wheel_br.tire_wear * 100, 0.01))
+	$Panel/VBoxContainer/HBoxContainer/WheelFL/TireWearLabel.text = "%3.1f %% " % float(wheel_fl.tire_wear * 100)
+	$Panel/VBoxContainer/HBoxContainer/WheelFR/TireWearLabel.text = "%3.1f %% " % float(wheel_fr.tire_wear * 100)
+	$Panel/VBoxContainer/HBoxContainer2/WheelBL/TireWearLabel.text ="%3.1f %% " % float(wheel_bl.tire_wear * 100)
+	$Panel/VBoxContainer/HBoxContainer2/WheelBR/TireWearLabel.text ="%3.1f %% " % float(wheel_br.tire_wear * 100)
 
