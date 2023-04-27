@@ -71,3 +71,7 @@ transform = Transform3D(0.833779, 0, 0.552097, 0, 1, 0, -0.552097, 0, 0.833779, 
 environment = SubResource("Environment_1y4ai")
 
 [editable path="Track"]
+[editable path="Sportcar"]
+[editable path="Sportcar/RigidBodyCar"]
+[editable path="Sportcar/RigidBodyCar/Gui"]
+[editable path="Sportcar/RigidBodyCar/sedanSports"]

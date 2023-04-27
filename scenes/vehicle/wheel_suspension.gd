@@ -2,20 +2,20 @@ class_name RaycastSuspension
 extends RayCast3D
 
 ############# Choose what tire formula to use #############
-@export var tire_model: BaseTireModel 
+var tire_model: BaseTireModel 
 
 ############# Suspension stuff #############
-@export var spring_length = 0.2
-@export var spring_stiffness = 20000.0
-@export var bump = 5000.0
-@export var rebound = 3000.0
-@export var anti_roll = 0.0
+var spring_length = 0.2
+var spring_stiffness = 20000.0
+var bump = 5000.0
+var rebound = 3000.0
+var anti_roll = 0.0
 
 ############# Tire stuff #############
-@export var wheel_mass = 15.0
-@export var tire_radius = 0.3
-@export var tire_width = 0.2
-@export var ackermann = 0.15
+var wheel_mass = 15.0
+var tire_radius = 0.3
+var tire_width = 0.2
+var ackermann = 0.15
 
 var tire_wear: float = 0.0
 
@@ -27,7 +27,7 @@ var spin: float = 0.0
 var z_vel: float = 0.0
 var local_vel
 
-# TODO
+
 var rolling_resistance: float = 0.0 #Vector2 = Vector2.ZERO
 var rol_res_surface_mul: float = 0.02
 
@@ -64,10 +64,13 @@ func set_params(params: WheelSuspensionParameters):
 	set_target_position(Vector3.DOWN * (spring_length + tire_radius))
 
 
-#func _process(delta: float) -> void:
-func _physics_process(delta: float) -> void:
-	wheelmesh.position.y = -spring_curr_length
+# Move back to physics process when physics interpolation comes to godot4
+func _process(delta: float) -> void:
 	wheelmesh.rotate_x(wrapf(-spin * delta,0, TAU))
+	wheelmesh.position.y = -spring_curr_length
+
+
+func _physics_process(delta: float) -> void:
 	if abs(z_vel) > 2.0:
 		tire_wear = tire_model.update_tire_wear(delta, slip_vec, y_force, surface_mu)
 

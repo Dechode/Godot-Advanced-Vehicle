@@ -28,11 +28,9 @@ func update_tire_forces(_slip: Vector2, _normal_load: float, _surface_mu: float)
 
 
 func update_tire_wear(delta: float, slip: Vector2, normal_load: float, mu: float):
-	var larger_slip = max(abs(slip.x), abs(slip.y))
-	tire_wear += larger_slip * mu * delta * normal_load  / (5000000 + tire_stiffness * 10000000)
+	tire_wear += slip.length() * mu * delta * normal_load  / (5000000 + tire_stiffness * 10000000)
 	tire_wear = clamp(tire_wear, 0 ,1)
 	return tire_wear
-#	print("Tire Wear = %f" % tire_wear)
 
 
 func update_load_sensitivity(normal_load: float) -> float:
