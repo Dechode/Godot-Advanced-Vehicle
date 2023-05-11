@@ -1,0 +1,48 @@
+[gd_scene load_steps=2 format=3 uid="uid://25r3bi1ijyc7"]
+
+[ext_resource type="Script" path="res://scenes/gui/render_stats.gd" id="1_qfdjj"]
+
+[node name="RenderStats" type="Control"]
+custom_minimum_size = Vector2(200, 150)
+layout_mode = 3
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 4
+script = ExtResource("1_qfdjj")
+
+[node name="Panel" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Panel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="FPSLabel" type="Label" parent="Panel/VBoxContainer"]
+layout_mode = 2
+text = "FPS = 144"
+
+[node name="StaticMemoryLabel" type="Label" parent="Panel/VBoxContainer"]
+layout_mode = 2
+text = "Mem = 0 Mb"
+
+[node name="VideoMemoryLabel" type="Label" parent="Panel/VBoxContainer"]
+layout_mode = 2
+text = "Mem = 0 Mb"
+
+[node name="DrawCallsLabel" type="Label" parent="Panel/VBoxContainer"]
+layout_mode = 2
+text = "Draw Calls = 0 "

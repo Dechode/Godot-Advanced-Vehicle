@@ -188,7 +188,7 @@ func drivetrain(torque: float, rear_brake_torque: float, front_brake_torque: flo
 	
 	elif drivetrain_params.drivetype == DRIVE_TYPE.AWD:
 		match drivetrain_params.center_diff.diff_type:
-			DIFF_TYPE.LOCKED: # Locked currently means raw 4x4 
+			DIFF_TYPE.LOCKED: # Locked center diff currently means raw 4x4 
 				var avg_spin = (avg_front_spin + avg_rear_spin) * 0.5
 				
 				var net_torque := 0.0
