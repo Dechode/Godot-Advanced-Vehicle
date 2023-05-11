@@ -70,21 +70,8 @@ func _init() -> void:
 
 func _ready() -> void:
 	clutch.friction = car_params.clutch_friction
-
-	drivetrain.rear_diff = car_params.rear_diff
-	drivetrain.front_diff = car_params.front_diff
-	drivetrain.gear_inertia = car_params.gear_inertia
-	drivetrain.gear_ratios = car_params.gear_ratios
-	drivetrain.reverse_ratio = car_params.reverse_ratio
-	drivetrain.final_drive = car_params.final_drive
-	drivetrain.front_diff_power_ratio = car_params.front_diff_power_ratio
-	drivetrain.rear_diff_power_ratio = car_params.rear_diff_power_ratio
-	drivetrain.front_diff_coast_ratio = car_params.front_diff_coast_ratio
-	drivetrain.rear_diff_coast_ratio = car_params.rear_diff_coast_ratio
-	drivetrain.automatic = car_params.automatic
-	drivetrain.drivetype = car_params.drivetype
-	drivetrain.set_front_diff_preload(car_params.front_diff_preload)
-	drivetrain.set_rear_diff_preload(car_params.rear_diff_preload)
+	
+	drivetrain.drivetrain_params = car_params.drivetrain_params
 	drivetrain.set_input_inertia(car_params.engine_moment)
 	
 	wheel_fl.set_params(car_params.wheel_params_fl)
@@ -114,16 +101,16 @@ func _process(delta: float) -> void:
 	front_brake_torque = brakes_torques.x
 	rear_brake_torque = brakes_torques.y + handbrake_input * car_params.max_handbrake_torque
 	
-	if car_params.automatic:
+	if car_params.drivetrain_params.automatic:
 		var reversing = false
 		var shift_time = 700
 		var next_gear_rpm = 0
-		if selected_gear < car_params.gear_ratios.size():
-			next_gear_rpm = car_params.gear_ratios[selected_gear] * drivetrain.final_drive * avg_front_spin * AV_2_RPM
+		if selected_gear < car_params.drivetrain_params.gear_ratios.size():
+			next_gear_rpm = car_params.drivetrain_params.gear_ratios[selected_gear] * car_params.drivetrain_params.final_drive * avg_front_spin * AV_2_RPM
 		
 		var prev_gear_rpm = 0
 		if selected_gear - 1 > 0:
-			prev_gear_rpm = car_params.gear_ratios[selected_gear - 1] * drivetrain.final_drive * avg_front_spin * AV_2_RPM
+			prev_gear_rpm = car_params.drivetrain_params.gear_ratios[selected_gear - 1] * car_params.drivetrain_params.final_drive * avg_front_spin * AV_2_RPM
 		
 		if selected_gear == -1:
 			reversing = true
@@ -151,14 +138,6 @@ func _physics_process(delta):
 	prev_pos = global_transform.origin
 	z_vel = -local_vel.z
 	x_vel = local_vel.x
-	drag_force()
-	
-	##### AntiRollBar #####
-	var prev_comp = susp_comp
-	susp_comp[2] = wheel_bl.apply_forces(prev_comp[3], delta)
-	susp_comp[3] = wheel_br.apply_forces(prev_comp[2], delta)
-	susp_comp[0] = wheel_fr.apply_forces(prev_comp[1], delta)
-	susp_comp[1] = wheel_fl.apply_forces(prev_comp[0], delta)
 	
 	##### Steerin with steer speed #####
 	if (steering_input < steering_amount):
@@ -186,7 +165,7 @@ func _physics_process(delta):
 		torque_out = 0
 		rpm -= 500 
 	
-	if rpm <= car_params.rpm_idle + 10:
+	if rpm <= car_params.rpm_idle + 10 and abs(z_vel) < 10 and throttle_input <= 0.05:
 		clutch_input = 1.0
 	
 	if selected_gear == 0:
@@ -204,7 +183,15 @@ func _physics_process(delta):
 	play_engine_sound()
 	burn_fuel(delta)
 	
-	
+	##### AntiRollBar #####
+	var prev_comp = susp_comp
+	susp_comp[2] = wheel_bl.apply_forces(prev_comp[3], delta)
+	susp_comp[3] = wheel_br.apply_forces(prev_comp[2], delta)
+	susp_comp[0] = wheel_fr.apply_forces(prev_comp[1], delta)
+	susp_comp[1] = wheel_fl.apply_forces(prev_comp[0], delta)
+	drag_force()
+
+
 func get_engine_torque(p_rpm) -> float: 
 	var rpm_factor = clamp(p_rpm / car_params.max_engine_rpm, 0.0, 1.0)
 	var torque_factor = car_params.torque_curve.sample_baked(rpm_factor)
@@ -245,11 +232,11 @@ func engage(delta):
 	
 	var gearbox_shaft_speed: float = 0.0
 	
-	if car_params.drivetype == car_params.DRIVE_TYPE.RWD:
+	if car_params.drivetrain_params.drivetype == car_params.drivetrain_params.DRIVE_TYPE.RWD:
 		gearbox_shaft_speed = avg_rear_spin * drivetrain.get_gearing() 
-	elif car_params.drivetype == car_params.DRIVE_TYPE.FWD:
-		gearbox_shaft_speed = avg_front_spin * drivetrain.get_gearing() 
-	elif car_params.drivetype == car_params.DRIVE_TYPE.AWD:
+	elif car_params.drivetrain_params.drivetype == car_params.drivetrain_params.DRIVE_TYPE.FWD:
+		gearbox_shaft_speed = avg_front_spin * car_params.drivetrain_params.get_gearing() 
+	elif car_params.drivetrain_params.drivetype == car_params.drivetrain_params.DRIVE_TYPE.AWD:
 		gearbox_shaft_speed = (avg_front_spin + avg_rear_spin) * 0.5 * drivetrain.get_gearing()
 		
 	var speed_error = engine_angular_vel - gearbox_shaft_speed
@@ -260,9 +247,7 @@ func engage(delta):
 	clutch_reaction_torque = reaction_torques.y
 	
 	net_drive = drive_reaction_torque * (1 - clutch_input)
-	
 	drivetrain.drivetrain(net_drive, rear_brake_torque, front_brake_torque, [wheel_bl, wheel_br, wheel_fl, wheel_fr], delta)
-
 	speedo = avg_front_spin * wheel_fl.tire_radius * 3.6
 
 func drag_force():
@@ -285,7 +270,7 @@ func burn_fuel(delta):
 
 
 func shift_up():
-	if selected_gear < car_params.gear_ratios.size():
+	if selected_gear < car_params.drivetrain_params.gear_ratios.size():
 		selected_gear += 1
 		last_shift_time = Time.get_ticks_msec()
 		drivetrain.set_selected_gear(selected_gear)

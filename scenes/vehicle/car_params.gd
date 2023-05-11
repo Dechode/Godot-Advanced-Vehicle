@@ -37,24 +37,25 @@ enum DRIVE_TYPE{
 @export var clutch_friction = 500.0
 
 ######### Drivetrain variables #########
-@export var drivetype = DRIVE_TYPE.RWD
-@export var automatic := false
-
-@export var gear_ratios = [ 3.1, 2.61, 2.1, 1.72, 1.2, 1.0 ] 
-@export var final_drive = 3.7
-@export var reverse_ratio = 3.9
-@export var gear_inertia = 0.12
-
-@export var front_diff = DIFF_TYPE.LIMITED_SLIP
-@export var front_diff_preload = 50.0
-@export var front_diff_power_ratio: float = 2.0
-@export var front_diff_coast_ratio: float = 1.0
-@export var rear_diff = DIFF_TYPE.LIMITED_SLIP
-@export var rear_diff_preload = 50.0
-@export var rear_diff_power_ratio: float = 2.0
-@export var rear_diff_coast_ratio: float = 1.0
-
-@export var center_split_fr = 0.4 # AWD torque split front / rear
+@export var drivetrain_params: DriveTrainParameters
+#@export var drivetype = DRIVE_TYPE.RWD
+#@export var automatic := false
+#
+#@export var gear_ratios = [ 3.1, 2.61, 2.1, 1.72, 1.2, 1.0 ] 
+#@export var final_drive = 3.7
+#@export var reverse_ratio = 3.9
+#@export var gear_inertia = 0.12
+#
+#@export var front_diff = DIFF_TYPE.LIMITED_SLIP
+#@export var front_diff_preload = 50.0
+#@export var front_diff_power_ratio: float = 2.0
+#@export var front_diff_coast_ratio: float = 1.0
+#@export var rear_diff = DIFF_TYPE.LIMITED_SLIP
+#@export var rear_diff_preload = 50.0
+#@export var rear_diff_power_ratio: float = 2.0
+#@export var rear_diff_coast_ratio: float = 1.0
+#
+#@export var center_split_fr = 0.4 # AWD torque split front / rear
 
 ######### Aero #########
 @export var cd = 0.3
