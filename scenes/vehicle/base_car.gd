@@ -209,7 +209,7 @@ func engage(delta):
 		gearbox_shaft_speed = avg_rear_spin * drivetrain.get_gearing() 
 		
 	elif car_params.drivetrain_params.drivetype == car_params.drivetrain_params.DRIVE_TYPE.FWD:
-		gearbox_shaft_speed = avg_front_spin * car_params.drivetrain_params.get_gearing() 
+		gearbox_shaft_speed = avg_front_spin * drivetrain.get_gearing() 
 		
 	elif car_params.drivetrain_params.drivetype == car_params.drivetrain_params.DRIVE_TYPE.AWD:
 		gearbox_shaft_speed = (avg_front_spin + avg_rear_spin) * 0.5 * drivetrain.get_gearing()
