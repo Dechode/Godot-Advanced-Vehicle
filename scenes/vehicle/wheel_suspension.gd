@@ -142,10 +142,11 @@ func apply_forces(opposite_comp, delta):
 		if not is_zero_approx(z_vel):
 			slip_vec.y = (z_vel - spin * tire_radius) / abs(z_vel)
 		else:
-			if is_zero_approx(spin):
-				slip_vec.y = 0.0
-			else:
-				slip_vec.y = 0.0001 * spin # This is to avoid "getting stuck" if local z velocity is absolute 0
+			slip_vec.y = (z_vel - spin * tire_radius) / abs(z_vel + 0.0000001)
+#			if is_zero_approx(spin):
+#				slip_vec.y = 0.0
+#			else:
+#				slip_vec.y = 0.0001 * spin # This is to avoid "getting stuck" if local z velocity is absolute 0
 	
 		force_vec = tire_model.update_tire_forces(slip_vec, y_force, surface_mu)
 		
