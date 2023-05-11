@@ -10,8 +10,8 @@ const AV_2_RPM: float = 60 / TAU
 
 #####
 
-var drivetrain: DriveTrain
-var clutch = Clutch
+var drivetrain := DriveTrain.new()
+var clutch := Clutch.new()
 
 ######### Controller inputs #########
 var throttle_input: float = 0.0
@@ -49,18 +49,11 @@ var prev_pos: Vector3 = Vector3.ZERO
 var z_vel: float = 0.0
 var x_vel: float = 0.0
 
-var last_shift_time := 0
-
 @onready var wheel_fl = $Wheel_fl as RaycastSuspension
 @onready var wheel_fr = $Wheel_fr as RaycastSuspension
 @onready var wheel_bl = $Wheel_bl as RaycastSuspension
 @onready var wheel_br = $Wheel_br as RaycastSuspension
 @onready var audioplayer = $EngineSound
-
-
-func _init() -> void:
-	clutch = Clutch.new()
-	drivetrain = DriveTrain.new()
 
 
 func _ready() -> void:
@@ -72,10 +65,10 @@ func _ready() -> void:
 	car_params.wheel_params_fl.ackermann = car_params.ackermann
 	car_params.wheel_params_fr.ackermann = -car_params.ackermann
 	
-	wheel_fl.set_params(car_params.wheel_params_fl)
-	wheel_fr.set_params(car_params.wheel_params_fr)
-	wheel_bl.set_params(car_params.wheel_params_bl)
-	wheel_br.set_params(car_params.wheel_params_br)
+	wheel_fl.set_params(car_params.wheel_params_fl.duplicate(true))
+	wheel_fr.set_params(car_params.wheel_params_fr.duplicate(true))
+	wheel_bl.set_params(car_params.wheel_params_bl.duplicate(true))
+	wheel_br.set_params(car_params.wheel_params_br.duplicate(true))
 	
 	fuel = car_params.fuel_tank_size * car_params.fuel_percentage * 0.01
 	self.mass += fuel * PETROL_KG_L
@@ -163,12 +156,13 @@ func _physics_process(delta):
 	play_engine_sound()
 	burn_fuel(delta)
 	
-	##### AntiRollBar #####
-	var prev_comp = susp_comp
+	##### Anti-roll bar and applying forces #####
+	var prev_comp := susp_comp
 	susp_comp[2] = wheel_bl.apply_forces(prev_comp[3], delta)
 	susp_comp[3] = wheel_br.apply_forces(prev_comp[2], delta)
 	susp_comp[0] = wheel_fr.apply_forces(prev_comp[1], delta)
 	susp_comp[1] = wheel_fl.apply_forces(prev_comp[0], delta)
+	
 	drag_force()
 
 
@@ -194,7 +188,6 @@ func get_brake_torques(p_brake_input: float, delta):
 func freewheel(delta):
 	clutch_reaction_torque = 0.0
 	avg_front_spin = 0.0
-#	var brakes_torques = get_brake_torques(brake_input, delta)
 	wheel_fl.apply_torque(0.0, front_brake_torque, 0.0, delta)
 	wheel_fr.apply_torque(0.0, front_brake_torque, 0.0, delta)
 	wheel_bl.apply_torque(0.0, rear_brake_torque, 0.0, delta)
@@ -214,8 +207,10 @@ func engage(delta):
 	
 	if car_params.drivetrain_params.drivetype == car_params.drivetrain_params.DRIVE_TYPE.RWD:
 		gearbox_shaft_speed = avg_rear_spin * drivetrain.get_gearing() 
+		
 	elif car_params.drivetrain_params.drivetype == car_params.drivetrain_params.DRIVE_TYPE.FWD:
 		gearbox_shaft_speed = avg_front_spin * car_params.drivetrain_params.get_gearing() 
+		
 	elif car_params.drivetrain_params.drivetype == car_params.drivetrain_params.DRIVE_TYPE.AWD:
 		gearbox_shaft_speed = (avg_front_spin + avg_rear_spin) * 0.5 * drivetrain.get_gearing()
 		
@@ -227,7 +222,8 @@ func engage(delta):
 	clutch_reaction_torque = reaction_torques.y
 	
 	net_drive = drive_reaction_torque * (1 - clutch_input)
-	drivetrain.drivetrain(net_drive, rear_brake_torque, front_brake_torque, [wheel_bl, wheel_br, wheel_fl, wheel_fr], delta)
+	drivetrain.drivetrain(net_drive, rear_brake_torque, front_brake_torque,
+						[wheel_bl, wheel_br, wheel_fl, wheel_fr], clutch_input, delta)
 	speedo = avg_front_spin * wheel_fl.tire_radius * 3.6
 
 
