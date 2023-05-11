@@ -20,4 +20,4 @@ enum DRIVE_TYPE{
 @export var center_diff: DiffParameters
 
 
-@export var center_split_fr := 0.4 # AWD torque split front / rear
+@export var center_split_fr := 0.4 # AWD torque split front / rear, unused if central diff is not limited slip

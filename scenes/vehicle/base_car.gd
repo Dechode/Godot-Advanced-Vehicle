@@ -1,7 +1,7 @@
 class_name BaseCar
 extends RigidBody3D
 
-@export var car_params: CarParameters
+@export var car_params := CarParameters.new()
 
 ######## CONSTANTS ########
 const PETROL_KG_L: float = 0.7489
@@ -36,10 +36,6 @@ var engine_angular_vel: float = 0.0
 var rear_brake_torque: float = 0.0
 var front_brake_torque: float = 0.0
 
-var selected_gear: int = 0
-
-var drive_inertia: float = 0.2 #includes every inertia after engine and before wheels
-
 var steering_amount: float = 0.0
 
 var speedo: float = 0.0
@@ -53,7 +49,7 @@ var prev_pos: Vector3 = Vector3.ZERO
 var z_vel: float = 0.0
 var x_vel: float = 0.0
 
-var last_shift_time = 0
+var last_shift_time := 0
 
 @onready var wheel_fl = $Wheel_fl as RaycastSuspension
 @onready var wheel_fr = $Wheel_fr as RaycastSuspension
@@ -65,7 +61,6 @@ var last_shift_time = 0
 func _init() -> void:
 	clutch = Clutch.new()
 	drivetrain = DriveTrain.new()
-	car_params = CarParameters.new()
 
 
 func _ready() -> void:
@@ -73,6 +68,9 @@ func _ready() -> void:
 	
 	drivetrain.drivetrain_params = car_params.drivetrain_params
 	drivetrain.set_input_inertia(car_params.engine_moment)
+	
+	car_params.wheel_params_fl.ackermann = car_params.ackermann
+	car_params.wheel_params_fr.ackermann = -car_params.ackermann
 	
 	wheel_fl.set_params(car_params.wheel_params_fl)
 	wheel_fr.set_params(car_params.wheel_params_fr)
@@ -90,7 +88,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		shift_down()
 
 
-func _process(delta: float) -> void:
+func _physics_process(delta):
 	brake_input = Input.get_action_strength("Brake")
 	steering_input = Input.get_action_strength("SteerLeft") - Input.get_action_strength("SteerRight")
 	throttle_input = Input.get_action_strength("Throttle")
@@ -101,39 +99,6 @@ func _process(delta: float) -> void:
 	front_brake_torque = brakes_torques.x
 	rear_brake_torque = brakes_torques.y + handbrake_input * car_params.max_handbrake_torque
 	
-	if car_params.drivetrain_params.automatic:
-		var reversing = false
-		var shift_time = 700
-		var next_gear_rpm = 0
-		if selected_gear < car_params.drivetrain_params.gear_ratios.size():
-			next_gear_rpm = car_params.drivetrain_params.gear_ratios[selected_gear] * car_params.drivetrain_params.final_drive * avg_front_spin * AV_2_RPM
-		
-		var prev_gear_rpm = 0
-		if selected_gear - 1 > 0:
-			prev_gear_rpm = car_params.drivetrain_params.gear_ratios[selected_gear - 1] * car_params.drivetrain_params.final_drive * avg_front_spin * AV_2_RPM
-		
-		if selected_gear == -1:
-			reversing = true
-
-		var torque_bigger_next_gear = get_engine_torque(next_gear_rpm) > torque_out - drag_torque
-		if torque_bigger_next_gear and selected_gear >= 0:
-			if rpm > 0.85 * car_params.max_engine_rpm:
-				if Time.get_ticks_msec() - last_shift_time > shift_time:
-					shift_up()
-		var torque_bigger_prev_gear = get_engine_torque(prev_gear_rpm) > torque_out - drag_torque
-		if selected_gear > 1 and rpm < 0.5 * car_params.max_engine_rpm and torque_bigger_prev_gear:
-			if Time.get_ticks_msec() - last_shift_time > shift_time:
-				shift_down()
-		if abs(selected_gear) <= 1 and abs(z_vel) < 3.0 and brake_input > 0.2:
-			if not reversing:
-				if Time.get_ticks_msec() - last_shift_time > shift_time:
-					shift_down()
-			else:
-				if Time.get_ticks_msec() - last_shift_time > shift_time:
-					shift_up()
-
-
-func _physics_process(delta):
 	local_vel = (global_transform.origin - prev_pos) / delta * global_transform.basis
 	prev_pos = global_transform.origin
 	z_vel = -local_vel.z
@@ -167,8 +132,23 @@ func _physics_process(delta):
 	
 	if rpm <= car_params.rpm_idle + 10 and abs(z_vel) < 10 and throttle_input <= 0.05:
 		clutch_input = 1.0
+		
+	var next_gear_rpm = 0
+	if drivetrain.selected_gear < car_params.drivetrain_params.gear_ratios.size():
+		next_gear_rpm = car_params.drivetrain_params.gear_ratios[drivetrain.selected_gear] * car_params.drivetrain_params.final_drive * avg_front_spin * AV_2_RPM
+
+	var prev_gear_rpm = 0
+	if drivetrain.selected_gear - 1 > 0:
+		prev_gear_rpm = car_params.drivetrain_params.gear_ratios[drivetrain.selected_gear - 1] * car_params.drivetrain_params.final_drive * avg_front_spin * AV_2_RPM
 	
-	if selected_gear == 0:
+	var next_gear_torque := get_engine_torque(next_gear_rpm)
+	var prev_gear_torque := get_engine_torque(prev_gear_rpm)
+	
+	drivetrain.automatic_shifting(torque_out - drag_torque, prev_gear_torque,
+								next_gear_torque, rpm, car_params.max_engine_rpm,
+								brake_input, z_vel)
+	
+	if drivetrain.selected_gear == 0:
 		freewheel(delta)
 	else:
 		engage(delta)
@@ -250,6 +230,7 @@ func engage(delta):
 	drivetrain.drivetrain(net_drive, rear_brake_torque, front_brake_torque, [wheel_bl, wheel_br, wheel_fl, wheel_fr], delta)
 	speedo = avg_front_spin * wheel_fl.tire_radius * 3.6
 
+
 func drag_force():
 	var spd = sqrt(x_vel * x_vel + z_vel * z_vel)
 	var cdrag = 0.5 * car_params.cd * car_params.frontal_area * car_params.air_density
@@ -270,17 +251,11 @@ func burn_fuel(delta):
 
 
 func shift_up():
-	if selected_gear < car_params.drivetrain_params.gear_ratios.size():
-		selected_gear += 1
-		last_shift_time = Time.get_ticks_msec()
-		drivetrain.set_selected_gear(selected_gear)
+	drivetrain.shift_up()
 
 
 func shift_down():
-	if selected_gear > -1:
-		selected_gear -= 1
-		last_shift_time = Time.get_ticks_msec()
-		drivetrain.set_selected_gear(selected_gear)
+	drivetrain.shift_down()
 
 
 func play_engine_sound():

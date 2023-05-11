@@ -1,6 +1,8 @@
 class_name DriveTrain
 extends Node
 
+const AV_2_RPM: float = 60 / TAU
+
 enum DIFF_TYPE{
 	LIMITED_SLIP,
 	OPEN_DIFF,
@@ -25,11 +27,57 @@ var selected_gear := 0
 var _diff_clutch := Clutch.new() 
 var _engine_inertia := 0.0
 var _diff_split := 0.5
+var last_shift_time := 0
+
+var avg_rear_spin := 0.0
+var avg_front_spin := 0.0
+
+
+func automatic_shifting(cur_torque, lower_gear_torque, higher_gear_torque, rpm, max_rpm, brake_input, speed):
+	if !drivetrain_params.automatic:
+		return
+		
+	var reversing = false
+	var shift_time = 700
+	
+	if selected_gear == -1:
+		reversing = true
+
+	if higher_gear_torque > cur_torque and selected_gear >= 0:
+		if rpm > 0.85 * max_rpm:
+			if Time.get_ticks_msec() - last_shift_time > shift_time:
+				shift_up()
+	
+	if selected_gear > 1 and rpm < 0.5 * max_rpm and lower_gear_torque > cur_torque:
+		if Time.get_ticks_msec() - last_shift_time > shift_time:
+			shift_down()
+	
+	if abs(selected_gear) <= 1 and abs(speed) < 3.0 and brake_input > 0.2:
+		if not reversing:
+			if Time.get_ticks_msec() - last_shift_time > shift_time:
+				shift_down()
+		else:
+			if Time.get_ticks_msec() - last_shift_time > shift_time:
+				shift_up()
 
 
 func set_selected_gear(gear):
 	gear = clamp(gear, -1, drivetrain_params.gear_ratios.size())
 	selected_gear = gear
+
+
+func shift_up():
+	if selected_gear < drivetrain_params.gear_ratios.size():
+		selected_gear += 1
+		last_shift_time = Time.get_ticks_msec()
+		set_selected_gear(selected_gear)
+
+
+func shift_down():
+	if selected_gear > -1:
+		selected_gear -= 1
+		last_shift_time = Time.get_ticks_msec()
+		set_selected_gear(selected_gear)
 
 
 func get_gearing() -> float:
@@ -61,9 +109,6 @@ func differential(torque: float, brake_torque, wheels, diff: DiffParameters, del
 		bias = tr2 / tr1
 		delta_torque = tr2 - tr1
 	
-#	var temp_td = abs(tr1 - tr2)
-#	print_debug(delta_torque - temp_td)
-	
 	var t1 := torque * 0.5
 	var t2 := torque * 0.5
 	var drive_inertia := _engine_inertia + pow(abs(get_gearing()), 2) * drivetrain_params.gear_inertia
@@ -77,13 +122,9 @@ func differential(torque: float, brake_torque, wheels, diff: DiffParameters, del
 	elif diff.diff_type == DIFF_TYPE.LOCKED:
 		diff_state = DIFF_STATE.LOCKED
 	else:
-#		print_debug(bias)
-		if abs(delta_torque) > diff.diff_preload and bias <= ratio:
+		if abs(delta_torque) > diff.diff_preload and bias >= ratio:
 			diff_state = DIFF_STATE.SLIPPING
-#			print_debug("Slipping")
-	
 #	print_debug(diff_state)
-	
 	match diff_state:
 		DIFF_STATE.OPEN:
 			var diff_sum := 0.0
@@ -96,8 +137,8 @@ func differential(torque: float, brake_torque, wheels, diff: DiffParameters, del
 		
 		DIFF_STATE.SLIPPING:
 			_diff_clutch.friction = diff.diff_preload
+			
 			var diff_torques = _diff_clutch.get_reaction_torques(wheels[0].get_spin(), wheels[1].get_spin(), 0.0, 0.0)
-#			print_debug("diff internal torques = " +  str(diff_torques))
 			t1 += diff_torques.x
 			t2 += diff_torques.y
 			
@@ -107,14 +148,16 @@ func differential(torque: float, brake_torque, wheels, diff: DiffParameters, del
 		DIFF_STATE.LOCKED:
 			var net_torque = wheels[0].get_reaction_torque() + wheels[1].get_reaction_torque()
 			net_torque += t1 + t2
-			var spin: float
+			
+			var spin := 0.0
 			var avg_spin = (wheels[0].get_spin() + wheels[1].get_spin()) * 0.5
 			var rolling_resistance = wheels[0].rolling_resistance + wheels[1].rolling_resistance
-#			if abs(avg_spin) < 5.0 and brake_torque > abs(t1 + t2):
+			
 			if abs(avg_spin) < 5.0 and brake_torque > abs(net_torque):
 				spin = 0.0
 			else:
 				net_torque -= (brake_torque + rolling_resistance) * sign(avg_spin)
+			
 			spin = avg_spin + delta * net_torque / (wheels[0].wheel_inertia + drive_inertia + wheels[1].wheel_inertia)
 			wheels[0].set_spin(spin)
 			wheels[1].set_spin(spin)
@@ -125,6 +168,9 @@ func differential(torque: float, brake_torque, wheels, diff: DiffParameters, del
 func drivetrain(torque: float, rear_brake_torque: float, front_brake_torque: float, wheels: Array, delta: float):
 	var rear_wheels = [wheels[0], wheels[1]]
 	var front_wheels = [wheels[2], wheels[3]]
+	
+	avg_rear_spin = (wheels[0].get_spin() + wheels[1].get_spin()) * 0.5
+	avg_front_spin = (wheels[2].get_spin() + wheels[3].get_spin()) * 0.5 
 	
 	var drive_torque = torque * get_gearing()
 	
@@ -138,15 +184,10 @@ func drivetrain(torque: float, rear_brake_torque: float, front_brake_torque: flo
 		rear_wheels[0].apply_torque(0.0, rear_brake_torque * 0.5, 0.0, delta)
 		rear_wheels[1].apply_torque(0.0, rear_brake_torque * 0.5, 0.0, delta)
 	
-	
 	elif drivetrain_params.drivetype == DRIVE_TYPE.AWD:
-		
-#		if drivetrain_params.center_diff.diff_type == DIFF_TYPE.LOCKED:
 		match drivetrain_params.center_diff.diff_type:
-			DIFF_TYPE.LOCKED:
-				var rear_spin = (wheels[0].get_spin() + wheels[1].get_spin()) * 0.5
-				var front_spin = (wheels[2].get_spin() + wheels[3].get_spin()) * 0.5 
-				var avg_spin = (front_spin + rear_spin) * 0.5
+			DIFF_TYPE.LOCKED: # Locked currently means raw 4x4 
+				var avg_spin = (avg_front_spin + avg_rear_spin) * 0.5
 				
 				var net_torque := 0.0
 				var combined_wheel_inertias := 0.0
@@ -158,7 +199,6 @@ func drivetrain(torque: float, rear_brake_torque: float, front_brake_torque: flo
 					rolling_resistance += w.rolling_resistance
 					
 				net_torque += drive_torque
-	#			print_debug(net_torque)
 				var brake_torque := rear_brake_torque + front_brake_torque
 				
 				var spin := 0.0
@@ -169,7 +209,6 @@ func drivetrain(torque: float, rear_brake_torque: float, front_brake_torque: flo
 				
 					var drive_inertia = _engine_inertia + pow(abs(get_gearing()), 2) * drivetrain_params.gear_inertia# * 2
 					drive_inertia += combined_wheel_inertias
-	#				print_debug(avg_spin)
 					spin = avg_spin + delta * net_torque / drive_inertia
 				
 				wheels[0].set_spin(spin)
@@ -190,5 +229,4 @@ func drivetrain(torque: float, rear_brake_torque: float, front_brake_torque: flo
 				
 				differential(rear_drive, rear_brake_torque, rear_wheels, drivetrain_params.rear_diff, delta)
 				differential(front_drive, front_brake_torque, front_wheels, drivetrain_params.front_diff, delta)
-				pass
 

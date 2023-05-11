@@ -15,6 +15,7 @@ enum DRIVE_TYPE{
 }
 
 @export var max_steer := 0.3
+@export var ackermann := 0.15
 @export var front_brake_bias := 0.6
 @export var steer_speed := 5.0
 @export var max_brake_force := 20000.0
@@ -38,24 +39,6 @@ enum DRIVE_TYPE{
 
 ######### Drivetrain variables #########
 @export var drivetrain_params: DriveTrainParameters
-#@export var drivetype = DRIVE_TYPE.RWD
-#@export var automatic := false
-#
-#@export var gear_ratios = [ 3.1, 2.61, 2.1, 1.72, 1.2, 1.0 ] 
-#@export var final_drive = 3.7
-#@export var reverse_ratio = 3.9
-#@export var gear_inertia = 0.12
-#
-#@export var front_diff = DIFF_TYPE.LIMITED_SLIP
-#@export var front_diff_preload = 50.0
-#@export var front_diff_power_ratio: float = 2.0
-#@export var front_diff_coast_ratio: float = 1.0
-#@export var rear_diff = DIFF_TYPE.LIMITED_SLIP
-#@export var rear_diff_preload = 50.0
-#@export var rear_diff_power_ratio: float = 2.0
-#@export var rear_diff_coast_ratio: float = 1.0
-#
-#@export var center_split_fr = 0.4 # AWD torque split front / rear
 
 ######### Aero #########
 @export var cd = 0.3
