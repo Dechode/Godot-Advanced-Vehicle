@@ -61,7 +61,8 @@ func differential(torque: float, brake_torque, wheels, diff: DiffParameters, del
 		bias = tr2 / tr1
 		delta_torque = tr2 - tr1
 	
-#	print_debug(delta_torque)
+#	var temp_td = abs(tr1 - tr2)
+#	print_debug(delta_torque - temp_td)
 	
 	var t1 := torque * 0.5
 	var t2 := torque * 0.5
@@ -184,8 +185,8 @@ func drivetrain(torque: float, rear_brake_torque: float, front_brake_torque: flo
 				differential(front_drive, front_brake_torque, front_wheels, drivetrain_params.front_diff, delta)
 			
 			DIFF_TYPE.OPEN_DIFF:
-				var rear_drive = drive_torque * (1 - drivetrain_params.center_split_fr)
-				var front_drive = drive_torque * drivetrain_params.center_split_fr
+				var rear_drive = drive_torque * 0.5
+				var front_drive = drive_torque * 0.5
 				
 				differential(rear_drive, rear_brake_torque, rear_wheels, drivetrain_params.rear_diff, delta)
 				differential(front_drive, front_brake_torque, front_wheels, drivetrain_params.front_diff, delta)
