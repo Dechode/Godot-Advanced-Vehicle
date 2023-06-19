@@ -1,0 +1,109 @@
+[gd_resource type="Resource" script_class="CarParameters" load_steps=11 format=3 uid="uid://cu4jo10x8b1se"]
+
+[ext_resource type="AudioStream" path="res://sounds/tres/engine_sample.tres" id="1_wqlgx"]
+[ext_resource type="Script" path="res://scenes/vehicle/car_params.gd" id="2_8ru0w"]
+[ext_resource type="Script" path="res://scenes/vehicle/wheel_params.gd" id="3_scbug"]
+[ext_resource type="Script" path="res://scenes/vehicle/tire_models/pacejka_tire_model.gd" id="4_ilwyn"]
+
+[sub_resource type="Curve" id="Curve_g3qlw"]
+_data = [Vector2(0, 0.463636), 0.0, 0.0, 0, 0, Vector2(0.4, 0.945454), 0.0, 0.0, 0, 0, Vector2(0.646753, 1), 0.0, 0.0, 0, 0, Vector2(1, 0.290909), -4.9, 0.0, 0, 0]
+point_count = 4
+
+[sub_resource type="Resource" id="Resource_kubsx"]
+script = ExtResource("4_ilwyn")
+tire_stiffness = 0.75
+
+[sub_resource type="Resource" id="Resource_wl1bc"]
+script = ExtResource("3_scbug")
+tire_model = SubResource("Resource_kubsx")
+spring_length = 0.15
+spring_stiffness = 55.0
+bump = 6.0
+rebound = 7.0
+wheel_mass = 20.0
+tire_radius = 0.3
+tire_width = 0.225
+ackermann = 0.15
+anti_roll = 50
+
+[sub_resource type="Resource" id="Resource_x3xtx"]
+script = ExtResource("3_scbug")
+tire_model = SubResource("Resource_kubsx")
+spring_length = 0.15
+spring_stiffness = 55.0
+bump = 6.0
+rebound = 7.0
+wheel_mass = 20.0
+tire_radius = 0.3
+tire_width = 0.225
+ackermann = 0.15
+anti_roll = 50
+
+[sub_resource type="Resource" id="Resource_qk3ry"]
+script = ExtResource("3_scbug")
+tire_model = SubResource("Resource_kubsx")
+spring_length = 0.15
+spring_stiffness = 55.0
+bump = 6.0
+rebound = 7.0
+wheel_mass = 20.0
+tire_radius = 0.3
+tire_width = 0.225
+ackermann = 0.15
+anti_roll = 50
+
+[sub_resource type="Resource" id="Resource_ofeud"]
+script = ExtResource("3_scbug")
+tire_model = SubResource("Resource_kubsx")
+spring_length = 0.15
+spring_stiffness = 55.0
+bump = 6.0
+rebound = 7.0
+wheel_mass = 20.0
+tire_radius = 0.3
+tire_width = 0.225
+ackermann = 0.15
+anti_roll = 50
+
+[resource]
+script = ExtResource("2_8ru0w")
+max_steer = 0.3
+front_brake_bias = 0.6
+steer_speed = 5.0
+max_brake_force = 20000.0
+max_handbrake_torque = 4000.0
+brake_effective_radius = 0.25
+fuel_tank_size = 40.0
+fuel_percentage = 100.0
+max_torque = 150.0
+max_engine_rpm = 8000.0
+rpm_idle = 900.0
+torque_curve = SubResource("Curve_g3qlw")
+engine_drag = 0.03
+engine_brake = 10.0
+engine_moment = 0.25
+engine_bsfc = 0.3
+engine_sound = ExtResource("1_wqlgx")
+clutch_friction = 300.0
+drivetype = 1
+automatic = false
+gear_ratios = [3.1, 2.61, 2.1, 1.72, 1.2, 1.0]
+final_drive = 3.7
+reverse_ratio = 3.9
+gear_inertia = 0.12
+front_diff = 0
+front_diff_preload = 50.0
+front_diff_power_ratio = 2.0
+front_diff_coast_ratio = 1.0
+rear_diff = 0
+rear_diff_preload = 50.0
+rear_diff_power_ratio = 2.0
+rear_diff_coast_ratio = 1.0
+center_split_fr = 0.4
+cd = 0.3
+air_density = 1.225
+frontal_area = 2.0
+wheel_params_fl = SubResource("Resource_qk3ry")
+wheel_params_fr = SubResource("Resource_ofeud")
+wheel_params_bl = SubResource("Resource_wl1bc")
+wheel_params_br = SubResource("Resource_x3xtx")

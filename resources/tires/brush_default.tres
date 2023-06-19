@@ -1,0 +1,11 @@
+[gd_resource type="Resource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scenes/vehicle/tire_models/brush_tire_model.gd" id="1"]
+
+[resource]
+resource_local_to_scene = true
+script = ExtResource( 1 )
+tire_softness = 1.0
+tire_width = 0.25
+tire_radius = 0.3
+brush_contact_patch = 0.2

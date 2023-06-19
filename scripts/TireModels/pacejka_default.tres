@@ -1,7 +1,0 @@
-[gd_resource type="Resource" load_steps=2 format=2]
-
-[ext_resource path="res://scripts/TireModels/pacejka_tire_model.gd" type="Script" id=1]
-
-[resource]
-script = ExtResource( 1 )
-tire_stiffness = 0.5

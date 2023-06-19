@@ -1,0 +1,53 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scenes/road.gd" id="1"]
+[ext_resource type="Material" path="res://materials/tarmac.tres" id="2"]
+[ext_resource type="Material" path="res://materials/gravel.tres" id="3"]
+
+[sub_resource type="Curve3D" id=1]
+_data = {
+"points": PackedVector3Array( -34.7, 0, -56.2, 34.7, 0, 56.2, 47.1, 0.1, 87.6, -28.87, 0, 15.53, 28.87, 0, -15.53, 142.571, 0.072282, 141.668, -13.3, 0, 47.4, 13.3, 0, -47.4, 201.7, 0, 59, 22.98, 0, 24.39, -22.98, 0, -24.39, 181.1, 0, -83.9, 16.05, 0, 11.4, -16.05, 0, -11.4, 109.4, 0, -95.3, 11.76, 0, 11.87, -11.76, 0, -11.87, 91.4, -0.1, -155.5, 50.2, 0, -42.5, -50.2, 0, 42.5, -176.1, -0.1, -139.5, -5.6, 0, -43.2, 5.6, 0, 43.2, -207.5, 0, 0.7, -16.32, 0, -26.43, 16.32, 0, 26.43, -139.871, 0.0468903, 76.3188, -21.53, 0, -18.01, 21.53, 0, 18.01, -100.442, 0.143051, 193.109, -26.55, 0, 37.35, 26.55, 0, -37.35, -17.4581, 0.141373, 180.703, 7.2, 0, 19.3, -7.2, 0, -19.3, -80.7745, -0.000213623, 9.30077, -16.47, -0.18, -11.69, 16.47, 0.18, 11.69, -32.8, 0.6, -30.9, 0, 0, 0, 0, 0, 0, 37.1024, -6.10948e-06, 71.8207 ),
+"tilts": PackedFloat32Array( 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 )
+}
+
+[node name="Track" type="Node3D"]
+
+[node name="Path3D" type="Path3D" parent="."]
+curve = SubResource( 1 )
+script = ExtResource( 1 )
+track_width = 17.131
+lower_ground_width = 13.498
+
+[node name="Road" type="CSGPolygon3D" parent="Path3D" groups=["Tarmac"]]
+use_collision = true
+polygon = PackedVector2Array( -8.5655, 0, -8.5655, -0.1, 8.5655, -0.1, 8.5655, 0 )
+mode = 2
+path_node = NodePath("..")
+path_interval_type = 0
+path_interval = 10.0
+path_simplify_angle = 0.0
+path_rotation = 2
+path_local = false
+path_continuous_u = false
+path_u_distance = 0.0
+path_joined = true
+smooth_faces = true
+material = ExtResource( 2 )
+
+[node name="Ground" type="CSGPolygon3D" parent="Path3D" groups=["Gravel"]]
+use_collision = true
+polygon = PackedVector2Array( -10.5655, -0.1, 10.5655, -0.1, 13.498, -4.01, 13.598, -4.1, -13.598, -4.1, -13.498, -4 )
+mode = 2
+path_node = NodePath("..")
+path_interval_type = 0
+path_interval = 7.0
+path_simplify_angle = 0.0
+path_rotation = 2
+path_local = false
+path_continuous_u = false
+path_u_distance = 1.0
+path_joined = true
+smooth_faces = true
+material = ExtResource( 3 )
+
+[connection signal="curve_changed" from="Path3D" to="Path3D" method="_on_Path_curve_changed"]

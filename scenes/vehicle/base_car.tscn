@@ -1,0 +1,70 @@
+[gd_scene load_steps=7 format=3 uid="uid://exyybiakl0yk"]
+
+[ext_resource type="Script" path="res://scenes/vehicle/base_car.gd" id="1_n8n57"]
+[ext_resource type="Script" path="res://scenes/camera.gd" id="3_5upga"]
+[ext_resource type="Script" path="res://scenes/vehicle/wheel_suspension.gd" id="4_6hvcn"]
+[ext_resource type="Material" path="res://materials/tire.tres" id="5_cuc4d"]
+[ext_resource type="PackedScene" uid="uid://djbt3ltge1aat" path="res://scenes/gui/gui.tscn" id="6_cp0hb"]
+
+[sub_resource type="CylinderMesh" id="10"]
+material = ExtResource("5_cuc4d")
+top_radius = 0.3
+bottom_radius = 0.3
+height = 0.2
+radial_segments = 16
+
+[node name="RigidBodyCar" type="RigidBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+collision_layer = 2
+mass = 700.0
+script = ExtResource("1_n8n57")
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.965926, 0.258819, 0, -0.258819, 0.965926, 0, 1.6, 4.4)
+script = ExtResource("3_5upga")
+follow_this_path = NodePath("../CamTarget")
+
+[node name="Wheel_br" type="RayCast3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.8, 0, 1.5)
+script = ExtResource("4_6hvcn")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Wheel_br"]
+transform = Transform3D(-4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 0, 0, 0)
+mesh = SubResource("10")
+skeleton = NodePath("")
+
+[node name="Wheel_bl" type="RayCast3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.8, 0, 1.5)
+script = ExtResource("4_6hvcn")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Wheel_bl"]
+transform = Transform3D(-4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 0, 0, 0)
+mesh = SubResource("10")
+skeleton = NodePath("")
+
+[node name="Wheel_fr" type="RayCast3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.8, 0, -1.4)
+script = ExtResource("4_6hvcn")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Wheel_fr"]
+transform = Transform3D(-4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 0, 0, 0)
+mesh = SubResource("10")
+skeleton = NodePath("")
+
+[node name="Wheel_fl" type="RayCast3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.8, 0, -1.4)
+script = ExtResource("4_6hvcn")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Wheel_fl"]
+transform = Transform3D(-4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 0, 0, 0)
+mesh = SubResource("10")
+skeleton = NodePath("")
+
+[node name="EngineSound" type="AudioStreamPlayer" parent="."]
+
+[node name="CamTarget" type="Marker3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.17515, 0)
+
+[node name="Gui" parent="." instance=ExtResource("6_cp0hb")]
+
+[editable path="Gui"]
