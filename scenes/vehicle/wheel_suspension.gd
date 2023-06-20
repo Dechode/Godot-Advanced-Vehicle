@@ -32,7 +32,6 @@ var spin: float = 0.0
 var z_vel: float = 0.0
 var local_vel
 
-
 var rolling_resistance: float = 0.0 #Vector2 = Vector2.ZERO
 var rol_res_surface_mul: float = 0.02
 
@@ -42,15 +41,14 @@ var prev_pos: Vector3 = Vector3.ZERO
 
 var spring_curr_length: float = spring_length
 
-
 @onready var car = $'..' #Get the parent node as car
 @onready var wheelmesh = $MeshInstance3D
 
 
 func _ready() -> void:
-#	var nominal_load = car.weight * 0.25
 	wheel_inertia = 0.5 * wheel_mass * pow(tire_radius, 2)
 	set_target_position(Vector3.DOWN * (spring_length + tire_radius))
+
 
 func set_params(params: WheelSuspensionParameters):
 	tire_model =  params.tire_model
@@ -59,8 +57,8 @@ func set_params(params: WheelSuspensionParameters):
 	bump = params.bump
 	rebound = params.rebound
 	wheel_mass = params.wheel_mass
-	tire_radius = params.tire_radius
-	tire_width = params.tire_width
+	tire_radius = params.tire_model.tire_radius
+	tire_width = params.tire_model.tire_width
 	ackermann = params.ackermann
 	anti_roll = params.anti_roll
 	
@@ -112,17 +110,17 @@ func apply_forces(opposite_comp, delta):
 	else:
 		spring_curr_length = spring_length
 	
-	#
+	
 	#Calculate the spring load in mm (absolut)
 	spring_load_mm = (spring_length - spring_curr_length) * 1000
-	#
+	
 	#Calculate spring movement in mm per seconds
 	spring_speed_mm_per_seconds = (spring_load_mm - prev_spring_load_mm) / delta
 	prev_spring_load_mm = spring_load_mm
-	#
+	
 	#Calculate the force of the spring in N (mm * N/mm  equals m * kN/m)
 	spring_load_newton = spring_load_mm * spring_stiffness
-	#
+	
 	#Calculate the damping force in N and add it to spring_load_newton
 	if spring_speed_mm_per_seconds >= 0:
 		spring_load_newton += spring_speed_mm_per_seconds * bump # bump
@@ -130,7 +128,6 @@ func apply_forces(opposite_comp, delta):
 		spring_load_newton += spring_speed_mm_per_seconds * rebound # rebound
 	
 	y_force = spring_load_newton
-
 	y_force = max(0, y_force)
 	
 	############### Slip #######################
