@@ -138,31 +138,23 @@ func apply_forces(opposite_comp, delta):
 	slip_vec.y = 0.0 # Y slip is the longitudinal Z slip
 	
 	if is_colliding():
-#		if z_vel != 0:
 		if not is_zero_approx(z_vel):
 			slip_vec.y = (z_vel - spin * tire_radius) / abs(z_vel)
 		else:
 			slip_vec.y = (z_vel - spin * tire_radius) / abs(z_vel + 0.0000001)
-#			if is_zero_approx(spin):
-#				slip_vec.y = 0.0
-#			else:
-#				slip_vec.y = 0.0001 * spin # This is to avoid "getting stuck" if local z velocity is absolute 0
 	
+		if spring_load_mm !=0:
+			y_force += anti_roll * (spring_load_mm - opposite_comp)
+		
 		force_vec = tire_model.update_tire_forces(slip_vec, y_force, surface_mu)
 		
 		var contact = get_collision_point() - car.global_transform.origin
 		var normal = get_collision_normal()
 		
-#		prints("Z force =", force_vec.y)
 		car.apply_force(normal * y_force, contact)
 		car.apply_force(global_transform.basis.x * force_vec.x, contact)
 		car.apply_force(global_transform.basis.z * force_vec.y, contact)
 		
-		### Return suspension compress info for the car bodys antirollbar calculations
-		#
-		#Now calculate the anti roll bar based on mm-difference between left and right
-		if spring_load_mm !=0:
-			y_force += anti_roll * (spring_load_mm - opposite_comp)
 		return spring_load_mm
 	else:
 		spin -= sign(spin) * delta * 2 / wheel_inertia # stop undriven wheels from spinning endlessly
