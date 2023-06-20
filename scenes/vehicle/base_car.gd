@@ -81,6 +81,11 @@ func _unhandled_input(event: InputEvent) -> void:
 		shift_down()
 
 
+#func _process(delta: float) -> void:
+#	print_debug("Front Left load sens = %1.2f" % wheel_fl.tire_model.load_sensitivity)
+#	print_debug("Front Right load sens = %1.2f" % wheel_fr.tire_model.load_sensitivity)
+
+
 func _physics_process(delta):
 	brake_input = Input.get_action_strength("Brake")
 	steering_input = Input.get_action_strength("SteerLeft") - Input.get_action_strength("SteerRight")
