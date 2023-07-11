@@ -6,8 +6,8 @@ const TIRE_WEAR_CURVE = preload("res://resources/tire_wear_curve.tres")
 @export var tire_radius := 0.3
 @export var tire_width := 0.205
 @export var tire_rated_load := 5500.0
-@export var load_sens0 := 2.0
-@export var load_sens1 := 1.0
+@export var load_sens0 := 1.7
+@export var load_sens1 := 0.9
 
 
 var tire_wear := 0.0

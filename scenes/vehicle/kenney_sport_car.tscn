@@ -53,18 +53,18 @@ loop_end = 141100
 _data = [Vector2(0, 0.663636), 0.0, 0.0, 0, 0, Vector2(0.4, 0.945454), 0.414404, 0.414404, 0, 0, Vector2(0.646753, 1), 0.0, 0.0, 0, 0, Vector2(1, 0.290909), -4.9, 0.0, 0, 0]
 point_count = 4
 
-[sub_resource type="Resource" id="Resource_gayl5"]
+[sub_resource type="Resource" id="Resource_2sh5w"]
 script = ExtResource("6_snfln")
 tire_stiffness = 0.5
 tire_radius = 0.3
 tire_width = 0.205
 tire_rated_load = 5500.0
-load_sens0 = 1.8
-load_sens1 = 1.2
+load_sens0 = 1.7
+load_sens1 = 0.9
 
 [sub_resource type="Resource" id="Resource_1vovn"]
 script = ExtResource("3_i57cj")
-tire_model = SubResource("Resource_gayl5")
+tire_model = SubResource("Resource_2sh5w")
 spring_length = 0.15
 spring_stiffness = 60.0
 bump = 6.0

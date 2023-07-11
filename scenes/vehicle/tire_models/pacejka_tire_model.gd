@@ -12,9 +12,9 @@ func pacejka(slip, B, C, D, E, normal_load):
 
 
 func update_tire_forces(slip: Vector2, normal_load: float, surface_mu: float):
-	var wear_mu = TIRE_WEAR_CURVE.sample_baked(tire_wear)
+	var wear_mu := TIRE_WEAR_CURVE.sample_baked(tire_wear)
 	load_sensitivity = update_load_sensitivity(normal_load)
-	var mu = surface_mu * load_sensitivity * wear_mu
+	var mu := surface_mu * load_sensitivity * wear_mu
 	
 	var peak_sa := pacejka_b / 20 * 0.5
 	var peak_sr := peak_sa * 0.7
@@ -27,11 +27,10 @@ func update_tire_forces(slip: Vector2, normal_load: float, surface_mu: float):
 	var sa_modified = resultant_slip * peak_sa
 	
 	var force_vec := Vector3.ZERO
-#	var b = 2 + tire_stiffness * 18
 	
 	force_vec.x = pacejka(abs(sa_modified), pacejka_b, pacejka_c_lat, pacejka_d, pacejka_e, normal_load) * sign(slip.x)
 	force_vec.y = pacejka(abs(sr_modified), pacejka_b, pacejka_c_long, pacejka_d, pacejka_e, normal_load) * sign(slip.y)
-	force_vec.z = pacejka(slip.x, pacejka_b, 2.0, 0.1 * pacejka_e, -20, normal_load)
+	force_vec.z = pacejka(slip.x, pacejka_b, 2.0, 0.1 * pacejka_e, -20, normal_load) # 
 	
 	force_vec *= mu
 	
