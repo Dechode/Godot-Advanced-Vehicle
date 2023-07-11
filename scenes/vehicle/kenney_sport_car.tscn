@@ -55,12 +55,12 @@ point_count = 4
 
 [sub_resource type="Resource" id="Resource_gayl5"]
 script = ExtResource("6_snfln")
-tire_stiffness = 0.0
+tire_stiffness = 0.5
 tire_radius = 0.3
 tire_width = 0.205
 tire_rated_load = 5500.0
-load_sens0 = 1.6
-load_sens1 = 1.0
+load_sens0 = 1.8
+load_sens1 = 1.2
 
 [sub_resource type="Resource" id="Resource_1vovn"]
 script = ExtResource("3_i57cj")
@@ -70,7 +70,7 @@ spring_stiffness = 60.0
 bump = 6.0
 rebound = 7.0
 wheel_mass = 30.0
-anti_roll = 1.0
+anti_roll = 0.5
 
 [sub_resource type="Resource" id="Resource_0mcht"]
 script = ExtResource("2_07fle")
@@ -78,7 +78,7 @@ max_steer = 0.4
 ackermann = 0.15
 front_brake_bias = 0.6
 steer_speed = 5.0
-max_brake_force = 30000.0
+max_brake_force = 50000.0
 max_handbrake_torque = 4000.0
 brake_effective_radius = 0.25
 fuel_tank_size = 40.0

@@ -13,15 +13,15 @@ func update_tire_forces(slip: Vector2, normal_load: float, surface_mu: float = 1
 	var mu := surface_mu * load_sensitivity * wear_mu
 	
 	var load_factor := normal_load / tire_rated_load
-	var peak_sa_deg: float = lerp(20.0, 3.0, tire_stiffness)
-	var delta_sa_deg: float = lerp(3.6, 0.8, tire_stiffness)
+	var peak_sa_deg: float = lerp(12.0, 3.0, tire_stiffness)
+	var delta_sa_deg: float = lerp(4.0, 0.8, tire_stiffness)
 	
-	var peak_sa := deg_to_rad(lerp(peak_sa_deg - 0.5 * delta_sa_deg,
-									peak_sa_deg + 0.5 * delta_sa_deg,
-									load_factor))
+	var sa0 := peak_sa_deg + 0.5 * delta_sa_deg
+	var sa1 := peak_sa_deg - 0.5 * delta_sa_deg
+	var peak_sa := deg_to_rad(lerp(sa1, sa0, load_factor))
 	var peak_sr := peak_sa * 0.7
 	
-#	print_debug(rad_to_deg(peak_sa))
+	print_debug("Peak slip = %2.2f" % rad_to_deg(peak_sa))
 	
 	var normalised_sr := slip.y / peak_sr
 	var normalised_sa := slip.x / peak_sa
