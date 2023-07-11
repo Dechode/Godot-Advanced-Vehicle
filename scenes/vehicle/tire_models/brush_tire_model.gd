@@ -1,6 +1,7 @@
 class_name BrushTireModel
 extends BaseTireModel
 
+@export_range(0.0, 1.0) var tire_stiffness := 0.5
 @export var contact_patch := 0.2
 
 
