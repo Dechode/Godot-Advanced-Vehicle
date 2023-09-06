@@ -7,16 +7,18 @@ extends BaseTireModel
 @export var pacejka_d := 1.0
 @export var pacejka_e := 0.0
 
+
 func pacejka(slip, B, C, D, E, normal_load):
 	return normal_load * D * sin(C * atan(B * slip - E * (B * slip - atan(B * slip))))
 
 
 func update_tire_forces(slip: Vector2, normal_load: float, surface_mu: float):
+	var temp_mu := TIRE_TEMP_MU.sample_baked(tire_temp / max_tire_temp)
 	var wear_mu := TIRE_WEAR_CURVE.sample_baked(tire_wear)
 	load_sensitivity = update_load_sensitivity(normal_load)
-	var mu := surface_mu * load_sensitivity * wear_mu
+	var mu := surface_mu * load_sensitivity * wear_mu * temp_mu
 	
-	var peak_sa := pacejka_b / 20 * 0.5
+	var peak_sa := pacejka_b / 20.0 * 0.5
 	var peak_sr := peak_sa * 0.7
 	
 	var normalised_sr = slip.y / peak_sr
