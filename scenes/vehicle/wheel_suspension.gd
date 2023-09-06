@@ -73,8 +73,10 @@ func _process(delta: float) -> void:
 
 
 func _physics_process(delta: float) -> void:
-	if abs(z_vel) > 2.0:
+	if abs(z_vel) > 0.2:
 		tire_wear = tire_model.update_tire_wear(delta, slip_vec, y_force, surface_mu)
+	
+	print_debug(tire_model.update_tire_temp(slip_vec, y_force, z_vel, surface_mu, delta))
 
 
 func apply_forces(opposite_comp, delta):

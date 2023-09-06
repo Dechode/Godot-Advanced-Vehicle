@@ -12,7 +12,9 @@ func update_tire_forces(slip: Vector2, normal_load: float, surface_mu: float = 1
 	load_sensitivity = update_load_sensitivity(normal_load)
 	var mu := surface_mu * load_sensitivity * wear_mu
 	
-	print_debug(mu)
+#	update_tire_temp(slip, normal_load, surface_mu, delta)
+	
+#	print_debug(mu)
 	
 	var load_factor := normal_load / tire_rated_load
 	var peak_sa_deg: float = lerp(12.0, 3.0, tire_stiffness)

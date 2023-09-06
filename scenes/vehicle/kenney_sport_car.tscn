@@ -70,7 +70,7 @@ spring_stiffness = 60.0
 bump = 6.0
 rebound = 7.0
 wheel_mass = 30.0
-anti_roll = 0.5
+anti_roll = 1.0
 
 [sub_resource type="Resource" id="Resource_0mcht"]
 script = ExtResource("2_07fle")
@@ -89,7 +89,7 @@ rpm_idle = 900.0
 torque_curve = SubResource("Curve_t8jp4")
 engine_drag = 0.03
 engine_brake = 10.0
-engine_moment = 0.2
+engine_moment = 0.14
 engine_bsfc = 0.3
 engine_sound = SubResource("AudioStreamWAV_tw0ir")
 clutch_friction = 200.0
@@ -248,10 +248,10 @@ blend_shape_mode = 0
 shadow_mesh = SubResource("ArrayMesh_qnnfo")
 
 [sub_resource type="BoxShape3D" id="5"]
-size = Vector3(2.27954, 1.01124, 4.27405)
+size = Vector3(1.8507, 0.896174, 3.73649)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_vdwmd"]
-size = Vector3(1.58492, 0.540089, 1.23744)
+size = Vector3(1.34378, 0.540089, 1.23744)
 
 [node name="Sportcar" type="Node3D"]
 
@@ -265,31 +265,31 @@ current = true
 far = 1000.0
 
 [node name="Wheel_br" parent="RigidBodyCar" index="1"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.75, -0.217887, 1.1698)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.75, -0.320126, 1.01935)
 
 [node name="MeshInstance3D" parent="RigidBodyCar/Wheel_br" index="0"]
-transform = Transform3D(1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, -0.1, 0, 0)
+transform = Transform3D(1.175, 0, 0, 0, 1.175, 0, 0, 0, 1.175, -0.1, 0, 0)
 mesh = SubResource("ArrayMesh_uwn7h")
 
 [node name="Wheel_bl" parent="RigidBodyCar" index="2"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.8, -0.217887, 1.1698)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.8, -0.320126, 1.01935)
 
 [node name="MeshInstance3D" parent="RigidBodyCar/Wheel_bl" index="0"]
-transform = Transform3D(-1.5, 0, -2.26494e-07, 0, 1.5, 0, 2.26494e-07, 0, -1.5, 0.0666667, 0, 0)
+transform = Transform3D(-1.175, 0, -1.7742e-07, 0, 1.175, 0, 1.7742e-07, 0, -1.175, 0.0666667, 0, 0)
 mesh = SubResource("ArrayMesh_j4x36")
 
 [node name="Wheel_fr" parent="RigidBodyCar" index="3"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.75, -0.217887, -1.13272)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.75, -0.320126, -0.989586)
 
 [node name="MeshInstance3D" parent="RigidBodyCar/Wheel_fr" index="0"]
-transform = Transform3D(1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, -0.1, 0, 0)
+transform = Transform3D(1.175, 0, 0, 0, 1.175, 0, 0, 0, 1.175, -0.1, 0, 0)
 mesh = SubResource("ArrayMesh_87r5k")
 
 [node name="Wheel_fl" parent="RigidBodyCar" index="4"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.8, -0.217887, -1.13272)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.8, -0.320126, -0.989586)
 
 [node name="MeshInstance3D" parent="RigidBodyCar/Wheel_fl" index="0"]
-transform = Transform3D(-1.5, 0, -1.31134e-07, 0, 1.5, 0, 1.31134e-07, 0, -1.5, 0.1, 0, 0)
+transform = Transform3D(-1.175, 0, -1.7742e-07, 0, 1.175, 0, 1.7742e-07, 0, -1.175, 0.1, 0, 0)
 mesh = SubResource("ArrayMesh_yr68v")
 
 [node name="EngineSound" parent="RigidBodyCar" index="5"]
@@ -299,15 +299,15 @@ stream = ExtResource("3_u8x6m")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.99303, 0.570521)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="RigidBodyCar"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.019886, 0.05)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.0969266, 0.0110624)
 shape = SubResource("5")
 
 [node name="CollisionShape3D2" type="CollisionShape3D" parent="RigidBodyCar"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.813212, 0.355275)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.52767, 0.355275)
 shape = SubResource("BoxShape3D_vdwmd")
 
 [node name="sedanSports" parent="RigidBodyCar" instance=ExtResource("4_yl31q")]
-transform = Transform3D(1.75, 0, 0, 0, 1.75, 0, 0, 0, 1.75, 0, -0.843164, 0)
+transform = Transform3D(1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, 0, -0.843164, 0)
 
 [node name="wheel_backLeft" parent="RigidBodyCar/sedanSports/tmpParent/sedanSports2" index="1"]
 visible = false
