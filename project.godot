@@ -77,9 +77,10 @@ Clutch={
 [physics]
 
 common/physics_ticks_per_second=240
-3d/physics_engine="GodotPhysics"
+3d/physics_engine="GodotPhysics3D"
 3d/default_linear_damp=0.0
 3d/default_angular_damp=0.0
+3d/solver/solver_iterations=100
 common/physics_fps=240
 3d/active_soft_world=false
 

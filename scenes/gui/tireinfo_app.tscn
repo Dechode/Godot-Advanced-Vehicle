@@ -49,10 +49,25 @@ layout_mode = 2
 text = "0.0"
 horizontal_alignment = 1
 
-[node name="ColorRect" type="ColorRect" parent="Panel/VBoxContainer/HBoxContainer/WheelFL"]
+[node name="TireTemp" type="ColorRect" parent="Panel/VBoxContainer/HBoxContainer/WheelFL"]
 layout_mode = 2
 size_flags_vertical = 3
 color = Color(0, 0.545098, 0.2, 1)
+
+[node name="Label" type="Label" parent="Panel/VBoxContainer/HBoxContainer/WheelFL/TireTemp"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -11.5
+offset_right = 20.0
+offset_bottom = 11.5
+grow_horizontal = 2
+grow_vertical = 2
+text = "20.0 c"
 
 [node name="WheelFR" type="VBoxContainer" parent="Panel/VBoxContainer/HBoxContainer"]
 layout_mode = 2
@@ -64,10 +79,25 @@ layout_mode = 2
 text = "0.0"
 horizontal_alignment = 1
 
-[node name="ColorRect" type="ColorRect" parent="Panel/VBoxContainer/HBoxContainer/WheelFR"]
+[node name="TireTemp" type="ColorRect" parent="Panel/VBoxContainer/HBoxContainer/WheelFR"]
 layout_mode = 2
 size_flags_vertical = 3
 color = Color(0, 0.545098, 0.2, 1)
+
+[node name="Label" type="Label" parent="Panel/VBoxContainer/HBoxContainer/WheelFR/TireTemp"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -11.5
+offset_right = 20.0
+offset_bottom = 11.5
+grow_horizontal = 2
+grow_vertical = 2
+text = "20.0 c"
 
 [node name="HBoxContainer2" type="HBoxContainer" parent="Panel/VBoxContainer"]
 layout_mode = 2
@@ -80,10 +110,25 @@ size_flags_horizontal = 3
 theme_override_constants/separation = 2
 alignment = 2
 
-[node name="ColorRect" type="ColorRect" parent="Panel/VBoxContainer/HBoxContainer2/WheelBL"]
+[node name="TireTemp" type="ColorRect" parent="Panel/VBoxContainer/HBoxContainer2/WheelBL"]
 layout_mode = 2
 size_flags_vertical = 3
 color = Color(0, 0.545098, 0.2, 1)
+
+[node name="Label" type="Label" parent="Panel/VBoxContainer/HBoxContainer2/WheelBL/TireTemp"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -11.5
+offset_right = 20.0
+offset_bottom = 11.5
+grow_horizontal = 2
+grow_vertical = 2
+text = "20.0 c"
 
 [node name="TireWearLabel" type="Label" parent="Panel/VBoxContainer/HBoxContainer2/WheelBL"]
 layout_mode = 2
@@ -96,10 +141,25 @@ size_flags_horizontal = 3
 theme_override_constants/separation = 2
 alignment = 2
 
-[node name="ColorRect" type="ColorRect" parent="Panel/VBoxContainer/HBoxContainer2/WheelBR"]
+[node name="TireTemp" type="ColorRect" parent="Panel/VBoxContainer/HBoxContainer2/WheelBR"]
 layout_mode = 2
 size_flags_vertical = 3
 color = Color(0, 0.545098, 0.2, 1)
+
+[node name="Label" type="Label" parent="Panel/VBoxContainer/HBoxContainer2/WheelBR/TireTemp"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -11.5
+offset_right = 20.0
+offset_bottom = 11.5
+grow_horizontal = 2
+grow_vertical = 2
+text = "20.0 c"
 
 [node name="TireWearLabel" type="Label" parent="Panel/VBoxContainer/HBoxContainer2/WheelBR"]
 layout_mode = 2

@@ -30,7 +30,7 @@ var y_force: float = 0.0
 var wheel_inertia: float = 0.0
 var spin: float = 0.0
 var z_vel: float = 0.0
-var local_vel
+var local_vel := Vector3.ZERO
 
 var rolling_resistance: float = 0.0 #Vector2 = Vector2.ZERO
 var rol_res_surface_mul: float = 0.02
@@ -73,8 +73,12 @@ func _process(delta: float) -> void:
 
 
 func _physics_process(delta: float) -> void:
-	if abs(z_vel) > 2.0:
+	var spin_treshold := 10.0
+	if abs(spin) > spin_treshold or abs(z_vel) > 1.0:
 		tire_wear = tire_model.update_tire_wear(delta, slip_vec, y_force, surface_mu)
+	
+	var ambient_temp := 20.0
+	tire_model.update_tire_temp(slip_vec, y_force, local_vel.length(), surface_mu, ambient_temp, delta)
 
 
 func apply_forces(opposite_comp, delta):
@@ -94,7 +98,7 @@ func apply_forces(opposite_comp, delta):
 		if surface:
 			surface_mu = 1.0
 			if surface == "Tarmac":
-				surface_mu = 1.0 
+				surface_mu = 0.85 
 				rol_res_surface_mul = 0.01
 			elif surface == "Gravel":
 				surface_mu = 0.6
