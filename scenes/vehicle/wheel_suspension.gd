@@ -75,10 +75,10 @@ func _process(delta: float) -> void:
 func _physics_process(delta: float) -> void:
 	var spin_treshold := 10.0
 	if abs(spin) > spin_treshold or abs(z_vel) > 1.0:
-		tire_wear = tire_model.update_tire_wear(delta, slip_vec, y_force, surface_mu * tire_model.load_sensitivity)
+		tire_wear = tire_model.update_tire_wear(delta, slip_vec, y_force, surface_mu)
 	
 	var ambient_temp := 20.0
-	tire_model.update_tire_temp(slip_vec, y_force, local_vel.length(), surface_mu * tire_model.load_sensitivity, ambient_temp, delta)
+	tire_model.update_tire_temp(slip_vec, y_force, local_vel.length(), surface_mu, ambient_temp, delta)
 
 
 func apply_forces(opposite_comp, delta):
