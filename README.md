@@ -3,7 +3,7 @@ A more advanced car controller for the Godot game engine.
 
 ## Description
 Custom rigidbody car controller with raycast suspension for the Godot game engine. This one is more realistic than the built-in vehiclebody with wheelcolliders.
-This project will be a small demo of the vehicle physics i have been able to craft so far. I am planning to use these physics in a full blown simulator in the near future.
+This project will be a small demo of the vehicle physics i have been able to craft so far.
 
 Features:
 - RWD, FWD and AWD drivetypes available
