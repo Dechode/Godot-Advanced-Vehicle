@@ -26,16 +26,16 @@ enum DRIVE_TYPE{
 @export var fuel_percentage := 100.0 # % of full tank
 
 ######### Engine variables #########
-@export var max_torque = 250.0
-@export var max_engine_rpm = 8000.0
-@export var rpm_idle = 900.0
-@export var torque_curve: Curve = null
-@export var engine_drag = 0.03
-@export var engine_brake = 10.0
-@export var engine_moment = 0.25
-@export var engine_bsfc = 0.3
+@export var max_torque := 250.0
+@export var max_engine_rpm := 8000.0
+@export var rpm_idle := 900.0
+@export var torque_curve := Curve.new()
+@export var throttle_model := Curve.new()
+@export var engine_brake := 10.0
+@export var engine_moment := 0.25
+@export var engine_bsfc := 0.3
 @export var engine_sound: AudioStream
-@export var clutch_friction = 500.0
+@export var clutch_friction := 500.0
 
 ######### Drivetrain variables #########
 @export var drivetrain_params: DriveTrainParameters

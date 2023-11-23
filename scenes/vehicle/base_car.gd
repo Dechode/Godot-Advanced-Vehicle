@@ -81,11 +81,6 @@ func _unhandled_input(event: InputEvent) -> void:
 		shift_down()
 
 
-#func _process(delta: float) -> void:
-#	print_debug("Front Left load sens = %1.2f" % wheel_fl.tire_model.load_sensitivity)
-#	print_debug("Front Right load sens = %1.2f" % wheel_fr.tire_model.load_sensitivity)
-
-
 func _physics_process(delta):
 	brake_input = Input.get_action_strength("Brake")
 	steering_input = Input.get_action_strength("SteerLeft") - Input.get_action_strength("SteerRight")
@@ -117,9 +112,8 @@ func _physics_process(delta):
 	wheel_fr.steer(steering_amount, car_params.max_steer)
 	
 	##### Engine loop #####
-	drag_torque = car_params.engine_brake + rpm * car_params.engine_drag
-	torque_out = (get_engine_torque(rpm) + drag_torque ) * throttle_input
-	engine_net_torque = torque_out + clutch_reaction_torque - drag_torque
+	torque_out = get_engine_torque(rpm, throttle_input)
+	engine_net_torque = torque_out + clutch_reaction_torque
 	
 	rpm += AV_2_RPM * delta * engine_net_torque / car_params.engine_moment
 	engine_angular_vel = rpm / AV_2_RPM
@@ -139,8 +133,8 @@ func _physics_process(delta):
 	if drivetrain.selected_gear - 1 > 0:
 		prev_gear_rpm = car_params.drivetrain_params.gear_ratios[drivetrain.selected_gear - 1] * car_params.drivetrain_params.final_drive * avg_front_spin * AV_2_RPM
 	
-	var next_gear_torque := get_engine_torque(next_gear_rpm)
-	var prev_gear_torque := get_engine_torque(prev_gear_rpm)
+	var next_gear_torque := get_engine_torque(next_gear_rpm, throttle_input)
+	var prev_gear_torque := get_engine_torque(prev_gear_rpm, throttle_input)
 	
 	drivetrain.automatic_shifting(torque_out - drag_torque, prev_gear_torque,
 								next_gear_torque, rpm, car_params.max_engine_rpm,
@@ -151,7 +145,7 @@ func _physics_process(delta):
 	else:
 		engage(delta)
 		
-	rpm = max(rpm , car_params.rpm_idle)
+	rpm = max(rpm, car_params.rpm_idle)
 	
 	if fuel <= 0.0:
 		torque_out = 0.0
@@ -171,10 +165,13 @@ func _physics_process(delta):
 	drag_force()
 
 
-func get_engine_torque(p_rpm) -> float: 
+func get_engine_torque(p_rpm, p_throttle) -> float: 
 	var rpm_factor = clamp(p_rpm / car_params.max_engine_rpm, 0.0, 1.0)
 	var torque_factor = car_params.torque_curve.sample_baked(rpm_factor)
-	return torque_factor * car_params.max_torque
+	var t0 = -car_params.engine_brake * rpm_factor
+	var t1 = torque_factor * car_params.max_torque
+	var thr := car_params.throttle_model.sample_baked(p_throttle)
+	return lerpf(t0, t1, thr)
 
 
 func get_brake_torques(p_brake_input: float, delta):
