@@ -1,6 +1,6 @@
 [gd_scene load_steps=11 format=3 uid="uid://x5af4u1lm676"]
 
-[ext_resource type="PackedScene" uid="uid://dqqcf60u11tfq" path="res://scenes/vehicle/kenney_sport_car.tscn" id="1"]
+[ext_resource type="PackedScene" uid="uid://dqqcf60u11tfq" path="res://scenes/vehicle/sport_car.tscn" id="1"]
 [ext_resource type="PackedScene" path="res://scenes/track.tscn" id="2"]
 
 [sub_resource type="FastNoiseLite" id="FastNoiseLite_otdr6"]
@@ -39,6 +39,7 @@ tonemap_mode = 2
 [node name="world" type="Node3D"]
 
 [node name="Ground" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.70018, 0)
 mesh = SubResource("2")
 skeleton = NodePath("")
 
@@ -65,7 +66,7 @@ polygon = PackedVector2Array(-7.0655, 0, -7.0655, -0.1, 7.0655, -0.1, 7.0655, 0)
 polygon = PackedVector2Array(-9.0655, -0.1, 9.0655, -0.1, 16.931, -4.01, 17.031, -4.1, -17.031, -4.1, -16.931, -4)
 
 [node name="Sportcar" parent="." instance=ExtResource("1")]
-transform = Transform3D(0.833779, 0, 0.552097, 0, 1, 0, -0.552097, 0, 0.833779, 39.2642, 2.75676, 76.6809)
+transform = Transform3D(0.833779, 0, 0.552097, 0, 1, 0, -0.552097, 0, 0.833779, 39.2642, 3.55066, 76.6809)
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_1y4ai")
@@ -74,4 +75,4 @@ environment = SubResource("Environment_1y4ai")
 [editable path="Sportcar"]
 [editable path="Sportcar/RigidBodyCar"]
 [editable path="Sportcar/RigidBodyCar/Gui"]
-[editable path="Sportcar/RigidBodyCar/sedanSports"]
+[editable path="Sportcar/RigidBodyCar/sport_car"]
