@@ -4,6 +4,12 @@ extends BaseTireModel
 const buildup = preload("res://scenes/vehicle/tire_models/buildup_curve.tres")
 const falloff = preload("res://scenes/vehicle/tire_models/falloff_curve.tres")
 
+const MIN_PEAK_SA_START_DEG = 3.0
+const MAX_PEAK_SA_START_DEG = 12.0
+
+const MIN_DELTA_SA_DEG = 1.0
+const MAX_DELTA_SA_DEG = 4.0
+
 @export_range(0.0, 1.0) var tire_stiffness := 0.5
 
 
@@ -14,18 +20,16 @@ func update_tire_forces(slip: Vector2, normal_load: float, surface_mu: float = 1
 	var mu := surface_mu * wear_mu * temp_mu * load_sensitivity
 #	var mu := ((surface_mu * wear_mu * temp_mu) + load_sensitivity) * 0.5
 	
-#	update_tire_temp(slip, normal_load, surface_mu, delta)
-	
-	print_debug(mu)
-	
 	var load_factor := normal_load / tire_rated_load
-	var peak_sa_deg: float = lerp(12.0, 3.0, tire_stiffness)
-	var delta_sa_deg: float = lerp(4.0, 0.8, tire_stiffness)
+	var peak_sa_deg: float = lerp(MAX_PEAK_SA_START_DEG, MIN_PEAK_SA_START_DEG, tire_stiffness)
+	var delta_sa_deg: float = lerp(MAX_DELTA_SA_DEG, MIN_DELTA_SA_DEG, tire_stiffness)
 	
 	var sa0 := peak_sa_deg + 0.5 * delta_sa_deg
 	var sa1 := peak_sa_deg - 0.5 * delta_sa_deg
 	var peak_sa := deg_to_rad(lerp(sa1, sa0, load_factor))
-	var peak_sr := peak_sa * 0.7
+	
+	var peak_sr_ratio := 0.65
+	var peak_sr := peak_sa * peak_sr_ratio
 	
 	var normalised_sr := slip.y / peak_sr
 	var normalised_sa := slip.x / peak_sa
