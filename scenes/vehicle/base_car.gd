@@ -122,9 +122,9 @@ func _physics_process(delta):
 		torque_out = 0
 		rpm -= 500 
 	
-	if rpm <= car_params.rpm_idle + 10 and abs(z_vel) < 10 and throttle_input <= 0.05:
-		clutch_input = 1.0
-		
+#	if rpm <= car_params.rpm_idle + 10 and abs(z_vel) < 10 and throttle_input <= 0.05:
+#		clutch_input = 1.0
+	
 	var next_gear_rpm = 0
 	if drivetrain.selected_gear < car_params.drivetrain_params.gear_ratios.size():
 		next_gear_rpm = car_params.drivetrain_params.gear_ratios[drivetrain.selected_gear] * car_params.drivetrain_params.final_drive * avg_front_spin * AV_2_RPM
@@ -168,6 +168,7 @@ func _physics_process(delta):
 func get_engine_torque(p_rpm, p_throttle) -> float: 
 	var rpm_factor = clamp(p_rpm / car_params.max_engine_rpm, 0.0, 1.0)
 	var torque_factor = car_params.torque_curve.sample_baked(rpm_factor)
+#	var t0 = - 0.1 * car_params.engine_brake - car_params.engine_brake * rpm_factor
 	var t0 = -car_params.engine_brake * rpm_factor
 	var t1 = torque_factor * car_params.max_torque
 	var thr := car_params.throttle_model.sample_baked(p_throttle)
@@ -218,12 +219,16 @@ func engage(delta):
 		
 	var speed_error = engine_angular_vel - gearbox_shaft_speed
 	var clutch_kick = abs(speed_error) * 0.2
+	var tr := drivetrain.reaction_torque
+	var clutch_slip_torque := 0.8 * clutch.friction
+	var reaction_torques : Vector2 = clutch.get_reaction_torques(engine_angular_vel, gearbox_shaft_speed, torque_out, tr, clutch_slip_torque, clutch_kick)
 
-	var reaction_torques = clutch.get_reaction_torques(engine_angular_vel, gearbox_shaft_speed, clutch_input, clutch_kick)
-	drive_reaction_torque = reaction_torques.x
-	clutch_reaction_torque = reaction_torques.y
+	if clutch.locked:
+		reaction_torques.x = torque_out
+	drive_reaction_torque = reaction_torques.x * (1 - clutch_input)
+	clutch_reaction_torque = reaction_torques.y * (1 - clutch_input)
 	
-	net_drive = drive_reaction_torque * (1 - clutch_input)
+	net_drive = drive_reaction_torque
 	drivetrain.drivetrain(net_drive, rear_brake_torque, front_brake_torque,
 						[wheel_bl, wheel_br, wheel_fl, wheel_fr], clutch_input, delta)
 	speedo = avg_front_spin * wheel_fl.tire_radius * 3.6
