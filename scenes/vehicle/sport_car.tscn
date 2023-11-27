@@ -6,7 +6,7 @@
 [ext_resource type="Script" path="res://scenes/vehicle/wheel_params.gd" id="3_i57cj"]
 [ext_resource type="AudioStream" path="res://sounds/tres/engine_sample.tres" id="3_u8x6m"]
 [ext_resource type="Script" path="res://scenes/vehicle/drivetrain_params.gd" id="3_xtqkk"]
-[ext_resource type="Script" path="res://scenes/vehicle/tire_models/pacejka_tire_model.gd" id="6_4mwfw"]
+[ext_resource type="Script" path="res://scenes/vehicle/tire_models/curve_tire_model.gd" id="6_2o354"]
 [ext_resource type="Texture2D" uid="uid://xcvloq7plggh" path="res://models/sport_car_colorpalette8x8.png" id="7_cvq8b"]
 [ext_resource type="PackedScene" uid="uid://vls3meliu3jk" path="res://models/sport_car.glb" id="10_sat6w"]
 
@@ -58,18 +58,14 @@ point_count = 2
 _data = [Vector2(0, 0.663636), 0.0, 0.0, 0, 0, Vector2(0.4, 0.945454), 0.414404, 0.414404, 0, 0, Vector2(0.646753, 1), 0.0, 0.0, 0, 0, Vector2(1, 0.290909), -4.9, 0.0, 0, 0]
 point_count = 4
 
-[sub_resource type="Resource" id="Resource_3l6ht"]
-script = ExtResource("6_4mwfw")
-pacejka_b = 10.0
-pacejka_c_lat = 1.35
-pacejka_c_long = 1.65
-pacejka_d = 1.0
-pacejka_e = 0.0
+[sub_resource type="Resource" id="Resource_rtrbs"]
+script = ExtResource("6_2o354")
+tire_stiffness = 0.25
 tire_radius = 0.3
-tire_width = 0.205
-tire_rated_load = 6500.0
-load_sens0 = 1.7
-load_sens1 = 1.2
+tire_width = 0.225
+tire_rated_load = 7500.0
+load_sens0 = 2.1
+load_sens1 = 0.9
 max_tire_temp = 150.0
 opt_tire_temp = 90.0
 heating_multiplier = 0.0015
@@ -77,7 +73,7 @@ cooling_multiplier = -0.25
 
 [sub_resource type="Resource" id="Resource_1vovn"]
 script = ExtResource("3_i57cj")
-tire_model = SubResource("Resource_3l6ht")
+tire_model = SubResource("Resource_rtrbs")
 spring_length = 0.15
 spring_stiffness = 60.0
 bump = 8.0
@@ -105,7 +101,7 @@ engine_brake = 150.0
 engine_moment = 0.14
 engine_bsfc = 0.3
 engine_sound = SubResource("AudioStreamWAV_tw0ir")
-clutch_friction = 250.0
+clutch_friction = 320.0
 drivetrain_params = SubResource("Resource_tq03h")
 cd = 0.3
 air_density = 1.225
