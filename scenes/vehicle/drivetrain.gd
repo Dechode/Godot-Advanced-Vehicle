@@ -185,12 +185,12 @@ func drivetrain(torque: float, rear_brake_torque: float, front_brake_torque: flo
 		differential(drive_torque, front_brake_torque, front_wheels, drivetrain_params.front_diff, delta)
 		rear_wheels[0].apply_torque(0.0, rear_brake_torque * 0.5, 0.0, delta)
 		rear_wheels[1].apply_torque(0.0, rear_brake_torque * 0.5, 0.0, delta)
-		reaction_torque = (front_wheels[0] + front_wheels[1]) * 0.5
+		reaction_torque = (front_wheels[0].get_reaction_torque() + front_wheels[1].get_reaction_torque()) * 0.5
 		reaction_torque *= (1.0 / get_gearing())
 		
 	elif drivetrain_params.drivetype == DRIVE_TYPE.AWD:
-		reaction_torque = (rear_wheels[0] + rear_wheels[1]) * 0.25
-		reaction_torque += (front_wheels[0] + front_wheels[1]) * 0.25
+		reaction_torque = (rear_wheels[0].get_reaction_torque() + rear_wheels[1].get_reaction_torque()) * 0.25
+		reaction_torque += (front_wheels[0].get_reaction_torque() + front_wheels[1].get_reaction_torque()) * 0.25
 		reaction_torque *= (1.0 / get_gearing())
 		
 		match drivetrain_params.center_diff.diff_type:

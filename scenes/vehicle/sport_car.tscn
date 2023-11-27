@@ -58,14 +58,14 @@ point_count = 2
 _data = [Vector2(0, 0.663636), 0.0, 0.0, 0, 0, Vector2(0.4, 0.945454), 0.414404, 0.414404, 0, 0, Vector2(0.646753, 1), 0.0, 0.0, 0, 0, Vector2(1, 0.290909), -4.9, 0.0, 0, 0]
 point_count = 4
 
-[sub_resource type="Resource" id="Resource_rtrbs"]
+[sub_resource type="Resource" id="Resource_mubfd"]
 script = ExtResource("6_2o354")
-tire_stiffness = 0.25
+tire_stiffness = 0.7
 tire_radius = 0.3
-tire_width = 0.225
-tire_rated_load = 7500.0
-load_sens0 = 2.1
-load_sens1 = 0.9
+tire_width = 0.205
+tire_rated_load = 6500.0
+load_sens0 = 1.7
+load_sens1 = 1.4
 max_tire_temp = 150.0
 opt_tire_temp = 90.0
 heating_multiplier = 0.0015
@@ -73,7 +73,7 @@ cooling_multiplier = -0.25
 
 [sub_resource type="Resource" id="Resource_1vovn"]
 script = ExtResource("3_i57cj")
-tire_model = SubResource("Resource_rtrbs")
+tire_model = SubResource("Resource_mubfd")
 spring_length = 0.15
 spring_stiffness = 60.0
 bump = 8.0
