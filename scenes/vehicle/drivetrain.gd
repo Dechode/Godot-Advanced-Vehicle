@@ -33,7 +33,7 @@ var avg_rear_spin := 0.0
 var avg_front_spin := 0.0
 
 var drive_inertia := 10.0
-
+var reaction_torque := 0.0
 
 func automatic_shifting(cur_torque, lower_gear_torque, higher_gear_torque, rpm, max_rpm, brake_input, speed):
 	if !drivetrain_params.automatic:
@@ -106,11 +106,10 @@ func differential(torque: float, brake_torque, wheels, diff: DiffParameters, del
 	
 	if tr1 >= tr2:
 		bias = tr1 / tr2
-		delta_torque = tr1 - tr2
 	else:
 		bias = tr2 / tr1
-		delta_torque = tr2 - tr1
 	
+	delta_torque = tr1 - tr2
 	var t1 := torque * 0.5
 	var t2 := torque * 0.5
 	
@@ -124,7 +123,7 @@ func differential(torque: float, brake_torque, wheels, diff: DiffParameters, del
 	elif diff.diff_type == DIFF_TYPE.LOCKED:
 		diff_state = DIFF_STATE.LOCKED
 	
-	else:
+	else: # Limited Slip Differential
 		if abs(delta_torque) > diff.diff_preload and bias >= ratio:
 			diff_state = DIFF_STATE.SLIPPING
 	
@@ -140,8 +139,7 @@ func differential(torque: float, brake_torque, wheels, diff: DiffParameters, del
 		
 		DIFF_STATE.SLIPPING:
 			_diff_clutch.friction = diff.diff_preload
-			
-			var diff_torques = _diff_clutch.get_reaction_torques(wheels[0].get_spin(), wheels[1].get_spin(), 0.0, 0.0)
+			var diff_torques = _diff_clutch.get_reaction_torques(wheels[0].get_spin(), wheels[1].get_spin(), tr1, tr2, diff.diff_preload * ratio, 0.0)
 			t1 += diff_torques.x
 			t2 += diff_torques.y
 			
@@ -180,13 +178,21 @@ func drivetrain(torque: float, rear_brake_torque: float, front_brake_torque: flo
 		differential(drive_torque, rear_brake_torque, rear_wheels, drivetrain_params.rear_diff, delta)
 		front_wheels[0].apply_torque(0.0, front_brake_torque * 0.5, 0.0, delta)
 		front_wheels[1].apply_torque(0.0, front_brake_torque * 0.5, 0.0, delta)
+		reaction_torque = (rear_wheels[0].get_reaction_torque() + rear_wheels[1].get_reaction_torque()) * 0.5
+		reaction_torque *= (1.0 / get_gearing())
 	
 	elif drivetrain_params.drivetype == DRIVE_TYPE.FWD:
 		differential(drive_torque, front_brake_torque, front_wheels, drivetrain_params.front_diff, delta)
 		rear_wheels[0].apply_torque(0.0, rear_brake_torque * 0.5, 0.0, delta)
 		rear_wheels[1].apply_torque(0.0, rear_brake_torque * 0.5, 0.0, delta)
-	
+		reaction_torque = (front_wheels[0] + front_wheels[1]) * 0.5
+		reaction_torque *= (1.0 / get_gearing())
+		
 	elif drivetrain_params.drivetype == DRIVE_TYPE.AWD:
+		reaction_torque = (rear_wheels[0] + rear_wheels[1]) * 0.25
+		reaction_torque += (front_wheels[0] + front_wheels[1]) * 0.25
+		reaction_torque *= (1.0 / get_gearing())
+		
 		match drivetrain_params.center_diff.diff_type:
 			DIFF_TYPE.LOCKED: # Locked center diff currently means raw 4x4 
 				var avg_spin = (avg_front_spin + avg_rear_spin) * 0.5
