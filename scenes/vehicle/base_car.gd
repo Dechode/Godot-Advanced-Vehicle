@@ -84,6 +84,7 @@ func _unhandled_input(event: InputEvent) -> void:
 func _physics_process(delta):
 	brake_input = Input.get_action_strength("Brake")
 	steering_input = Input.get_action_strength("SteerLeft") - Input.get_action_strength("SteerRight")
+	steering_input = car_params.steering_curve.sample_baked(absf(steering_input)) * signf(steering_input)
 	throttle_input = Input.get_action_strength("Throttle")
 	handbrake_input = Input.get_action_strength("Handbrake")
 	clutch_input = Input.get_action_strength("Clutch")
