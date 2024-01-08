@@ -25,6 +25,9 @@ enum DRIVE_TYPE{
 @export var fuel_tank_size := 40.0 #Liters
 @export var fuel_percentage := 100.0 # % of full tank
 
+@export var steering_curve := Curve.new()
+
+
 ######### Engine variables #########
 @export var max_torque := 250.0
 @export var max_engine_rpm := 8000.0

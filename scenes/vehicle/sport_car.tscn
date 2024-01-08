@@ -1,4 +1,4 @@
-[gd_scene load_steps=26 format=3 uid="uid://dqqcf60u11tfq"]
+[gd_scene load_steps=27 format=3 uid="uid://dqqcf60u11tfq"]
 
 [ext_resource type="PackedScene" uid="uid://exyybiakl0yk" path="res://scenes/vehicle/base_car.tscn" id="1_rpk6a"]
 [ext_resource type="Script" path="res://scenes/vehicle/car_params.gd" id="2_07fle"]
@@ -51,6 +51,10 @@ format = 1
 loop_mode = 1
 loop_end = 141100
 
+[sub_resource type="Curve" id="Curve_rbl1f"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(1, 1), 2.28592, 0.0, 0, 0]
+point_count = 2
+
 [sub_resource type="Curve" id="Curve_kdwlw"]
 _data = [Vector2(0, 0), 0.0, 2.36316, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
 point_count = 2
@@ -61,11 +65,11 @@ point_count = 4
 
 [sub_resource type="Resource" id="Resource_mubfd"]
 script = ExtResource("6_2o354")
-tire_stiffness = 0.7
+tire_stiffness = 0.75
 tire_radius = 0.3
 tire_width = 0.205
 tire_rated_load = 6500.0
-load_sens0 = 1.7
+load_sens0 = 2.0
 load_sens1 = 1.4
 max_tire_temp = 150.0
 opt_tire_temp = 90.0
@@ -93,6 +97,7 @@ max_handbrake_torque = 4000.0
 brake_effective_radius = 0.25
 fuel_tank_size = 40.0
 fuel_percentage = 100.0
+steering_curve = SubResource("Curve_rbl1f")
 max_torque = 260.0
 max_engine_rpm = 8000.0
 rpm_idle = 900.0
