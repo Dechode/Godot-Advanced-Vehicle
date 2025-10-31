@@ -192,4 +192,3 @@ func get_reaction_torque():
 
 func steer(input, max_steer):
 	rotation.y = max_steer * (input + (1 - cos(input * 0.5 * PI)) * ackermann)
-

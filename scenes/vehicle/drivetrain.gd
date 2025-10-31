@@ -234,4 +234,3 @@ func drivetrain(torque: float, rear_brake_torque: float, front_brake_torque: flo
 				
 				differential(rear_drive, rear_brake_torque, rear_wheels, drivetrain_params.rear_diff, delta)
 				differential(front_drive, front_brake_torque, front_wheels, drivetrain_params.front_diff, delta)
-

@@ -275,4 +275,3 @@ func play_engine_sound():
 
 func stop_engine_sound():
 	audioplayer.stop()
-
