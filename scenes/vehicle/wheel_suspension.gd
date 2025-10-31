@@ -21,6 +21,7 @@ var wheel_mass = 15.0
 var tire_radius = 0.3
 var tire_width = 0.2
 var ackermann = 0.15
+var camber_angle := 0.0
 
 var tire_wear: float = 0.0
 
@@ -61,6 +62,7 @@ func set_params(params: WheelSuspensionParameters):
 	tire_width = params.tire_model.tire_width
 	ackermann = params.ackermann
 	anti_roll = params.anti_roll
+	camber_angle = params.camber_angle
 	
 	wheel_inertia = 0.5 * wheel_mass * pow(tire_radius, 2)
 	set_target_position(Vector3.DOWN * (spring_length + tire_radius))
@@ -138,6 +140,11 @@ func apply_forces(opposite_comp, delta):
 	slip_vec.x = asin(clamp(-planar_vect.x, -1, 1)) # X slip is lateral slip
 	slip_vec.y = 0.0 # Y slip is the longitudinal Z slip
 	
+	# Camber
+	#var camber_angle := deg_to_rad(-1.5)
+	var camber_thrust := y_force * tan(deg_to_rad(camber_angle)) * signf(position.x)
+	print(camber_thrust)
+	
 	if is_colliding():
 		if not is_zero_approx(z_vel):
 			slip_vec.y = (z_vel - spin * tire_radius) / abs(z_vel)
@@ -148,6 +155,7 @@ func apply_forces(opposite_comp, delta):
 			y_force += anti_roll * (spring_load_mm - opposite_comp)
 		
 		force_vec = tire_model.update_tire_forces(slip_vec, y_force, surface_mu)
+		force_vec.x += camber_thrust
 		
 		var contact = get_collision_point() - car.global_transform.origin
 		var normal = get_collision_normal()

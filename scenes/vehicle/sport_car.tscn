@@ -1,4 +1,4 @@
-[gd_scene load_steps=28 format=4 uid="uid://dqqcf60u11tfq"]
+[gd_scene load_steps=31 format=4 uid="uid://dqqcf60u11tfq"]
 
 [ext_resource type="PackedScene" uid="uid://exyybiakl0yk" path="res://scenes/vehicle/base_car.tscn" id="1_rpk6a"]
 [ext_resource type="Script" uid="uid://dssspfnea8d08" path="res://scenes/vehicle/car_params.gd" id="2_07fle"]
@@ -50,7 +50,7 @@ tire_stiffness = 0.7
 tire_rated_load = 6500.0
 load_sens1 = 1.4
 
-[sub_resource type="Resource" id="Resource_1vovn"]
+[sub_resource type="Resource" id="Resource_y2k6s"]
 script = ExtResource("3_i57cj")
 tire_model = SubResource("Resource_mubfd")
 spring_stiffness = 60.0
@@ -58,6 +58,33 @@ bump = 8.0
 rebound = 9.0
 wheel_mass = 30.0
 anti_roll = 2.0
+camber_angle = -0.5
+
+[sub_resource type="Resource" id="Resource_oye6d"]
+script = ExtResource("3_i57cj")
+tire_model = SubResource("Resource_mubfd")
+spring_stiffness = 60.0
+bump = 8.0
+rebound = 9.0
+wheel_mass = 30.0
+anti_roll = 2.0
+camber_angle = -0.5
+
+[sub_resource type="Resource" id="Resource_pw5xn"]
+script = ExtResource("6_2o354")
+tire_stiffness = 0.7
+tire_rated_load = 6500.0
+load_sens1 = 1.4
+
+[sub_resource type="Resource" id="Resource_1vovn"]
+script = ExtResource("3_i57cj")
+tire_model = SubResource("Resource_pw5xn")
+spring_stiffness = 60.0
+bump = 8.0
+rebound = 9.0
+wheel_mass = 30.0
+anti_roll = 2.0
+camber_angle = -1.5
 
 [sub_resource type="Resource" id="Resource_0mcht"]
 script = ExtResource("2_07fle")
@@ -74,8 +101,8 @@ clutch_friction = 320.0
 drivetrain_params = SubResource("Resource_tq03h")
 wheel_params_fl = SubResource("Resource_1vovn")
 wheel_params_fr = SubResource("Resource_1vovn")
-wheel_params_bl = SubResource("Resource_1vovn")
-wheel_params_br = SubResource("Resource_1vovn")
+wheel_params_bl = SubResource("Resource_y2k6s")
+wheel_params_br = SubResource("Resource_oye6d")
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_cw0ms"]
 resource_name = "CarBaseNaterial"
