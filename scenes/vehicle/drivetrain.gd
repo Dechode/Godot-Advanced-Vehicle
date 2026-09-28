@@ -1,7 +1,7 @@
 class_name DriveTrain
 extends Node
 
-const AV_2_RPM: float = 60 / TAU
+const AV_2_RPM: float = 60.0 / TAU
 
 enum DIFF_TYPE{
 	LIMITED_SLIP,
@@ -36,8 +36,8 @@ var drive_inertia := 10.0
 var reaction_torque := 0.0
 
 func automatic_shifting(cur_torque, lower_gear_torque, higher_gear_torque, rpm, max_rpm, brake_input, speed):
-	if !drivetrain_params.automatic:
-		return
+	#if !drivetrain_params.automatic:
+		#return
 		
 	var reversing = false
 	var shift_time = 700

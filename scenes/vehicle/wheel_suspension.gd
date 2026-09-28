@@ -141,9 +141,8 @@ func apply_forces(opposite_comp, delta):
 	slip_vec.y = 0.0 # Y slip is the longitudinal Z slip
 	
 	# Camber
-	#var camber_angle := deg_to_rad(-1.5)
 	var camber_thrust := y_force * tan(deg_to_rad(camber_angle)) * signf(position.x)
-	print(camber_thrust)
+	#print(camber_thrust)
 	
 	if is_colliding():
 		if not is_zero_approx(z_vel):

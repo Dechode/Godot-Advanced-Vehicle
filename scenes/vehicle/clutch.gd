@@ -12,19 +12,21 @@ func get_reaction_torques(av1: float, av2: float, t1: float, t2: float, slip_tor
 	var delta_av := av1 - av2
 	var reaction_torques := Vector2.ZERO
 	
-	# Locked situations are handled in car and drivetrain scripts atm
 	if locked:
 		if absf(delta_torque) >= slip_torque:
 			locked = false
 	else:
 		if absf(delta_av) < 0.5:
 			locked = true
-	
-	if av1 < av2:
-		reaction_torques.x = -clutch_torque
-		reaction_torques.y = clutch_torque
+	if locked:
+		reaction_torques.x = t1
+		reaction_torques.y = -t2
 	else:
-		reaction_torques.x = clutch_torque
-		reaction_torques.y = -clutch_torque
+		if av1 < av2:
+			reaction_torques.x = -clutch_torque
+			reaction_torques.y = clutch_torque
+		else:
+			reaction_torques.x = clutch_torque
+			reaction_torques.y = -clutch_torque
 	return reaction_torques
 	
