@@ -19,5 +19,3 @@ func _process(delta: float) -> void:
 	$Panel/VBoxContainer/SteeringInput.value = (Input.get_action_strength("SteerRight") - Input.get_action_strength("SteerLeft")) * 100
 	
 	#print((Input.get_action_strength("SteerRight") - Input.get_action_strength("SteerLeft")) * 100)
-
-

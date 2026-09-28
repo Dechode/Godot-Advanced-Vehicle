@@ -1,7 +1,7 @@
 class_name DriveTrain
 extends Node
 
-const AV_2_RPM: float = 60 / TAU
+const AV_2_RPM: float = 60.0 / TAU
 
 enum DIFF_TYPE{
 	LIMITED_SLIP,
@@ -36,8 +36,8 @@ var drive_inertia := 10.0
 var reaction_torque := 0.0
 
 func automatic_shifting(cur_torque, lower_gear_torque, higher_gear_torque, rpm, max_rpm, brake_input, speed):
-	if !drivetrain_params.automatic:
-		return
+	#if !drivetrain_params.automatic:
+		#return
 		
 	var reversing = false
 	var shift_time = 700
@@ -234,4 +234,3 @@ func drivetrain(torque: float, rear_brake_torque: float, front_brake_torque: flo
 				
 				differential(rear_drive, rear_brake_torque, rear_wheels, drivetrain_params.rear_diff, delta)
 				differential(front_drive, front_brake_torque, front_wheels, drivetrain_params.front_diff, delta)
-

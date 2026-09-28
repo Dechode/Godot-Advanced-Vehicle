@@ -21,6 +21,7 @@ var wheel_mass = 15.0
 var tire_radius = 0.3
 var tire_width = 0.2
 var ackermann = 0.15
+var camber_angle := 0.0
 
 var tire_wear: float = 0.0
 
@@ -61,6 +62,7 @@ func set_params(params: WheelSuspensionParameters):
 	tire_width = params.tire_model.tire_width
 	ackermann = params.ackermann
 	anti_roll = params.anti_roll
+	camber_angle = params.camber_angle
 	
 	wheel_inertia = 0.5 * wheel_mass * pow(tire_radius, 2)
 	set_target_position(Vector3.DOWN * (spring_length + tire_radius))
@@ -138,16 +140,18 @@ func apply_forces(opposite_comp, delta):
 	slip_vec.x = asin(clamp(-planar_vect.x, -1, 1)) # X slip is lateral slip
 	slip_vec.y = 0.0 # Y slip is the longitudinal Z slip
 	
-	if is_colliding():
-		if not is_zero_approx(z_vel):
-			slip_vec.y = (z_vel - spin * tire_radius) / abs(z_vel)
-		else:
-			slip_vec.y = (z_vel - spin * tire_radius) / abs(z_vel + 0.0000001)
+	# Camber
+	var camber_thrust := y_force * tan(deg_to_rad(camber_angle)) * signf(position.x)
+	#print(camber_thrust)
 	
+	if is_colliding():
+		slip_vec.y = calculate_slip_ratio(z_vel - spin * tire_radius, absf(z_vel))
+		
 		if spring_load_mm !=0:
 			y_force += anti_roll * (spring_load_mm - opposite_comp)
 		
 		force_vec = tire_model.update_tire_forces(slip_vec, y_force, surface_mu)
+		force_vec.x += camber_thrust
 		
 		var contact = get_collision_point() - car.global_transform.origin
 		var normal = get_collision_normal()
@@ -160,6 +164,16 @@ func apply_forces(opposite_comp, delta):
 	else:
 		spin -= sign(spin) * delta * 2 / wheel_inertia # stop undriven wheels from spinning endlessly
 		return 0.0
+
+
+func calculate_slip_ratio(slip_velocity: float, speed: float) -> float:
+	const LOW_SPEED := 1.0
+	if speed < 0.01:
+		return slip_velocity / LOW_SPEED
+	var normal_slip := slip_velocity / speed
+	var low_speed_slip := slip_velocity / LOW_SPEED
+	var blend := smoothstep(0.0, LOW_SPEED, speed)
+	return lerp(low_speed_slip, normal_slip, blend)
 
 
 func apply_torque(drive_torque, brake_torque, drive_inertia, delta):
@@ -192,4 +206,3 @@ func get_reaction_torque():
 
 func steer(input, max_steer):
 	rotation.y = max_steer * (input + (1 - cos(input * 0.5 * PI)) * ackermann)
-

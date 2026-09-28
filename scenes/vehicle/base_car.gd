@@ -9,7 +9,6 @@ const NM_2_KW: int = 9549
 const AV_2_RPM: float = 60 / TAU
 
 ##### Refs
-
 var drivetrain := DriveTrain.new()
 var clutch := Clutch.new()
 
@@ -88,7 +87,7 @@ func _physics_process(delta):
 	handbrake_input = Input.get_action_strength("Handbrake")
 	clutch_input = Input.get_action_strength("Clutch")
 	
-	var brakes_torques = get_brake_torques(brake_input, delta)
+	var brakes_torques = get_brake_torques(brake_input)
 	front_brake_torque = brakes_torques.x
 	rear_brake_torque = brakes_torques.y + handbrake_input * car_params.max_handbrake_torque
 	
@@ -97,7 +96,7 @@ func _physics_process(delta):
 	z_vel = -local_vel.z
 	x_vel = local_vel.x
 	
-	##### Steerin with steer speed #####
+	##### Steering with steer speed #####
 	if (steering_input < steering_amount):
 		steering_amount -= car_params.steer_speed * delta
 		if (steering_input > steering_amount):
@@ -122,9 +121,6 @@ func _physics_process(delta):
 		torque_out = 0
 		rpm -= 500 
 	
-#	if rpm <= car_params.rpm_idle + 10 and abs(z_vel) < 10 and throttle_input <= 0.05:
-#		clutch_input = 1.0
-	
 	var next_gear_rpm = 0
 	if drivetrain.selected_gear < car_params.drivetrain_params.gear_ratios.size():
 		next_gear_rpm = car_params.drivetrain_params.gear_ratios[drivetrain.selected_gear] * car_params.drivetrain_params.final_drive * avg_front_spin * AV_2_RPM
@@ -136,9 +132,10 @@ func _physics_process(delta):
 	var next_gear_torque := get_engine_torque(next_gear_rpm, throttle_input)
 	var prev_gear_torque := get_engine_torque(prev_gear_rpm, throttle_input)
 	
-	drivetrain.automatic_shifting(torque_out - drag_torque, prev_gear_torque,
-								next_gear_torque, rpm, car_params.max_engine_rpm,
-								brake_input, z_vel)
+	if drivetrain.drivetrain_params.automatic:
+		drivetrain.automatic_shifting(torque_out - drag_torque, prev_gear_torque,
+									next_gear_torque, rpm, car_params.max_engine_rpm,
+									brake_input, z_vel)
 	
 	if drivetrain.selected_gear == 0:
 		freewheel(delta)
@@ -168,21 +165,17 @@ func _physics_process(delta):
 func get_engine_torque(p_rpm, p_throttle) -> float: 
 	var rpm_factor = clamp(p_rpm / car_params.max_engine_rpm, 0.0, 1.0)
 	var torque_factor = car_params.torque_curve.sample_baked(rpm_factor)
-#	var t0 = - 0.1 * car_params.engine_brake - car_params.engine_brake * rpm_factor
 	var t0 = -car_params.engine_brake * rpm_factor
 	var t1 = torque_factor * car_params.max_torque
 	var thr := car_params.throttle_model.sample_baked(p_throttle)
 	return lerpf(t0, t1, thr)
 
 
-func get_brake_torques(p_brake_input: float, delta):
+func get_brake_torques(p_brake_input: float):
 	var clamping_force := p_brake_input * car_params.max_brake_force * 0.5 
 	var brake_pad_mu := 0.4
-	var effective_radius := 0.25
-	var braking_force := 2.0 * brake_pad_mu * clamping_force
-	
+	var braking_force := 2.0 * brake_pad_mu * clamping_force	
 	var torques := Vector2.ZERO
-	
 	torques.x = braking_force * car_params.brake_effective_radius * car_params.front_brake_bias
 	torques.y = braking_force * car_params.brake_effective_radius * (1 - car_params.front_brake_bias)
 	return torques
@@ -200,11 +193,8 @@ func freewheel(delta):
 	
 	
 func engage(delta):
-	avg_rear_spin = 0.0
-	avg_front_spin = 0.0
-
-	avg_rear_spin += (wheel_bl.spin + wheel_br.spin) * 0.5
-	avg_front_spin += (wheel_fl.spin + wheel_fr.spin) * 0.5
+	avg_rear_spin = (wheel_bl.spin + wheel_br.spin) * 0.5
+	avg_front_spin = (wheel_fl.spin + wheel_fr.spin) * 0.5
 	
 	var gearbox_shaft_speed: float = 0.0
 	
@@ -219,12 +209,13 @@ func engage(delta):
 		
 	var speed_error = engine_angular_vel - gearbox_shaft_speed
 	var clutch_kick = abs(speed_error) * 0.2
-	var tr := drivetrain.reaction_torque
-	var clutch_slip_torque := 0.8 * clutch.friction
-	var reaction_torques : Vector2 = clutch.get_reaction_torques(engine_angular_vel, gearbox_shaft_speed, torque_out, tr, clutch_slip_torque, clutch_kick)
+	var clutch_slip_torque := 0.9 * clutch.friction
+	var reaction_torques : Vector2 = clutch.get_reaction_torques(engine_angular_vel, gearbox_shaft_speed, torque_out, drivetrain.reaction_torque, clutch_slip_torque, clutch_kick)
 
-	if clutch.locked:
-		reaction_torques.x = torque_out
+	if clutch.locked and clutch_input < 0.1:
+		engine_angular_vel = gearbox_shaft_speed
+		rpm = engine_angular_vel * AV_2_RPM
+	#print(clutch.locked)
 	drive_reaction_torque = reaction_torques.x * (1 - clutch_input)
 	clutch_reaction_torque = reaction_torques.y * (1 - clutch_input)
 	
@@ -275,4 +266,3 @@ func play_engine_sound():
 
 func stop_engine_sound():
 	audioplayer.stop()
-
