@@ -215,7 +215,7 @@ func engage(delta):
 	if clutch.locked and clutch_input < 0.1:
 		engine_angular_vel = gearbox_shaft_speed
 		rpm = engine_angular_vel * AV_2_RPM
-	print(clutch.locked)
+	#print(clutch.locked)
 	drive_reaction_torque = reaction_torques.x * (1 - clutch_input)
 	clutch_reaction_torque = reaction_torques.y * (1 - clutch_input)
 	

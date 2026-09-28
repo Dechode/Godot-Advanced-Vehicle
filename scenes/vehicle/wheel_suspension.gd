@@ -145,11 +145,8 @@ func apply_forces(opposite_comp, delta):
 	#print(camber_thrust)
 	
 	if is_colliding():
-		if not is_zero_approx(z_vel):
-			slip_vec.y = (z_vel - spin * tire_radius) / abs(z_vel)
-		else:
-			slip_vec.y = (z_vel - spin * tire_radius) / abs(z_vel + 0.0000001)
-	
+		slip_vec.y = calculate_slip_ratio(z_vel - spin * tire_radius, absf(z_vel))
+		
 		if spring_load_mm !=0:
 			y_force += anti_roll * (spring_load_mm - opposite_comp)
 		
@@ -167,6 +164,16 @@ func apply_forces(opposite_comp, delta):
 	else:
 		spin -= sign(spin) * delta * 2 / wheel_inertia # stop undriven wheels from spinning endlessly
 		return 0.0
+
+
+func calculate_slip_ratio(slip_velocity: float, speed: float) -> float:
+	const LOW_SPEED := 1.0
+	if speed < 0.01:
+		return slip_velocity / LOW_SPEED
+	var normal_slip := slip_velocity / speed
+	var low_speed_slip := slip_velocity / LOW_SPEED
+	var blend := smoothstep(0.0, LOW_SPEED, speed)
+	return lerp(low_speed_slip, normal_slip, blend)
 
 
 func apply_torque(drive_torque, brake_torque, drive_inertia, delta):

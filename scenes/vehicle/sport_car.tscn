@@ -1,4 +1,4 @@
-[gd_scene load_steps=30 format=4 uid="uid://dqqcf60u11tfq"]
+[gd_scene format=4 uid="uid://dqqcf60u11tfq"]
 
 [ext_resource type="PackedScene" uid="uid://exyybiakl0yk" path="res://scenes/vehicle/base_car.tscn" id="1_rpk6a"]
 [ext_resource type="Script" uid="uid://dssspfnea8d08" path="res://scenes/vehicle/car_params.gd" id="2_07fle"]
@@ -179,9 +179,9 @@ _surfaces = [{
 blend_shape_mode = 0
 shadow_mesh = SubResource("ArrayMesh_mnl4s")
 
-[node name="Sportcar" type="Node3D"]
+[node name="Sportcar" type="Node3D" unique_id=2004413629]
 
-[node name="RigidBodyCar" parent="." instance=ExtResource("1_rpk6a")]
+[node name="RigidBodyCar" parent="." unique_id=385030128 instance=ExtResource("1_rpk6a")]
 mass = 1000.0
 car_params = SubResource("Resource_0mcht")
 
@@ -223,15 +223,15 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.99303, -0.0781195)
 [node name="TireInfoApp" parent="RigidBodyCar/Gui" index="1"]
 layout_mode = 0
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="RigidBodyCar"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="RigidBodyCar" unique_id=1661226596]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.14458, -0.537506)
 shape = SubResource("5")
 
-[node name="CollisionShape3D2" type="CollisionShape3D" parent="RigidBodyCar"]
+[node name="CollisionShape3D2" type="CollisionShape3D" parent="RigidBodyCar" unique_id=337279934]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.332292, -0.174233)
 shape = SubResource("BoxShape3D_vdwmd")
 
-[node name="sport_car" parent="RigidBodyCar" instance=ExtResource("10_sat6w")]
+[node name="sport_car" parent="RigidBodyCar" unique_id=528307275 instance=ExtResource("10_sat6w")]
 transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, -0.672, -0.47664)
 
 [node name="Wheel_001" parent="RigidBodyCar/sport_car" index="0"]
